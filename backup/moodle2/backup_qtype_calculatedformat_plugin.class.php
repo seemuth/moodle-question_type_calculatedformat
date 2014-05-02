@@ -68,6 +68,7 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
         $calculatedrecords = new backup_nested_element('calculatedformat_records');
         $calculatedrecord = new backup_nested_element('calculatedformat_record', array('id'), array(
             'answer', 'tolerance', 'tolerancetype',
+            'allownegative',
             'correctanswerlengthint', 'correctanswerlengthfrac',
             'correctanswerbase'));
 
