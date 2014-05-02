@@ -219,81 +219,65 @@ class qtype_calculatedformat_variable_substituter {
     }
 
     /**
-     * Display a float properly formatted with a certain number of decimal places.
+     * Display a number properly formatted in a certain base, with a certain
+     * number of digits before and after the radix point.
      * @param number $x the number to format
-     * @param int $length restrict to this many decimal places or significant
-     *      figures. If null, the number is not rounded.
-     * @param int format 1 => decimalformat, 2 => significantfigures.
+     * @param int $lengthint expand to this many digits before the radix point
+     * @param int $lengthfrac restrict to this many digits after the radix point
+     * @param int $base render number in this base (2 <= $base <= 36)
      * @return string formtted number.
      */
-    public function format_float($x, $length = null, $format = null) {
-        if (!is_null($length) && !is_null($format)) {
-            if ($format == '1' ) { // Answer is to have $length decimals.
-                // Decimal places.
-                $x = sprintf('%.' . $length . 'F', $x);
+    public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
+        $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-            } else if ($x) { // Significant figures does only apply if the result is non-zero.
-                $answer = $x;
-                // Convert to positive answer.
-                if ($answer < 0) {
-                    $answer = -$answer;
-                    $sign = '-';
-                } else {
-                    $sign = '';
-                }
-
-                // Determine the format 0.[1-9][0-9]* for the answer...
-                $p10 = 0;
-                while ($answer < 1) {
-                    --$p10;
-                    $answer *= 10;
-                }
-                while ($answer >= 1) {
-                    ++$p10;
-                    $answer /= 10;
-                }
-                // ... and have the answer rounded of to the correct length.
-                $answer = round($answer, $length);
-
-                // If we rounded up to 1.0, place the answer back into 0.[1-9][0-9]* format.
-                if ($answer >= 1) {
-                    ++$p10;
-                    $answer /= 10;
-                }
-
-                // Have the answer written on a suitable format.
-                // Either scientific or plain numeric.
-                if (-2 > $p10 || 4 < $p10) {
-                    // Use scientific format.
-                    $exponent = 'e'.--$p10;
-                    $answer *= 10;
-                    if (1 == $length) {
-                        $x = $sign.$answer.$exponent;
-                    } else {
-                        // Attach additional zeros at the end of $answer.
-                        $answer .= (1 == strlen($answer) ? '.' : '')
-                            . '00000000000000000000000000000000000000000x';
-                        $x = $sign
-                            .substr($answer, 0, $length +1).$exponent;
-                    }
-                } else {
-                    // Stick to plain numeric format.
-                    $answer *= "1e$p10";
-                    if (0.1 <= $answer / "1e$length") {
-                        $x = $sign.$answer;
-                    } else {
-                        // Could be an idea to add some zeros here.
-                        $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
-                            . '00000000000000000000000000000000000000000x';
-                        $oklen = $length + ($p10 < 1 ? 2-$p10 : 1);
-                        $x = $sign.substr($answer, 0, $oklen);
-                    }
-                }
-
-            } else {
-                $x = 0.0;
-            }
+        if (($base < 2) || ($base > 36)) {
+            throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
         }
+
+        if ($lengthint < 1) {
+            $lengthint = 1;
+        }
+
+        if ($lengthfrac < 0) {
+            $lengthfrac = 0;
+        }
+
+        $answer = $x;
+        // Convert to positive answer.
+        if ($answer < 0) {
+            $answer = -$answer;
+            $sign = '-';
+        } else {
+            $sign = '';
+        }
+
+        // Round properly to correct # of digits.
+        $answer *= pow($base, $lengthfrac);
+        $answer = intval(round($answer));
+
+        // Convert to string in given base (in reverse order at first).
+        $x = '';
+        while ($answer > 0) {
+            $mod = $answer % $base;
+            $answer = intval(floor($answer / $base));
+
+            $x .= digits[$mod];
+        }
+
+        // Insert required number of digits.
+        $needed = $lengthint + $lengthfrac - strlen($x);
+        if ($needed > 0) {
+            $x .= str_repeat('0', $needed);
+        }
+
+        // Reverse string to get proper format.
+        $x = strrev($x);
+
+        // Insert radix point if there are fractional digits.
+        if ($lengthfrac > 0) {
+            $x = substr_replace($x, ',', -$lengthfrac, 0);
+        }
+
         return str_replace('.', $this->decimalpoint, $x);
     }
 

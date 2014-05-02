@@ -69,6 +69,7 @@ $string['functiontakestwoargs'] = 'The function {$a} must have exactly two argum
 $string['generatevalue'] = 'Generate a new value between';
 $string['getnextnow'] = 'Get new \'Item to Add\' now';
 $string['hexanotallowed'] = 'Dataset <strong>{$a->name}</strong> hexadecimal format value {$a->value} is not allowed';
+$string['illegalbase'] = 'Illegal base \'{$a}\'';
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'{$a}\'';
 $string['incorrectfeedback'] = 'For any incorrect response';
 $string['item(s)'] = 'item(s)';
