@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qtype_calculated', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'qtype_calculatedformat', language 'en', branch 'MOODLE_26_STABLE'
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -109,12 +110,12 @@ $string['notvalidnumber'] = 'Wild card value is not a valid number ';
 $string['oneanswertrueansweroutsidelimits'] = 'At least one correct answer outside the true value limits.<br />Modify the answers tolerance settings available as Advanced parameters';
 $string['param'] = 'Param {<strong>{$a}</strong>}';
 $string['partiallycorrectfeedback'] = 'For any partially correct response';
-$string['pluginname'] = 'Calculated';
-$string['pluginname_help'] = 'Calculated questions enable individual numerical questions to be created using wildcards in curly brackets that are substituted with individual values when the quiz is taken. For example, the question "What is the area of a rectangle of length {l} and width {w}?" would have correct answer formula "{l}*{w}" (where * denotes multiplication).';
-$string['pluginname_link'] = 'question/type/calculated';
-$string['pluginnameadding'] = 'Adding a Calculated question';
-$string['pluginnameediting'] = 'Editing a Calculated question';
-$string['pluginnamesummary'] = 'Calculated questions are like numerical questions but with the numbers used selected randomly from a set when the quiz is taken.';
+$string['pluginname'] = 'Calculated format';
+$string['pluginname_help'] = 'Calculated questions with number formatting enable individual numerical questions to be created using wildcards in curly brackets that are substituted with individual values and formatted in desired bases when the quiz is taken. For example, the question "What is the area of a rectangle of length {l} and width {w}?" would have correct answer formula "{l}*{w}" (where * denotes multiplication).';
+$string['pluginname_link'] = 'question/type/calculatedformat';
+$string['pluginnameadding'] = 'Adding a Calculated question with number formatting';
+$string['pluginnameediting'] = 'Editing a Calculated question with number formatting';
+$string['pluginnamesummary'] = 'Calculated questions with number formatting are like numerical questions but with the numbers used selected randomly from a set and formatted in desired bases when the quiz is taken.';
 $string['possiblehdr'] = 'Possible wild cards present only in the question text';
 $string['questiondatasets'] = 'Question datasets';
 $string['questiondatasets_help'] = 'Question datasets of wild cards that will be used in each individual question';
