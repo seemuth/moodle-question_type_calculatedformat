@@ -219,6 +219,49 @@ class qtype_calculatedformat_variable_substituter {
     }
 
     /**
+     * Given a number format:
+     *      `%' NUM (`.' NUM)? [bdoh]
+     * format the number in the given base with the given # of digits.
+     *
+     * If the number format is not valid, return null.
+     *
+     * @param string $fmt the number format, e.g.:
+     *      4.2d for 4 integer digits, 2 fractional digits, in base 10 (decimal)
+     * @param number $x the number to format
+     * @return string formatted number.
+     */
+    public function format_by_fmt($fmt, $x) {
+        if (preg_match('/^%(\d+)(?:.(\d+))?([bodh])$/', $fmt, $regs)) {
+            list($fullmatch, $lengthint, $lengthfrac, $basestr) = $regs;
+
+            $base = 0;
+            if ($basestr == 'b') {
+                $base = 2;
+
+            } else if ($basestr == 'o') {
+                $base = 8;
+
+            } else if ($basestr == 'd') {
+                $base = 10;
+
+            } else if ($basestr == 'h') {
+                $base = 16;
+
+            } else {
+                throw new coding_exception('Invalid base: ' . $basestr);
+            }
+
+            $lengthint = intval($lengthint);
+            $lengthfrac = intval($lengthfrac);
+
+            return $this->format_in_base($x, $base, $lengthint, $lengthfrac);
+        }
+
+        // Not a valid format.
+        return null;
+    }
+
+    /**
      * Display a number properly formatted in a certain base, with a certain
      * number of digits before and after the radix point.
      * @param number $x the number to format
