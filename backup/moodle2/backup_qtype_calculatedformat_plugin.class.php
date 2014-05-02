@@ -18,6 +18,7 @@
  * @package    moodlecore
  * @subpackage backup-moodle2
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,12 +27,13 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Provides the information to backup calculated questions
+ * Provides the information to backup calculated formatted questions
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class backup_qtype_calculated_plugin extends backup_qtype_plugin {
+class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
 
     /**
      * Returns the qtype information to attach to question element
@@ -40,7 +42,7 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
 
         // Define the virtual plugin element with the condition to fulfill.
         // Note: we use $this->pluginname so for extended plugins this will work
-        // automatically: calculatedsimple and calculatedmulti.
+        // automatically (if extended plugins are added).
         $plugin = $this->get_plugin_element(null, '../../qtype', $this->pluginname);
 
         // Create one standard named plugin element (the visible container).
@@ -63,13 +65,14 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $this->add_question_datasets($pluginwrapper);
 
         // Now create the qtype own structures.
-        $calculatedrecords = new backup_nested_element('calculated_records');
-        $calculatedrecord = new backup_nested_element('calculated_record', array('id'), array(
-            'answer', 'tolerance', 'tolerancetype', 'correctanswerlength',
-            'correctanswerformat'));
+        $calculatedrecords = new backup_nested_element('calculatedformat_records');
+        $calculatedrecord = new backup_nested_element('calculatedformat_record', array('id'), array(
+            'answer', 'tolerance', 'tolerancetype',
+            'correctanswerlengthint', 'correctanswerlengthfrac',
+            'correctanswerbase'));
 
-        $calculatedoptions = new backup_nested_element('calculated_options');
-        $calculatedoption = new backup_nested_element('calculated_option', array('id'), array(
+        $calculatedoptions = new backup_nested_element('calculatedformat_options');
+        $calculatedoption = new backup_nested_element('calculatedformat_option', array('id'), array(
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering'));
@@ -82,9 +85,9 @@ class backup_qtype_calculated_plugin extends backup_qtype_plugin {
         $calculatedoptions->add_child($calculatedoption);
 
         // Set source to populate the data.
-        $calculatedrecord->set_source_table('question_calculated',
+        $calculatedrecord->set_source_table('question_calculatedformat',
                 array('question' => backup::VAR_PARENTID));
-        $calculatedoption->set_source_table('question_calculated_options',
+        $calculatedoption->set_source_table('question_calculatedformat_options',
                 array('question' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.

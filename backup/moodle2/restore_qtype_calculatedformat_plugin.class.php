@@ -18,6 +18,7 @@
  * @package    moodlecore
  * @subpackage backup-moodle2
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,12 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * restore plugin class that provides the necessary information
- * needed to restore one calculated qtype plugin
+ * needed to restore one calculatedformat qtype plugin
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_qtype_calculated_plugin extends restore_qtype_plugin {
+class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level
@@ -52,21 +54,21 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
         $this->add_question_datasets($paths);
 
         // Add own qtype stuff.
-        $elename = 'calculated_record';
-        $elepath = $this->get_pathfor('/calculated_records/calculated_record');
+        $elename = 'calculatedformat_record';
+        $elepath = $this->get_pathfor('/calculatedformat_records/calculatedformat_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        $elename = 'calculated_option';
-        $elepath = $this->get_pathfor('/calculated_options/calculated_option');
+        $elename = 'calculatedformat_option';
+        $elepath = $this->get_pathfor('/calculatedformat_options/calculatedformat_option');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths.
     }
 
     /**
-     * Process the qtype/calculated_record element
+     * Process the qtype/calculatedformat_record element
      */
-    public function process_calculated_record($data) {
+    public function process_calculatedformat_record($data) {
         global $DB;
 
         $data = (object)$data;
@@ -79,20 +81,20 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
                 true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_calculated too.
+        // question_calculatedformat too.
         if ($questioncreated) {
             // Adjust some columns.
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
             // Insert record.
-            $newitemid = $DB->insert_record('question_calculated', $data);
+            $newitemid = $DB->insert_record('question_calculatedformat', $data);
         }
     }
 
     /**
-     * Process the qtype/calculated_option element
+     * Process the qtype/calculatedformat_option element
      */
-    public function process_calculated_option($data) {
+    public function process_calculatedformat_option($data) {
         global $DB;
 
         $data = (object)$data;
@@ -105,12 +107,12 @@ class restore_qtype_calculated_plugin extends restore_qtype_plugin {
                 true : false;
 
         // If the question has been created by restore, we need to create its
-        // question_calculated too.
+        // question_calculatedformat too.
         if ($questioncreated) {
             // Adjust some columns.
             $data->question = $newquestionid;
             // Insert record.
-            $newitemid = $DB->insert_record('question_calculated_options', $data);
+            $newitemid = $DB->insert_record('question_calculatedformat_options', $data);
         }
     }
 }
