@@ -20,17 +20,19 @@
  * @package    qtype
  * @subpackage calculated
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qtype_calculated';
+$plugin->component = 'qtype_calculatedformat';
 $plugin->version   = 2013110500;
 
 $plugin->requires  = 2013110500;
 $plugin->dependencies = array(
     'qtype_numerical' => 2013110500,
+    'qtype_calculated' => 2013110500,
 );
 
 $plugin->maturity  = MATURITY_STABLE;
