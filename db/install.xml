@@ -12,9 +12,9 @@
         <FIELD NAME="tolerance" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false"/>
         <FIELD NAME="tolerancetype" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="allownegative" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="correctanswerbase" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
         <FIELD NAME="correctanswerlengthint" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="correctanswerlengthfrac" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="correctanswerbase" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
