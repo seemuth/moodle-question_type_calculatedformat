@@ -18,8 +18,9 @@
  * Calculated question definition class.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,37 +28,31 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
+require_once($CFG->dirroot . '/question/type/calculated/question.php');
 
 
 /**
- * Represents a calculated question.
+ * Represents a calculated question with number formatting.
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_question extends qtype_numerical_question
-        implements qtype_calculated_question_with_expressions {
-
-    /** @var qtype_calculated_dataset_loader helper for loading the dataset. */
-    public $datasetloader;
-
-    /** @var qtype_calculated_variable_substituter stores the dataset we are using. */
-    public $vs;
-
-    /**
-     * @var bool wheter the dataset item to use should be chose based on attempt
-     * start time, rather than randomly.
-     */
-    public $synchronised;
+class qtype_calculatedformat_question extends qtype_calculated_question
+    implements qtype_calculatedformat_question_with_expressions {
 
     public function start_attempt(question_attempt_step $step, $variant) {
-        qtype_calculated_question_helper::start_attempt($this, $step, $variant);
-        parent::start_attempt($step, $variant);
+        qtype_calculatedformat_question_helper::start_attempt($this, $step, $variant);
+
+        // Skip parent (qtype_calculated_question), because that would conflict
+        qtype_numerical_question::start_attempt($step, $variant);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
-        qtype_calculated_question_helper::apply_attempt_state($this, $step);
-        parent::apply_attempt_state($step);
+        qtype_calculatedformat_question_helper::apply_attempt_state($this, $step);
+
+        // Skip parent (qtype_calculated_question), because that would conflict
+        qtype_numerical_question::apply_attempt_state($step);
     }
 
     public function calculate_all_expressions() {
@@ -67,23 +62,12 @@ class qtype_calculated_question extends qtype_numerical_question
         foreach ($this->answers as $ans) {
             if ($ans->answer && $ans->answer !== '*') {
                 $ans->answer = $this->vs->calculate($ans->answer,
-                        $ans->correctanswerlength, $ans->correctanswerformat);
+                    $ans->correctanswerlengthint, $ans->correctanswerlengthfrac,
+                    $ans->correctanswerformat);
             }
             $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback,
-                        $ans->correctanswerlength, $ans->correctanswerformat);
-        }
-    }
-
-    public function get_num_variants() {
-        return $this->datasetloader->get_number_of_items();
-    }
-
-    public function get_variants_selection_seed() {
-        if (!empty($this->synchronised) &&
-                $this->datasetloader->datasets_are_synchronised($this->category)) {
-            return 'category' . $this->category;
-        } else {
-            return parent::get_variants_selection_seed();
+                    $ans->correctanswerlengthint, $ans->correctanswerlengthfrac,
+                    $ans->correctanswerformat);
         }
     }
 
@@ -94,7 +78,8 @@ class qtype_calculated_question extends qtype_numerical_question
         }
 
         $response = array('answer' => $this->vs->format_float($answer->answer,
-            $answer->correctanswerlength, $answer->correctanswerformat));
+            $answer->correctanswerlengthint, $answer->correctanswerlengthfrac,
+            $answer->correctanswerbase));
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
@@ -109,18 +94,19 @@ class qtype_calculated_question extends qtype_numerical_question
 
 
 /**
- * This interface defines the method that a quetsion type must implement if it
- * is to work with {@link qtype_calculated_question_helper}.
+ * This interface defines the method that a question type must implement if it
+ * is to work with {@link qtype_calculatedformat_question_helper}.
  *
  * As well as this method, the class that implements this interface must have
  * fields
  * public $datasetloader; // of type qtype_calculated_dataset_loader
- * public $vs; // of type qtype_calculated_variable_substituter
+ * public $vs; // of type qtype_calculatedformat_variable_substituter
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface qtype_calculated_question_with_expressions {
+interface qtype_calculatedformat_question_with_expressions {
     /**
      * Replace all the expression in the question definition with the values
      * computed from the selected dataset by calling $this->vs->calculate() and
@@ -133,19 +119,20 @@ interface qtype_calculated_question_with_expressions {
 
 /**
  * Helper class for questions that use datasets. Works with the interface
- * {@link qtype_calculated_question_with_expressions} and the class
+ * {@link qtype_calculatedformat_question_with_expressions} and the class
  * {@link qtype_calculated_dataset_loader} to set up the value of each variable
  * in start_attempt, and restore that in apply_attempt_state.
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_calculated_question_helper {
+abstract class qtype_calculatedformat_question_helper {
     public static function start_attempt(
-            qtype_calculated_question_with_expressions $question,
+            qtype_calculatedformat_question_with_expressions $question,
             question_attempt_step $step, $variant) {
 
-        $question->vs = new qtype_calculated_variable_substituter(
+        $question->vs = new qtype_calculatedformat_variable_substituter(
                 $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'));
         $question->calculate_all_expressions();
@@ -156,7 +143,9 @@ abstract class qtype_calculated_question_helper {
     }
 
     public static function apply_attempt_state(
-            qtype_calculated_question_with_expressions $question, question_attempt_step $step) {
+        qtype_calculatedformat_question_with_expressions $question,
+        question_attempt_step $step) {
+
         $values = array();
         foreach ($step->get_qt_data() as $name => $value) {
             if (substr($name, 0, 5) === '_var_') {
@@ -164,7 +153,7 @@ abstract class qtype_calculated_question_helper {
             }
         }
 
-        $question->vs = new qtype_calculated_variable_substituter(
+        $question->vs = new qtype_calculatedformat_variable_substituter(
                 $values, get_string('decsep', 'langconfig'));
         $question->calculate_all_expressions();
     }
@@ -172,112 +161,17 @@ abstract class qtype_calculated_question_helper {
 
 
 /**
- * This class is responsible for loading the dataset that a question needs from
- * the database.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_calculated_dataset_loader {
-    /** @var int the id of the question we are helping. */
-    protected $questionid;
-
-    /** @var int the id of the question we are helping. */
-    protected $itemsavailable = null;
-
-    /**
-     * Constructor
-     * @param int $questionid the question to load datasets for.
-     */
-    public function __construct($questionid) {
-        $this->questionid = $questionid;
-    }
-
-    /**
-     * Get the number of items (different values) in each dataset used by this
-     * question. This is the minimum number of items in any dataset used by this
-     * question.
-     * @return int the number of items available.
-     */
-    public function get_number_of_items() {
-        global $DB;
-
-        if (is_null($this->itemsavailable)) {
-            $this->itemsavailable = $DB->get_field_sql('
-                    SELECT MIN(qdd.itemcount)
-                      FROM {question_dataset_definitions} qdd
-                      JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
-                     WHERE qd.question = ?
-                    ', array($this->questionid), MUST_EXIST);
-        }
-
-        return $this->itemsavailable;
-    }
-
-    /**
-     * Actually query the database for the values.
-     * @param int $itemnumber which set of values to load.
-     * @return array name => value;
-     */
-    protected function load_values($itemnumber) {
-        global $DB;
-
-        return $DB->get_records_sql_menu('
-                SELECT qdd.name, qdi.value
-                  FROM {question_dataset_items} qdi
-                  JOIN {question_dataset_definitions} qdd ON qdd.id = qdi.definition
-                  JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
-                 WHERE qd.question = ?
-                   AND qdi.itemnumber = ?
-                ', array($this->questionid, $itemnumber));
-    }
-
-    /**
-     * Load a particular set of values for each dataset used by this question.
-     * @param int $itemnumber which set of values to load.
-     *      0 < $itemnumber <= {@link get_number_of_items()}.
-     * @return array name => value.
-     */
-    public function get_values($itemnumber) {
-        if ($itemnumber <= 0 || $itemnumber > $this->get_number_of_items()) {
-            $a = new stdClass();
-            $a->id = $this->questionid;
-            $a->item = $itemnumber;
-            throw new moodle_exception('cannotgetdsfordependent', 'question', '', $a);
-        }
-
-        return $this->load_values($itemnumber);
-    }
-
-    public function datasets_are_synchronised($category) {
-        global $DB;
-        // We need to ensure that there are synchronised datasets, and that they
-        // all use the right category.
-        $categories = $DB->get_record_sql('
-                SELECT MAX(qdd.category) AS max,
-                       MIN(qdd.category) AS min
-                  FROM {question_dataset_definitions} qdd
-                  JOIN {question_datasets} qd ON qdd.id = qd.datasetdefinition
-                 WHERE qd.question = ?
-                   AND qdd.category <> 0
-            ', array($this->questionid));
-
-        return $categories && $categories->max == $category && $categories->min == $category;
-    }
-}
-
-
-/**
- * This class holds the current values of all the variables used by a calculated
- * question.
+ * This class holds the current values of all the variables used by a
+ * calculatedformat question.
  *
  * It can compute formulae using those values, and can substitute equations
  * embedded in text.
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_variable_substituter {
+class qtype_calculatedformat_variable_substituter {
     /** @var array variable name => value */
     protected $values;
 
@@ -315,7 +209,7 @@ class qtype_calculated_variable_substituter {
                 $a = new stdClass();
                 $a->name = '{' . $name . '}';
                 $a->value = $value;
-                throw new moodle_exception('notvalidnumber', 'qtype_calculated', '', $a);
+                throw new moodle_exception('notvalidnumber', 'qtype_calculatedformat', '', $a);
             }
 
             $this->search[] = '{' . $name . '}';
@@ -430,7 +324,7 @@ class qtype_calculated_variable_substituter {
     protected function calculate_raw($expression) {
         // This validation trick from http://php.net/manual/en/function.eval.php .
         if (!@eval('return true; $result = ' . $expression . ';')) {
-            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $expression);
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculatedformat', '', $expression);
         }
         return eval('return ' . $expression . ';');
     }
@@ -501,14 +395,14 @@ class qtype_calculated_variable_substituter {
                 // Simple parenthesis.
                 case '':
                     if ((isset($regs[4]) && $regs[4]) || strlen($regs[3]) == 0) {
-                        return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
+                        return get_string('illegalformulasyntax', 'qtype_calculatedformat', $regs[0]);
                     }
                     break;
 
                     // Zero argument functions.
                 case 'pi':
                     if ($regs[3]) {
-                        return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
+                        return get_string('functiontakesnoargs', 'qtype_calculatedformat', $regs[2]);
                     }
                     break;
 
@@ -521,14 +415,14 @@ class qtype_calculated_variable_substituter {
                 case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
                 case 'tan': case 'tanh':
                     if (!empty($regs[4]) || empty($regs[3])) {
-                        return get_string('functiontakesonearg', 'qtype_calculated', $regs[2]);
+                        return get_string('functiontakesonearg', 'qtype_calculatedformat', $regs[2]);
                     }
                     break;
 
                     // Functions that take one or two arguments.
                 case 'log': case 'round':
                     if (!empty($regs[5]) || empty($regs[3])) {
-                        return get_string('functiontakesoneortwoargs', 'qtype_calculated',
+                        return get_string('functiontakesoneortwoargs', 'qtype_calculatedformat',
                                 $regs[2]);
                     }
                     break;
@@ -536,19 +430,19 @@ class qtype_calculated_variable_substituter {
                     // Functions that must have two arguments.
                 case 'atan2': case 'fmod': case 'pow':
                     if (!empty($regs[5]) || empty($regs[4])) {
-                        return get_string('functiontakestwoargs', 'qtype_calculated', $regs[2]);
+                        return get_string('functiontakestwoargs', 'qtype_calculatedformat', $regs[2]);
                     }
                     break;
 
                     // Functions that take two or more arguments.
                 case 'min': case 'max':
                     if (empty($regs[4])) {
-                        return get_string('functiontakesatleasttwo', 'qtype_calculated', $regs[2]);
+                        return get_string('functiontakesatleasttwo', 'qtype_calculatedformat', $regs[2]);
                     }
                     break;
 
                 default:
-                    return get_string('unsupportedformulafunction', 'qtype_calculated', $regs[2]);
+                    return get_string('unsupportedformulafunction', 'qtype_calculatedformat', $regs[2]);
             }
 
             // Exchange the function call with '1' and then check for another function call.
@@ -563,7 +457,7 @@ class qtype_calculated_variable_substituter {
         }
 
         if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
-            return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
+            return get_string('illegalformulasyntax', 'qtype_calculatedformat', $regs[0]);
         } else {
             // Formula just might be valid.
             return false;
