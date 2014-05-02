@@ -17,9 +17,10 @@
 /**
  * Serve question type files
  *
- * @since      2.0
- * @package    qtype_calculated
+ * @since      2.6
+ * @package    qtype_calculatedformat
  * @copyright  Dongsheng Cai <dongsheng@moodle.com>
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,9 +29,9 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Checks file access for calculated questions.
+ * Checks file access for calculatedformat questions.
  *
- * @package  qtype_calculated
+ * @package  qtype_calculatedformat
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
@@ -41,8 +42,8 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options additional options affecting the file serving
  * @return bool
  */
-function qtype_calculated_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->libdir . '/questionlib.php');
-    question_pluginfile($course, $context, 'qtype_calculated', $filearea, $args, $forcedownload, $options);
+    question_pluginfile($course, $context, 'qtype_calculatedformat', $filearea, $args, $forcedownload, $options);
 }
