@@ -268,7 +268,7 @@ class qtype_calculatedformat_variable_substituter {
      * @param int $lengthint expand to this many digits before the radix point
      * @param int $lengthfrac restrict to this many digits after the radix point
      * @param int $base render number in this base (2 <= $base <= 36)
-     * @return string formtted number.
+     * @return string formatted number.
      */
     public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
         $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
