@@ -187,7 +187,7 @@ class qtype_calculatedformat_variable_substituter {
 
     /**
      * @var array variable values, with negative numbers wrapped in (...).
-     * Used by {@link substitute_values()}.
+     * Used by {@link substitute_values_for_eval()}.
      */
     protected $safevalue;
 
