@@ -77,9 +77,9 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             return array();
         }
 
-        $response = array('answer' => $this->vs->format_float($answer->answer,
-            $answer->correctanswerlengthint, $answer->correctanswerlengthfrac,
-            $answer->correctanswerbase));
+        $response = array('answer' => $this->vs->format_in_base($answer->answer,
+            $answer->correctanswerbase,
+            $answer->correctanswerlengthint, $answer->correctanswerlengthfrac));
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
