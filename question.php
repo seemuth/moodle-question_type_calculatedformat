@@ -218,7 +218,7 @@ class qtype_calculatedformat_variable_substituter {
 
             $this->search[] = '{' . $name . '}';
             $this->safevalue[] = '(' . $value . ')';
-            $this->prettyvalue[] = $this->format_float($value);
+            $this->prettyvalue[] = $this->format_simple($value);
         }
     }
 
@@ -263,6 +263,16 @@ class qtype_calculatedformat_variable_substituter {
 
         // Not a valid format.
         return null;
+    }
+
+    /**
+     * Display a number formatted only by replacing the decimal point with
+     * the appropriate character.
+     * @param number $x the number to format
+     * @return string formatted number.
+     */
+    public function format_simple($x) {
+        return str_replace('.', $this->decimalpoint, $x);
     }
 
     /**
