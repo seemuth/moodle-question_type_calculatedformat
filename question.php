@@ -167,6 +167,10 @@ abstract class qtype_calculatedformat_question_helper {
  * It can compute formulae using those values, and can substitute equations
  * embedded in text.
  *
+ * In contrast to {@link qtype_calculated_question_helper}, this class
+ * automatically converts appropriate HTML entities to their corresponding
+ * characters: &amp; &lt; &gt;
+ *
  * @copyright  2011 The Open University
  * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -344,11 +348,20 @@ class qtype_calculatedformat_variable_substituter {
 
     /**
      * Evaluate an expression after the variable values have been substituted.
+     *
+     * In contrast to {@link qtype_calculated_question_helper}, this class
+     * automatically converts appropriate HTML entities to their corresponding
+     * characters: &amp; &lt; &gt;
+     *
      * @param string $expression the expression. A PHP expression with placeholders
      *      like {a} for where the variables need to go.
      * @return float the computed result.
      */
     protected function calculate_raw($expression) {
+        $html_ops = array('&amp;', '&lt;', '&gt;');
+        $raw_ops = array('&', '<', '>');
+        $expression = str_replace($html_ops, $raw_ops, $expression);
+
         // This validation trick from http://php.net/manual/en/function.eval.php .
         if (!@eval('return true; $result = ' . $expression . ';')) {
             throw new moodle_exception('illegalformulasyntax', 'qtype_calculatedformat', '', $expression);
