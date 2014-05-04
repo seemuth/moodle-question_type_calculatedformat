@@ -245,7 +245,7 @@ class qtype_calculatedformat_variable_substituter {
      * @return string formatted number.
      */
     public function format_by_fmt($fmt, $x) {
-        if (preg_match('/^%(\d+)(?:.(\d+))?([bodh])$/', $fmt, $regs)) {
+        if (preg_match('/^%(\d+)(?:\.(\d+))?([bodh])$/', $fmt, $regs)) {
             list($fullmatch, $lengthint, $lengthfrac, $basestr) = $regs;
 
             $base = 0;
