@@ -223,6 +223,16 @@ class qtype_calculatedformat_variable_substituter {
     }
 
     /**
+     * Display a number formatted only by replacing the decimal point with
+     * the appropriate character.
+     * @param number $x the number to format
+     * @return string formatted number.
+     */
+    public function format_simple($x) {
+        return str_replace('.', $this->decimalpoint, $x);
+    }
+
+    /**
      * Given a number format:
      *      `%' NUM (`.' NUM)? [bdoh]
      * format the number in the given base with the given # of digits.
@@ -263,16 +273,6 @@ class qtype_calculatedformat_variable_substituter {
 
         // Not a valid format.
         return null;
-    }
-
-    /**
-     * Display a number formatted only by replacing the decimal point with
-     * the appropriate character.
-     * @param number $x the number to format
-     * @return string formatted number.
-     */
-    public function format_simple($x) {
-        return str_replace('.', $this->decimalpoint, $x);
     }
 
     /**
