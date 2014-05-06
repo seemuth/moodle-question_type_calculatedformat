@@ -11,10 +11,6 @@
         <FIELD NAME="answer" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="tolerance" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="0.0" SEQUENCE="false"/>
         <FIELD NAME="tolerancetype" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="allownegative" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="correctanswerbase" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
-        <FIELD NAME="correctanswerlengthint" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="correctanswerlengthfrac" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -39,6 +35,10 @@
         <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="answernumbering" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="abc" SEQUENCE="false" COMMENT="Indicates how and whether the choices should be numbered."/>
         <FIELD NAME="shownumcorrect" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, then when the user gets a multiple-response question partially correct, tell them how many choices they got correct alongside the feedback."/>
+        <FIELD NAME="allownegative" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="correctanswerbase" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="10" SEQUENCE="false"/>
+        <FIELD NAME="correctanswerlengthint" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="correctanswerlengthfrac" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
