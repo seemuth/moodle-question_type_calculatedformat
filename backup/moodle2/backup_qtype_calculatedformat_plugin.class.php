@@ -85,9 +85,9 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
         $calculatedoptions->add_child($calculatedoption);
 
         // Set source to populate the data.
-        $calculatedrecord->set_source_table('question_calculatedformat',
+        $calculatedrecord->set_source_table('question_calculatedfmt',
                 array('question' => backup::VAR_PARENTID));
-        $calculatedoption->set_source_table('question_calculatedformat_options',
+        $calculatedoption->set_source_table('question_calculatedfmt_opts',
                 array('question' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.

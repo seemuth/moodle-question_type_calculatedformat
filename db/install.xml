@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="question_calculatedformat" COMMENT="Options for questions of type calculatedformat">
+    <TABLE NAME="question_calculatedfmt" COMMENT="Options for questions of type calculatedformat">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -24,7 +24,7 @@
         <INDEX NAME="answer" UNIQUE="false" FIELDS="answer"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="question_calculatedformat_options" COMMENT="Options for questions of type calculatedformat">
+    <TABLE NAME="question_calculatedfmt_opts" COMMENT="Options for questions of type calculatedformat">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
