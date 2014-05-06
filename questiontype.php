@@ -271,16 +271,16 @@ class qtype_calculatedformat extends qtype_calculated {
             case 'question':
                 $calculatedmessages = array();
                 if (empty($form->name)) {
-                    $calculatedmessages[] = get_string('missingname', 'qtype_calculated');
+                    $calculatedmessages[] = get_string('missingname', 'qtype_calculatedformat');
                 }
                 if (empty($form->questiontext)) {
-                    $calculatedmessages[] = get_string('missingquestiontext', 'qtype_calculated');
+                    $calculatedmessages[] = get_string('missingquestiontext', 'qtype_calculatedformat');
                 }
                 // Verify formulas.
                 foreach ($form->answers as $key => $answer) {
                     if ('' === trim($answer)) {
                         $calculatedmessages[] = get_string(
-                                'missingformula', 'qtype_calculated');
+                                'missingformula', 'qtype_calculatedformat');
                     }
                     if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
                         $calculatedmessages[] = $formulaerrors;
@@ -290,7 +290,7 @@ class qtype_calculatedformat extends qtype_calculated {
                     }
                     if (! is_numeric($form->tolerance[$key])) {
                         $calculatedmessages[] = get_string('xmustbenumeric', 'qtype_numerical',
-                                get_string('tolerance', 'qtype_calculated'));
+                                get_string('tolerance', 'qtype_calculatedformat'));
                     }
                 }
 
@@ -391,13 +391,13 @@ class qtype_calculatedformat extends qtype_calculated {
 
             case 'datasetdefinitions':
                 echo $OUTPUT->heading_with_help(
-                        get_string('choosedatasetproperties', 'qtype_calculated'),
-                        'questiondatasets', 'qtype_calculated');
+                        get_string('choosedatasetproperties', 'qtype_calculatedformat'),
+                        'questiondatasets', 'qtype_calculatedformat');
                 break;
 
             case 'datasetitems':
-                echo $OUTPUT->heading_with_help(get_string('editdatasets', 'qtype_calculated'),
-                        'questiondatasets', 'qtype_calculated');
+                echo $OUTPUT->heading_with_help(get_string('editdatasets', 'qtype_calculatedformat'),
+                        'questiondatasets', 'qtype_calculatedformat');
                 break;
         }
 
@@ -630,22 +630,22 @@ class qtype_calculatedformat extends qtype_calculated {
 
         $minmaxgrp = array();
         $minmaxgrp[] = $mform->createElement('text', "calcmin[$idx]",
-                get_string('calcmin', 'qtype_calculated'));
+                get_string('calcmin', 'qtype_calculatedformat'));
         $minmaxgrp[] = $mform->createElement('text', "calcmax[$idx]",
-                get_string('calcmax', 'qtype_calculated'));
+                get_string('calcmax', 'qtype_calculatedformat'));
         $mform->addGroup($minmaxgrp, 'minmaxgrp',
-                get_string('minmax', 'qtype_calculated'), ' - ', false);
+                get_string('minmax', 'qtype_calculatedformat'), ' - ', false);
         $mform->setType("calcmin[$idx]", PARAM_FLOAT);
         $mform->setType("calcmax[$idx]", PARAM_FLOAT);
 
         $precisionoptions = range(0, 10);
         $mform->addElement('select', "calclength[$idx]",
-                get_string('calclength', 'qtype_calculated'), $precisionoptions);
+                get_string('calclength', 'qtype_calculatedformat'), $precisionoptions);
 
-        $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'),
-                'loguniform' => get_string('loguniform', 'qtype_calculated'));
+        $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculatedformat'),
+                'loguniform' => get_string('loguniform', 'qtype_calculatedformat'));
         $mform->addElement('select', "calcdistribution[$idx]",
-                get_string('calcdistribution', 'qtype_calculated'), $distriboptions);
+                get_string('calcdistribution', 'qtype_calculatedformat'), $distriboptions);
     }
 
     public function custom_generator_set_data($datasetdefs, $formdata) {
@@ -672,20 +672,20 @@ class qtype_calculatedformat extends qtype_calculated {
             for ($i = 0; $i<10; ++$i) {
                 $lengthoptions[$i] = get_string(($regs[1] == 'uniform'
                     ? 'decimals'
-                    : 'significantfigures'), 'qtype_calculated', $i);
+                    : 'significantfigures'), 'qtype_calculatedformat', $i);
             }
-            $menu1 = html_writer::label(get_string('lengthoption', 'qtype_calculated'),
+            $menu1 = html_writer::label(get_string('lengthoption', 'qtype_calculatedformat'),
                 'menucalclength', false, array('class' => 'accesshide'));
             $menu1 .= html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
 
-            $options = array('uniform' => get_string('uniformbit', 'qtype_calculated'),
-                'loguniform' => get_string('loguniformbit', 'qtype_calculated'));
-            $menu2 = html_writer::label(get_string('distributionoption', 'qtype_calculated'),
+            $options = array('uniform' => get_string('uniformbit', 'qtype_calculatedformat'),
+                'loguniform' => get_string('loguniformbit', 'qtype_calculatedformat'));
+            $menu2 = html_writer::label(get_string('distributionoption', 'qtype_calculatedformat'),
                 'menucalcdistribution', false, array('class' => 'accesshide'));
             $menu2 .= html_writer::select($options, 'calcdistribution[]', $regs[1], null);
             return '<input type="submit" onclick="'
                 . "getElementById('addform').regenerateddefid.value='$defid'; return true;"
-                .'" value="'. get_string('generatevalue', 'qtype_calculated') . '"/><br/>'
+                .'" value="'. get_string('generatevalue', 'qtype_calculatedformat') . '"/><br/>'
                 . '<input type="text" size="3" name="calcmin[]" '
                 . " value=\"$regs[2]\"/> &amp; <input name=\"calcmax[]\" "
                 . ' type="text" size="3" value="' . $regs[3] .'"/> '
@@ -1001,7 +1001,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $comment->stranswers[$key] = " $formattedanswer->answer".'<br/><br/>';
             } else if ($formula === '*') {
                 $comment->stranswers[$key] = $formula . ' = ' .
-                        get_string('anyvalue', 'qtype_calculated') . '<br/><br/><br/>';
+                        get_string('anyvalue', 'qtype_calculatedformat') . '<br/><br/><br/>';
             } else {
                 $formula = shorten_text($formula, 57, true);
                 $comment->stranswers[$key] = $formula . ' = ' . $formattedanswer->answer . '<br/>';
@@ -1013,15 +1013,15 @@ class qtype_calculatedformat extends qtype_calculated {
                     $comment->outsidelimit = true;
                     $comment->answers[$key] = $key;
                     $comment->stranswers[$key] .=
-                            get_string('trueansweroutsidelimits', 'qtype_calculated', $correcttrue);
+                            get_string('trueansweroutsidelimits', 'qtype_calculatedformat', $correcttrue);
                 } else {
                     $comment->stranswers[$key] .=
-                            get_string('trueanswerinsidelimits', 'qtype_calculated', $correcttrue);
+                            get_string('trueanswerinsidelimits', 'qtype_calculatedformat', $correcttrue);
                 }
                 $comment->stranswers[$key] .= '<br/>';
-                $comment->stranswers[$key] .= get_string('min', 'qtype_calculated') .
+                $comment->stranswers[$key] .= get_string('min', 'qtype_calculatedformat') .
                         $delimiter . $answer->min . ' --- ';
-                $comment->stranswers[$key] .= get_string('max', 'qtype_calculated') .
+                $comment->stranswers[$key] .= get_string('max', 'qtype_calculatedformat') .
                         $delimiter . $answer->max;
             }
         }
@@ -1096,7 +1096,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $a = new stdClass();
                 $a->name = '{'.$name.'}';
                 $a->value = $value;
-                echo $OUTPUT->notification(get_string('notvalidnumber', 'qtype_calculated', $a));
+                echo $OUTPUT->notification(get_string('notvalidnumber', 'qtype_calculatedformat', $a));
                 $val = 1.0;
             }
             if ($val <= 0) { // MDL-36025 Use parentheses for "-0" .
@@ -1381,7 +1381,7 @@ class qtype_calculatedformat extends qtype_calculated {
     }
 
     public function dataset_options_from_database($form, $name, $prefix = '',
-            $langfile = 'qtype_calculated') {
+            $langfile = 'qtype_calculatedformat') {
         global $CFG, $DB;
         $type = 1; // Only type = 1 (i.e. old 'LITERAL') has ever been used.
         // First options - it is not a dataset...
@@ -1485,9 +1485,9 @@ class qtype_calculatedformat extends qtype_calculated {
         $datasetdefs = array();
         $lnamemax = 22;
         $namestr          = get_string('name');
-        $rangeofvaluestr  = get_string('minmax', 'qtype_calculated');
-        $questionusingstr = get_string('usedinquestion', 'qtype_calculated');
-        $itemscountstr    = get_string('itemscount', 'qtype_calculated');
+        $rangeofvaluestr  = get_string('minmax', 'qtype_calculatedformat');
+        $questionusingstr = get_string('usedinquestion', 'qtype_calculatedformat');
+        $itemscountstr    = get_string('itemscount', 'qtype_calculatedformat');
         $text = '';
         if (!empty($form->category)) {
             list($category) = explode(',', $form->category);
@@ -1547,7 +1547,7 @@ class qtype_calculatedformat extends qtype_calculated {
             }
             $text .= "</table>";
         } else {
-            $text .= get_string('nosharedwildcard', 'qtype_calculated');
+            $text .= get_string('nosharedwildcard', 'qtype_calculatedformat');
         }
         return $text;
     }
@@ -1565,9 +1565,9 @@ class qtype_calculatedformat extends qtype_calculated {
         $datasetdefs = array();
         $lnamemax = 22;
         $namestr          = get_string('name', 'quiz');
-        $rangeofvaluestr  = get_string('minmax', 'qtype_calculated');
-        $questionusingstr = get_string('usedinquestion', 'qtype_calculated');
-        $itemscountstr    = get_string('itemscount', 'qtype_calculated');
+        $rangeofvaluestr  = get_string('minmax', 'qtype_calculatedformat');
+        $questionusingstr = get_string('usedinquestion', 'qtype_calculatedformat');
+        $itemscountstr    = get_string('itemscount', 'qtype_calculatedformat');
         $text = '';
         if (!empty($question->category)) {
             list($category) = explode(',', $question->category);
@@ -1658,7 +1658,7 @@ class qtype_calculatedformat extends qtype_calculated {
             }
             $text .= "</table>";
         } else {
-            $text .= get_string('nosharedwildcard', 'qtype_calculated');
+            $text .= get_string('nosharedwildcard', 'qtype_calculatedformat');
         }
         return $text;
     }
@@ -1698,7 +1698,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $a->tolerance = $answer->tolerance;
                 $a->tolerancetype = $tolerancetypes[$answer->tolerancetype];
 
-                $responseclass = get_string('answerwithtolerance', 'qtype_calculated', $a);
+                $responseclass = get_string('answerwithtolerance', 'qtype_calculatedformat', $a);
             }
 
             $responses[$aid] = new question_possible_response($responseclass,
@@ -1844,14 +1844,14 @@ function qtype_calculated_find_formula_errors($formula) {
             // Simple parenthesis.
             case '':
                 if ((isset($regs[4]) && $regs[4]) || strlen($regs[3]) == 0) {
-                    return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
+                    return get_string('illegalformulasyntax', 'qtype_calculatedformat', $regs[0]);
                 }
                 break;
 
                 // Zero argument functions.
             case 'pi':
                 if ($regs[3]) {
-                    return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
+                    return get_string('functiontakesnoargs', 'qtype_calculatedformat', $regs[2]);
                 }
                 break;
 
@@ -1864,33 +1864,33 @@ function qtype_calculated_find_formula_errors($formula) {
             case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
             case 'tan': case 'tanh':
                 if (!empty($regs[4]) || empty($regs[3])) {
-                    return get_string('functiontakesonearg', 'qtype_calculated', $regs[2]);
+                    return get_string('functiontakesonearg', 'qtype_calculatedformat', $regs[2]);
                 }
                 break;
 
                 // Functions that take one or two arguments.
             case 'log': case 'round':
                 if (!empty($regs[5]) || empty($regs[3])) {
-                    return get_string('functiontakesoneortwoargs', 'qtype_calculated', $regs[2]);
+                    return get_string('functiontakesoneortwoargs', 'qtype_calculatedformat', $regs[2]);
                 }
                 break;
 
                 // Functions that must have two arguments.
             case 'atan2': case 'fmod': case 'pow':
                 if (!empty($regs[5]) || empty($regs[4])) {
-                    return get_string('functiontakestwoargs', 'qtype_calculated', $regs[2]);
+                    return get_string('functiontakestwoargs', 'qtype_calculatedformat', $regs[2]);
                 }
                 break;
 
                 // Functions that take two or more arguments.
             case 'min': case 'max':
                 if (empty($regs[4])) {
-                    return get_string('functiontakesatleasttwo', 'qtype_calculated', $regs[2]);
+                    return get_string('functiontakesatleasttwo', 'qtype_calculatedformat', $regs[2]);
                 }
                 break;
 
             default:
-                return get_string('unsupportedformulafunction', 'qtype_calculated', $regs[2]);
+                return get_string('unsupportedformulafunction', 'qtype_calculatedformat', $regs[2]);
         }
 
         // Exchange the function call with '1' and then check for
@@ -1905,7 +1905,7 @@ function qtype_calculated_find_formula_errors($formula) {
     }
 
     if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
-        return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
+        return get_string('illegalformulasyntax', 'qtype_calculatedformat', $regs[0]);
     } else {
         // Formula just might be valid.
         return false;
