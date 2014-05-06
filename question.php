@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calculated question definition class.
+ * Calculated question with number formatting definition class.
  *
  * @package    qtype
  * @subpackage calculatedformat
