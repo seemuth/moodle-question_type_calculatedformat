@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question type class for the calculated question type.
+ * Question type class for the calculated question with number formatting type.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,25 +28,25 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/questionbase.php');
+require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
+require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 
 
 /**
- * The calculated question type.
+ * The calculated question with number formatting type.
  *
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated extends question_type {
-    const MAX_DATASET_ITEMS = 100;
-
-    public $wizardpagesnumber = 3;
+class qtype_calculatedformat extends qtype_calculated {
 
     public function get_question_options($question) {
         // First get the datasets and default options.
         // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
         global $CFG, $DB, $OUTPUT;
-        if (!$question->options = $DB->get_record('question_calculated_options',
+        if (!$question->options = $DB->get_record('question_calculatedfmt_opts',
                 array('question' => $question->id))) {
             $question->options = new stdClass();
             $question->options->synchronize = 0;
@@ -58,12 +59,16 @@ class qtype_calculated extends question_type {
             $question->options->correctfeedbackformat = 0;
             $question->options->partiallycorrectfeedbackformat = 0;
             $question->options->incorrectfeedbackformat = 0;
+            $question->options->allownegative = 1;
+            $question->options->correctanswerbase = 10;
+            $question->options->correctanswerlengthint = 0;
+            $question->options->correctanswerlengthfrac = 0;
         }
 
         if (!$question->options->answers = $DB->get_records_sql("
-            SELECT a.*, c.tolerance, c.tolerancetype, c.correctanswerlength, c.correctanswerformat
+            SELECT a.*, c.tolerance, c.tolerancetype
             FROM {question_answers} a,
-                 {question_calculated} c
+                 {question_calculatedfmt} c
             WHERE a.question = ?
             AND   a.id = c.answer
             ORDER BY a.id ASC", array($question->id))) {
@@ -84,58 +89,16 @@ class qtype_calculated extends question_type {
         return true;
     }
 
-    public function get_datasets_for_export($question) {
-        global $DB, $CFG;
-        $datasetdefs = array();
-        if (!empty($question->id)) {
-            $sql = "SELECT i.*
-                      FROM {question_datasets} d, {question_dataset_definitions} i
-                     WHERE d.question = ? AND d.datasetdefinition = i.id";
-            if ($records = $DB->get_records_sql($sql, array($question->id))) {
-                foreach ($records as $r) {
-                    $def = $r;
-                    if ($def->category == '0') {
-                        $def->status = 'private';
-                    } else {
-                        $def->status = 'shared';
-                    }
-                    $def->type = 'calculated';
-                    list($distribution, $min, $max, $dec) = explode(':', $def->options, 4);
-                    $def->distribution = $distribution;
-                    $def->minimum = $min;
-                    $def->maximum = $max;
-                    $def->decimals = $dec;
-                    if ($def->itemcount > 0) {
-                        // Get the datasetitems.
-                        $def->items = array();
-                        if ($items = $this->get_database_dataset_items($def->id)) {
-                            $n = 0;
-                            foreach ($items as $ii) {
-                                $n++;
-                                $def->items[$n] = new stdClass();
-                                $def->items[$n]->itemnumber = $ii->itemnumber;
-                                $def->items[$n]->value = $ii->value;
-                            }
-                            $def->number_of_items = $n;
-                        }
-                    }
-                    $datasetdefs["1-$r->category-$r->name"] = $def;
-                }
-            }
-        }
-        return $datasetdefs;
-    }
-
     public function save_question_options($question) {
         global $CFG, $DB;
-        // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
+        // The code is used for calculatedformat qtypes.
         $context = $question->context;
         if (isset($question->answer) && !isset($question->answers)) {
             $question->answers = $question->answer;
         }
         // Calculated options.
         $update = true;
-        $options = $DB->get_record('question_calculated_options',
+        $options = $DB->get_record('question_calculatedfmt_opts',
                 array('question' => $question->id));
         if (!$options) {
             $update = false;
@@ -152,6 +115,11 @@ class qtype_calculated extends question_type {
         $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
 
+        $options->allownegative = $question->allownegative;
+        $options->correctanswerbase = $question->correctanswerbase;
+        $options->correctanswerlengthint = $question->correctanswerlengthint;
+        $options->correctanswerlengthfrac = $question->correctanswerlengthfrac;
+
         foreach (array('correctfeedback', 'partiallycorrectfeedback',
                 'incorrectfeedback') as $feedbackname) {
             $options->$feedbackname = '';
@@ -160,16 +128,16 @@ class qtype_calculated extends question_type {
         }
 
         if ($update) {
-            $DB->update_record('question_calculated_options', $options);
+            $DB->update_record('question_calculatedfmt_opts', $options);
         } else {
-            $DB->insert_record('question_calculated_options', $options);
+            $DB->insert_record('question_calculatedfmt_opts', $options);
         }
 
         // Get old versions of the objects.
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
 
-        $oldoptions = $DB->get_records('question_calculated',
+        $oldoptions = $DB->get_records('question_calculatedfmt',
                 array('question' => $question->id), 'answer ASC');
 
         // Save the units.
@@ -220,16 +188,14 @@ class qtype_calculated extends question_type {
             $options->answer              = $answer->id;
             $options->tolerance           = trim($question->tolerance[$key]);
             $options->tolerancetype       = trim($question->tolerancetype[$key]);
-            $options->correctanswerlength = trim($question->correctanswerlength[$key]);
-            $options->correctanswerformat = trim($question->correctanswerformat[$key]);
 
             // Save options.
             if (isset($options->id)) {
                 // Reusing existing record.
-                $DB->update_record('question_calculated', $options);
+                $DB->update_record('question_calculatedfmt', $options);
             } else {
                 // New options.
-                $DB->insert_record('question_calculated', $options);
+                $DB->insert_record('question_calculatedfmt', $options);
             }
         }
 
@@ -243,7 +209,7 @@ class qtype_calculated extends question_type {
         // Delete old answer records.
         if (!empty($oldoptions)) {
             foreach ($oldoptions as $oo) {
-                $DB->delete_records('question_calculated', array('id' => $oo->id));
+                $DB->delete_records('question_calculatedfmt', array('id' => $oo->id));
             }
         }
 
@@ -264,81 +230,38 @@ class qtype_calculated extends question_type {
         return true;
     }
 
-    public function import_datasets($question) {
-        global $DB;
-        $n = count($question->dataset);
-        foreach ($question->dataset as $dataset) {
-            // Name, type, option.
-            $datasetdef = new stdClass();
-            $datasetdef->name = $dataset->name;
-            $datasetdef->type = 1;
-            $datasetdef->options =  $dataset->distribution . ':' . $dataset->min . ':' .
-                    $dataset->max . ':' . $dataset->length;
-            $datasetdef->itemcount = $dataset->itemcount;
-            if ($dataset->status == 'private') {
-                $datasetdef->category = 0;
-                $todo = 'create';
-            } else if ($dataset->status == 'shared') {
-                if ($sharedatasetdefs = $DB->get_records_select(
-                    'question_dataset_definitions',
-                    "type = '1'
-                    AND name = ?
-                    AND category = ?
-                    ORDER BY id DESC ", array($dataset->name, $question->category)
-                )) { // So there is at least one.
-                    $sharedatasetdef = array_shift($sharedatasetdefs);
-                    if ($sharedatasetdef->options ==  $datasetdef->options) {// Identical so use it.
-                        $todo = 'useit';
-                        $datasetdef = $sharedatasetdef;
-                    } else { // Different so create a private one.
-                        $datasetdef->category = 0;
-                        $todo = 'create';
-                    }
-                } else { // No so create one.
-                    $datasetdef->category = $question->category;
-                    $todo = 'create';
-                }
-            }
-            if ($todo == 'create') {
-                $datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef);
-            }
-            // Create relation to the dataset.
-            $questiondataset = new stdClass();
-            $questiondataset->question = $question->id;
-            $questiondataset->datasetdefinition = $datasetdef->id;
-            $DB->insert_record('question_datasets', $questiondataset);
-            if ($todo == 'create') {
-                // Add the items.
-                foreach ($dataset->datasetitem as $dataitem) {
-                    $datasetitem = new stdClass();
-                    $datasetitem->definition = $datasetdef->id;
-                    $datasetitem->itemnumber = $dataitem->itemnumber;
-                    $datasetitem->value = $dataitem->value;
-                    $DB->insert_record('question_dataset_items', $datasetitem);
-                }
-            }
-        }
-    }
-
     protected function initialise_question_instance(question_definition $question, $questiondata) {
-        parent::initialise_question_instance($question, $questiondata);
+        /* Do NOT call parent::initialise_question_instance, as parent is
+         *  qtype_calculated, and some DB fields don't match:
+         *      correctanswerlength
+         *      correctanswerformat
+         *
+         * Instead, call method of question_type (qtype_calculated's parent).
+         */
+        question_type::initialise_question_instance($question, $questiondata);
 
         question_bank::get_qtype('numerical')->initialise_numerical_answers(
                 $question, $questiondata);
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id]->tolerancetype = $a->tolerancetype;
-            $question->answers[$a->id]->correctanswerlength = $a->correctanswerlength;
-            $question->answers[$a->id]->correctanswerformat = $a->correctanswerformat;
         }
 
         $question->synchronised = $questiondata->options->synchronize;
 
+        $question->allownegative = $questiondata->options->allownegative;
+        $question->correctanswerbase = $questiondata->options->correctanswerbase;
+        $question->correctanswerlengthint = $questiondata->options->correctanswerlengthint;
+        $question->correctanswerlengthfrac = $questiondata->options->correctanswerlengthfrac;
+
         $question->unitdisplay = $questiondata->options->showunits;
         $question->unitgradingtype = $questiondata->options->unitgradingtype;
         $question->unitpenalty = $questiondata->options->unitpenalty;
-        $question->ap = question_bank::get_qtype(
-                'numerical')->make_answer_processor(
-                $questiondata->options->units, $questiondata->options->unitsleft);
+        $question->ap = $this->make_answer_processor(
+            $questiondata->options->allownegative,
+            $questiondata->options->correctanswerbase,
+            $questiondata->options->correctanswerlengthint,
+            $questiondata->options->correctanswerlengthfrac,
+            $questiondata->options->units, $questiondata->options->unitsleft);
 
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
@@ -640,14 +563,14 @@ class qtype_calculated extends question_type {
             case 'datasetdefinitions':
                 // Calculated options.
                 // It cannot go here without having done the first page,
-                // so the question_calculated_options should exist.
+                // so the question_calculatedfmt_opts should exist.
                 // We only need to update the synchronize field.
                 if (isset($form->synchronize)) {
                     $optionssynchronize = $form->synchronize;
                 } else {
                     $optionssynchronize = 0;
                 }
-                $DB->set_field('question_calculated_options', 'synchronize', $optionssynchronize,
+                $DB->set_field('question_calculatedfmt_opts', 'synchronize', $optionssynchronize,
                         array('question' => $question->id));
                 if (isset($form->synchronize) && $form->synchronize == 2) {
                     $this->addnamecategory($question);
@@ -657,7 +580,7 @@ class qtype_calculated extends question_type {
                 break;
             case 'datasetitems':
                 $this->save_dataset_items($question, $form);
-                $this->save_question_calculated($question, $form);
+                $this->save_question_calculatedfmt($question, $form);
                 break;
             default:
                 print_error('invalidwizardpage', 'question');
@@ -669,8 +592,8 @@ class qtype_calculated extends question_type {
     public function delete_question($questionid, $contextid) {
         global $DB;
 
-        $DB->delete_records('question_calculated', array('question' => $questionid));
-        $DB->delete_records('question_calculated_options', array('question' => $questionid));
+        $DB->delete_records('question_calculatedfmt', array('question' => $questionid));
+        $DB->delete_records('question_calculatedfmt_opts', array('question' => $questionid));
         $DB->delete_records('question_numerical_units', array('question' => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
@@ -815,16 +738,16 @@ class qtype_calculated extends question_type {
         return $datasetdefs;
     }
 
-    public function save_question_calculated($question, $fromform) {
+    public function save_question_calculatedformat($question, $fromform) {
         global $DB;
 
         foreach ($question->options->answers as $key => $answer) {
-            if ($options = $DB->get_record('question_calculated', array('answer' => $key))) {
+            if ($options = $DB->get_record('question_calculatedfmt', array('answer' => $key))) {
                 $options->tolerance = trim($fromform->tolerance[$key]);
                 $options->tolerancetype  = trim($fromform->tolerancetype[$key]);
                 $options->correctanswerlength  = trim($fromform->correctanswerlength[$key]);
                 $options->correctanswerformat  = trim($fromform->correctanswerformat[$key]);
-                $DB->update_record('question_calculated', $options);
+                $DB->update_record('question_calculatedfmt', $options);
             }
         }
     }
