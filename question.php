@@ -403,16 +403,23 @@ class qtype_calculatedformat_variable_substituter {
     }
 
     /**
-     * Replace any embedded variables (like {a}) or formulae (like {={a} + {b}})
+     * Replace any embedded variables (like {a}), formulae (like {={a} + {b}}),
+     * or formatted formulae (like {%8.0h={a} + {b}})
      * in some text with the corresponding values.
      * @param string $text the text to process.
      * @return string the text with values substituted.
      */
-    public function replace_expressions_in_text($text, $length = null, $format = null) {
+    public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
-                function ($matches) use ($vs, $format, $length) {
-                    return $vs->format_float($vs->calculate($matches[1]), $length, $format);
+        $re_format = '(\d+(?:\.\d+)?[bodh])?';
+        $re_expr = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
+        $text = preg_replace_callback('~\{' . $re_format . $re_expr . '}~',
+                function ($matches) use ($vs) {
+                    $calc = $vs->calculate($matches[2]);
+                    $ret = $vs->format_by_fmt($matches[1], $calc);
+                    if is_null($ret) {
+                        $ret = $vs->format_simple($calc);
+                    }
                 }, $text);
         return $this->substitute_values_pretty($text);
     }
