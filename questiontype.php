@@ -282,7 +282,7 @@ class qtype_calculatedformat extends qtype_calculated {
                         $calculatedmessages[] = get_string(
                                 'missingformula', 'qtype_calculatedformat');
                     }
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
+                    if ($formulaerrors = qtype_calculatedformat_find_formula_errors($answer)) {
                         $calculatedmessages[] = $formulaerrors;
                     }
                     if (! isset($form->tolerance[$key])) {
@@ -309,29 +309,23 @@ class qtype_calculatedformat extends qtype_calculated {
         }
         return true;
     }
-    public function finished_edit_wizard($form) {
-        return isset($form->savechanges);
-    }
-    public function wizardpagesnumber() {
-        return 3;
-    }
     // This gets called by editquestion.php after the standard question is saved.
     public function print_next_wizard_page($question, $form, $course) {
-        global $CFG, $SESSION, $COURSE;
+        global $CFG, $COURSE;
 
         // Catch invalid navigation & reloads.
-        if (empty($question->id) && empty($SESSION->calculated)) {
+        if (empty($question->id)) {
             redirect('edit.php?courseid='.$COURSE->id, 'The page you are loading has expired.', 3);
         }
 
         // See where we're coming from.
         switch($form->wizardpage) {
             case 'question':
-                require("$CFG->dirroot/question/type/calculated/datasetdefinitions.php");
+                require("$CFG->dirroot/question/type/calculatedformat/datasetdefinitions.php");
                 break;
             case 'datasetdefinitions':
             case 'datasetitems':
-                require("$CFG->dirroot/question/type/calculated/datasetitems.php");
+                require("$CFG->dirroot/question/type/calculatedformat/datasetitems.php");
                 break;
             default:
                 print_error('invalidwizardpage', 'question');
@@ -341,26 +335,23 @@ class qtype_calculatedformat extends qtype_calculated {
 
     // This gets called by question2.php after the standard question is saved.
     public function &next_wizard_form($submiturl, $question, $wizardnow) {
-        global $CFG, $SESSION, $COURSE;
+        global $CFG, $COURSE;
 
         // Catch invalid navigation & reloads.
-        if (empty($question->id) && empty($SESSION->calculated)) {
+        if (empty($question->id)) {
             redirect('edit.php?courseid=' . $COURSE->id,
                     'The page you are loading has expired. Cannot get next wizard form.', 3);
-        }
-        if (empty($question->id)) {
-            $question = $SESSION->calculated->questionform;
         }
 
         // See where we're coming from.
         switch($wizardnow) {
             case 'datasetdefinitions':
-                require("$CFG->dirroot/question/type/calculated/datasetdefinitions_form.php");
+                require("$CFG->dirroot/question/type/calculatedformat/datasetdefinitions_form.php");
                 $mform = new question_dataset_dependent_definitions_form(
                         "$submiturl?wizardnow=datasetdefinitions", $question);
                 break;
             case 'datasetitems':
-                require("$CFG->dirroot/question/type/calculated/datasetitems_form.php");
+                require("$CFG->dirroot/question/type/calculatedformat/datasetitems_form.php");
                 $regenerate = optional_param('forceregeneration', false, PARAM_BOOL);
                 $mform = new question_dataset_dependent_items_form(
                         "$submiturl?wizardnow=datasetitems", $question, $regenerate);
@@ -405,91 +396,6 @@ class qtype_calculatedformat extends qtype_calculated {
     }
 
     /**
-     * This method prepare the $datasets in a format similar to dadatesetdefinitions_form.php
-     * so that they can be saved
-     * using the function save_dataset_definitions($form)
-     * when creating a new calculated question or
-     * when editing an already existing calculated question
-     * or by  function save_as_new_dataset_definitions($form, $initialid)
-     * when saving as new an already existing calculated question.
-     *
-     * @param object $form
-     * @param int $questionfromid default = '0'
-     */
-    public function preparedatasets($form , $questionfromid = '0') {
-        // The dataset names present in the edit_question_form and edit_calculated_form
-        // are retrieved.
-        $possibledatasets = $this->find_dataset_names($form->questiontext);
-        $mandatorydatasets = array();
-        foreach ($form->answers as $answer) {
-            $mandatorydatasets += $this->find_dataset_names($answer);
-        }
-        // If there are identical datasetdefs already saved in the original question
-        // either when editing a question or saving as new,
-        // they are retrieved using $questionfromid.
-        if ($questionfromid != '0') {
-            $form->id = $questionfromid;
-        }
-        $datasets = array();
-        $key = 0;
-        // Always prepare the mandatorydatasets present in the answers.
-        // The $options are not used here.
-        foreach ($mandatorydatasets as $datasetname) {
-            if (!isset($datasets[$datasetname])) {
-                list($options, $selected) =
-                    $this->dataset_options($form, $datasetname);
-                $datasets[$datasetname] = '';
-                $form->dataset[$key] = $selected;
-                $key++;
-            }
-        }
-        // Do not prepare possibledatasets when creating a question.
-        // They will defined and stored with datasetdefinitions_form.php.
-        // The $options are not used here.
-        if ($questionfromid != '0') {
-
-            foreach ($possibledatasets as $datasetname) {
-                if (!isset($datasets[$datasetname])) {
-                    list($options, $selected) =
-                        $this->dataset_options($form, $datasetname, false);
-                    $datasets[$datasetname] = '';
-                    $form->dataset[$key] = $selected;
-                    $key++;
-                }
-            }
-        }
-        return $datasets;
-    }
-    public function addnamecategory(&$question) {
-        global $DB;
-        $categorydatasetdefs = $DB->get_records_sql(
-            "SELECT  a.*
-               FROM {question_datasets} b, {question_dataset_definitions} a
-              WHERE a.id = b.datasetdefinition
-                AND a.type = '1'
-                AND a.category != 0
-                AND b.question = ?
-           ORDER BY a.name ", array($question->id));
-        $questionname = $question->name;
-        $regs= array();
-        if (preg_match('~#\{([^[:space:]]*)#~', $questionname , $regs)) {
-            $questionname = str_replace($regs[0], '', $questionname);
-        };
-
-        if (!empty($categorydatasetdefs)) {
-            // There is at least one with the same name.
-            $questionname = '#' . $questionname;
-            foreach ($categorydatasetdefs as $def) {
-                if (strlen($def->name) + strlen($questionname) < 250) {
-                    $questionname = '{' . $def->name . '}' . $questionname;
-                }
-            }
-            $questionname = '#' . $questionname;
-        }
-        $DB->set_field('question', 'name', $questionname, array('id' => $question->id));
-    }
-
-    /**
      * this version save the available data at the different steps of the question editing process
      * without using global $SESSION as storage between steps
      * at the first step $wizardnow = 'question'
@@ -510,7 +416,7 @@ class qtype_calculatedformat extends qtype_calculated {
      */
     public function save_question($question, $form) {
         global $DB;
-        if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedsimple') {
+        if ($this->wizardpagesnumber() == 1 || $question->qtype == 'calculatedformatsimple') {
                 $question = parent::save_question($question, $form);
             return $question;
         }
@@ -610,20 +516,6 @@ class qtype_calculatedformat extends qtype_calculated {
         $DB->delete_records('question_datasets', array('question' => $questionid));
 
         parent::delete_question($questionid, $contextid);
-    }
-
-    public function get_random_guess_score($questiondata) {
-        foreach ($questiondata->options->answers as $aid => $answer) {
-            if ('*' == trim($answer->answer)) {
-                return max($answer->fraction - $questiondata->options->unitpenalty, 0);
-            }
-        }
-        return 0;
-    }
-
-    public function supports_dataset_item_generation() {
-        // Calculated support generation of randomly distributed number data.
-        return true;
     }
 
     public function custom_generator_tools_part($mform, $idx, $j) {
@@ -983,7 +875,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $virtualqtype =  $qtypeobj->get_virtual_qtype();
         foreach ($answers as $key => $answer) {
             $formula = $this->substitute_variables($answer->answer, $data);
-            $formattedanswer = qtype_calculated_calculate_answer(
+            $formattedanswer = qtype_calculatedformat_calculate_answer(
                 $answer->answer, $data, $answer->tolerance,
                 $answer->tolerancetype, $answer->correctanswerlength,
                 $answer->correctanswerformat, $unit);
@@ -1733,7 +1625,7 @@ class qtype_calculatedformat extends qtype_calculated {
 }
 
 
-function qtype_calculated_calculate_answer($formula, $individualdata,
+function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     $tolerance, $tolerancetype, $answerlength, $answerformat = '1', $unit = '') {
     // The return value has these properties: .
     // ->answer    the correct answer
