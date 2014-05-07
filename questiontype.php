@@ -621,55 +621,6 @@ class qtype_calculatedformat extends qtype_calculated {
         return fullclone($comment);
     }
 
-    public function dataset_options($form, $name, $mandatory = true,
-            $renameabledatasets = false) {
-        // Takes datasets from the parent implementation but
-        // filters options that are currently not accepted by calculated.
-        // It also determines a default selection.
-        // Param $renameabledatasets not implemented anywhere.
-
-        list($options, $selected) = $this->dataset_options_from_database(
-                $form, $name, '', 'qtype_calculated');
-
-        foreach ($options as $key => $whatever) {
-            if (!preg_match('~^1-~', $key) && $key != '0') {
-                unset($options[$key]);
-            }
-        }
-        if (!$selected) {
-            if ($mandatory) {
-                $selected =  "1-0-$name"; // Default.
-            } else {
-                $selected = '0'; // Default.
-            }
-        }
-        return array($options, $selected);
-    }
-
-    public function construct_dataset_menus($form, $mandatorydatasets,
-            $optionaldatasets) {
-        global $OUTPUT;
-        $datasetmenus = array();
-        foreach ($mandatorydatasets as $datasetname) {
-            if (!isset($datasetmenus[$datasetname])) {
-                list($options, $selected) =
-                    $this->dataset_options($form, $datasetname);
-                unset($options['0']); // Mandatory...
-                $datasetmenus[$datasetname] = html_writer::select(
-                        $options, 'dataset[]', $selected, null);
-            }
-        }
-        foreach ($optionaldatasets as $datasetname) {
-            if (!isset($datasetmenus[$datasetname])) {
-                list($options, $selected) =
-                    $this->dataset_options($form, $datasetname);
-                $datasetmenus[$datasetname] = html_writer::select(
-                        $options, 'dataset[]', $selected, null);
-            }
-        }
-        return $datasetmenus;
-    }
-
     public function substitute_variables($str, $dataset) {
         global $OUTPUT;
         // Testing for wrong numerical values.
