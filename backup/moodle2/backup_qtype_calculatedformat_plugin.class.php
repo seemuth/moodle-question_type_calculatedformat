@@ -74,7 +74,7 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering',
-            'allownegative', 'correctanswerbase',
+            'correctanswerbase',
             'correctanswerlengthint', 'correctanswerlengthfrac'));
 
         // Now the own qtype tree.

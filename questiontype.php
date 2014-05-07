@@ -59,7 +59,6 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctfeedbackformat = 0;
             $question->options->partiallycorrectfeedbackformat = 0;
             $question->options->incorrectfeedbackformat = 0;
-            $question->options->allownegative = 1;
             $question->options->correctanswerbase = 10;
             $question->options->correctanswerlengthint = 0;
             $question->options->correctanswerlengthfrac = 0;
@@ -115,7 +114,6 @@ class qtype_calculatedformat extends qtype_calculated {
         $options->answernumbering =  $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
 
-        $options->allownegative = $question->allownegative;
         $options->correctanswerbase = $question->correctanswerbase;
         $options->correctanswerlengthint = $question->correctanswerlengthint;
         $options->correctanswerlengthfrac = $question->correctanswerlengthfrac;
@@ -248,7 +246,6 @@ class qtype_calculatedformat extends qtype_calculated {
 
         $question->synchronised = $questiondata->options->synchronize;
 
-        $question->allownegative = $questiondata->options->allownegative;
         $question->correctanswerbase = $questiondata->options->correctanswerbase;
         $question->correctanswerlengthint = $questiondata->options->correctanswerlengthint;
         $question->correctanswerlengthfrac = $questiondata->options->correctanswerlengthfrac;
@@ -257,7 +254,6 @@ class qtype_calculatedformat extends qtype_calculated {
         $question->unitgradingtype = $questiondata->options->unitgradingtype;
         $question->unitpenalty = $questiondata->options->unitpenalty;
         $question->ap = $this->make_answer_processor(
-            $questiondata->options->allownegative,
             $questiondata->options->correctanswerbase,
             $questiondata->options->correctanswerlengthint,
             $questiondata->options->correctanswerlengthfrac,
@@ -267,11 +263,11 @@ class qtype_calculatedformat extends qtype_calculated {
     }
 
     public function make_answer_processor(
-        $allownegative, $base, $lengthint, $lengthfrac, $units, $unitsleft
+        $base, $lengthint, $lengthfrac, $units, $unitsleft
     ) {
         if (empty($units)) {
             return new qtype_calculatedformat_answer_processor(
-                $allownegative, $base, $lengthint, $lengthfrac,
+                $base, $lengthint, $lengthfrac,
                 array()
             );
         }
@@ -282,7 +278,7 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         return new qtype_calculatedformat_answer_processor(
-            $allownegative, $base, $lengthint, $lengthfrac,
+            $base, $lengthint, $lengthfrac,
             $cleanedunits, $unitsleft
         );
     }
