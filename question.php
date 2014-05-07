@@ -312,6 +312,10 @@ class qtype_calculatedformat_variable_substituter {
         $answer *= pow($base, $lengthfrac);
         $answer = intval(round($answer));
 
+        if ($answer == 0) {
+            $sign = '';
+        }
+
         // Convert to string in given base (in reverse order at first).
         $x = '';
         while ($answer > 0) {
