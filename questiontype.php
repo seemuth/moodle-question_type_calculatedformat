@@ -551,7 +551,7 @@ class qtype_calculatedformat extends qtype_calculated {
         }
     }
 
-    public function comment_on_datasetitems($qtypeobj, $questionid, $questiontext,
+    public function comment_on_datasetitems($qtypeobj, $question,
             $answers, $data, $number) {
         global $DB;
         $comment = new stdClass();
@@ -560,7 +560,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $comment->answers = array();
         // Find a default unit.
         if (!empty($questionid) && $unit = $DB->get_record('question_numerical_units',
-                array('question' => $questionid, 'multiplier' => 1.0))) {
+                array('question' => $question->id, 'multiplier' => 1.0))) {
             $unit = $unit->unit;
         } else {
             $unit = '';
@@ -574,8 +574,11 @@ class qtype_calculatedformat extends qtype_calculated {
             $formula = $this->substitute_variables($answer->answer, $data);
             $formattedanswer = qtype_calculatedformat_calculate_answer(
                 $answer->answer, $data, $answer->tolerance,
-                $answer->tolerancetype, $answer->correctanswerlength,
-                $answer->correctanswerformat, $unit);
+                $answer->tolerancetype,
+                $question->options->correctanswerbase,
+                $question->options->correctanswerlengthint,
+                $question->options->correctanswerlengthfrac,
+                $unit);
             if ($formula === '*') {
                 $answer->min = ' ';
                 $formattedanswer->answer = $answer->answer;
@@ -597,6 +600,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
+                $formattedanswer->answer = $ap->parse_to_float($formattedanswer->answer);
                 if ($formattedanswer->answer < $answer->min ||
                         $formattedanswer->answer > $answer->max) {
                     $comment->outsidelimit = true;
