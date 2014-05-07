@@ -266,6 +266,27 @@ class qtype_calculatedformat extends qtype_calculated {
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
+    public function make_answer_processor(
+        $allownegative, $base, $lengthint, $lengthfrac, $units, $unitsleft
+    ) {
+        if (empty($units)) {
+            return new qtype_calculatedformat_answer_processor(
+                $allownegative, $base, $lengthint, $lengthfrac,
+                array()
+            );
+        }
+
+        $cleanedunits = array();
+        foreach ($units as $unit) {
+            $cleanedunits[$unit->unit] = $unit->multiplier;
+        }
+
+        return new qtype_calculatedformat_answer_processor(
+            $allownegative, $base, $lengthint, $lengthfrac,
+            $cleanedunits, $unitsleft
+        );
+    }
+
     public function validate_form($form) {
         switch($form->wizardpage) {
             case 'question':
