@@ -530,20 +530,6 @@ class qtype_calculatedformat extends qtype_calculated {
         }
     }
 
-    public function comment_header($question) {
-        $strheader = '';
-        $delimiter = '';
-
-        $answers = $question->options->answers;
-
-        foreach ($answers as $key => $answer) {
-            $ans = shorten_text($answer->answer, 17, true);
-            $strheader .= $delimiter.$ans;
-            $delimiter = '<br/><br/><br/>';
-        }
-        return $strheader;
-    }
-
     public function comment_on_datasetitems($qtypeobj, $questionid, $questiontext,
             $answers, $data, $number) {
         global $DB;
