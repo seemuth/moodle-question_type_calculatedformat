@@ -578,7 +578,6 @@ class qtype_calculatedformat extends qtype_calculated {
                 $unit);
             if ($formula === '*') {
                 $answer->min = ' ';
-                $formattedanswer->answer = $answer->answer;
             } else {
                 eval('$ansvalue = '.$formula.';');
                 $ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $answer->tolerance);
