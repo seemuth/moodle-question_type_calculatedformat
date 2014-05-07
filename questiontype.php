@@ -623,7 +623,7 @@ class qtype_calculatedformat extends qtype_calculated {
 
     public function evaluate_equations($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset);
-        if ($error = qtype_calculated_find_formula_errors($formula)) {
+        if ($error = qtype_calculatedformat_find_formula_errors($formula)) {
             return $error;
         }
         return $str;
@@ -631,7 +631,7 @@ class qtype_calculatedformat extends qtype_calculated {
 
     public function substitute_variables_and_eval($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset);
-        if ($error = qtype_calculated_find_formula_errors($formula)) {
+        if ($error = qtype_calculatedformat_find_formula_errors($formula)) {
             return $error;
         }
         // Calculate the correct answer.
