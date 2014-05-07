@@ -518,48 +518,6 @@ class qtype_calculatedformat extends qtype_calculated {
         parent::delete_question($questionid, $contextid);
     }
 
-
-    public function update_dataset_options($datasetdefs, $form) {
-        global $OUTPUT;
-        // Do we have information about new options ?
-        if (empty($form->definition) || empty($form->calcmin)
-                ||empty($form->calcmax) || empty($form->calclength)
-                || empty($form->calcdistribution)) {
-            // I guess not.
-
-        } else {
-            // Looks like we just could have some new information here.
-            $uniquedefs = array_values(array_unique($form->definition));
-            foreach ($uniquedefs as $key => $defid) {
-                if (isset($datasetdefs[$defid])
-                        && is_numeric($form->calcmin[$key+1])
-                        && is_numeric($form->calcmax[$key+1])
-                        && is_numeric($form->calclength[$key+1])) {
-                    switch     ($form->calcdistribution[$key+1]) {
-                        case 'uniform': case 'loguniform':
-                            $datasetdefs[$defid]->options =
-                                $form->calcdistribution[$key+1] . ':'
-                                . $form->calcmin[$key+1] . ':'
-                                . $form->calcmax[$key+1] . ':'
-                                . $form->calclength[$key+1];
-                            break;
-                        default:
-                            echo $OUTPUT->notification(
-                                    "Unexpected distribution ".$form->calcdistribution[$key+1]);
-                    }
-                }
-            }
-        }
-
-        // Look for empty options, on which we set default values.
-        foreach ($datasetdefs as $defid => $def) {
-            if (empty($def->options)) {
-                $datasetdefs[$defid]->options = 'uniform:1.0:10.0:1';
-            }
-        }
-        return $datasetdefs;
-    }
-
     public function save_question_calculatedformat($question, $fromform) {
         global $DB;
 
