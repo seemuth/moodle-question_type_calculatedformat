@@ -621,29 +621,6 @@ class qtype_calculatedformat extends qtype_calculated {
         return fullclone($comment);
     }
 
-    public function substitute_variables($str, $dataset) {
-        global $OUTPUT;
-        // Testing for wrong numerical values.
-        // All calculations used this function so testing here should be OK.
-
-        foreach ($dataset as $name => $value) {
-            $val = $value;
-            if (! is_numeric($val)) {
-                $a = new stdClass();
-                $a->name = '{'.$name.'}';
-                $a->value = $value;
-                echo $OUTPUT->notification(get_string('notvalidnumber', 'qtype_calculatedformat', $a));
-                $val = 1.0;
-            }
-            if ($val <= 0) { // MDL-36025 Use parentheses for "-0" .
-                $str = str_replace('{'.$name.'}', '('.$val.')', $str);
-            } else {
-                $str = str_replace('{'.$name.'}', $val, $str);
-            }
-        }
-        return $str;
-    }
-
     public function evaluate_equations($str, $dataset) {
         $formula = $this->substitute_variables($str, $dataset);
         if ($error = qtype_calculated_find_formula_errors($formula)) {
