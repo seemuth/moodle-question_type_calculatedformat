@@ -486,7 +486,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 break;
             case 'datasetitems':
                 $this->save_dataset_items($question, $form);
-                $this->save_question_calculatedfmt($question, $form);
+                $this->save_question_calculatedformat($question, $form);
                 break;
             default:
                 print_error('invalidwizardpage', 'question');
@@ -525,8 +525,6 @@ class qtype_calculatedformat extends qtype_calculated {
             if ($options = $DB->get_record('question_calculatedfmt', array('answer' => $key))) {
                 $options->tolerance = trim($fromform->tolerance[$key]);
                 $options->tolerancetype  = trim($fromform->tolerancetype[$key]);
-                $options->correctanswerlength  = trim($fromform->correctanswerlength[$key]);
-                $options->correctanswerformat  = trim($fromform->correctanswerformat[$key]);
                 $DB->update_record('question_calculatedfmt', $options);
             }
         }
