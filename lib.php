@@ -109,7 +109,7 @@ public function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint
 
     // Insert radix point if there are fractional digits.
     if ($lengthfrac > 0) {
-        $x = substr_replace($x, ',', -$lengthfrac, 0);
+        $x = substr_replace($x, '.', -$lengthfrac, 0);
     }
 
     return $x;
