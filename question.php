@@ -245,7 +245,7 @@ class qtype_calculatedformat_variable_substituter {
      * @return string formatted number.
      */
     public function format_by_fmt($fmt, $x) {
-        if (preg_match('/^%(\d+)(?:\.(\d+))?([bodh])$/', $fmt, $regs)) {
+        if (preg_match('/^%(\d+)(?:\.(\d+))?([bodxBODX])$/', $fmt, $regs)) {
             list($fullmatch, $lengthint, $lengthfrac, $basestr) = $regs;
 
             $base = 0;
@@ -362,7 +362,7 @@ class qtype_calculatedformat_variable_substituter {
      */
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $re_format = '(\d+(?:\.\d+)?[bodh])?';
+        $re_format = '(\d+(?:\.\d+)?[bodxBODX])?';
         $re_expr = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
         $text = preg_replace_callback('~\{' . $re_format . $re_expr . '}~',
                 function ($matches) use ($vs) {
