@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
 require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
+require_once($CFG->dirroot . '/question/type/calculatedformat/question.php');
 
 
 /**
@@ -645,87 +646,26 @@ class qtype_calculatedformat extends qtype_calculated {
 
 
 function qtype_calculatedformat_calculate_answer($formula, $individualdata,
-    $tolerance, $tolerancetype, $answerlength, $answerformat = '1', $unit = '') {
+    $tolerance, $tolerancetype, $base, $lengthint, $lengthfrac, $unit = '') {
     // The return value has these properties: .
-    // ->answer    the correct answer
-    // ->min       the lower bound for an acceptable response
-    // ->max       the upper bound for an accetpable response.
+    // ->answer    the correct answer, formatted properly
     $calculated = new stdClass();
     // Exchange formula variables with the correct values...
-    $answer = question_bank::get_qtype('calculated')->substitute_variables_and_eval(
+    $answer = question_bank::get_qtype('calculatedformat')->substitute_variables_and_eval(
             $formula, $individualdata);
     if (!is_numeric($answer)) {
         // Something went wrong, so just return NaN.
         $calculated->answer = NAN;
         return $calculated;
     }
-    if ('1' == $answerformat) { // Answer is to have $answerlength decimals.
-        // Decimal places.
-        $calculated->answer = sprintf('%.' . $answerlength . 'F', $answer);
 
-    } else if ($answer) { // Significant figures does only apply if the result is non-zero.
+    $calculated->answer = qtype_calculatedformat_format_in_base(
+        $calculated->answer,
+        $base, $lengthint, $lengthfrac
+    );
 
-        // Convert to positive answer...
-        if ($answer < 0) {
-            $answer = -$answer;
-            $sign = '-';
-        } else {
-            $sign = '';
-        }
-
-        // Determine the format 0.[1-9][0-9]* for the answer...
-        $p10 = 0;
-        while ($answer < 1) {
-            --$p10;
-            $answer *= 10;
-        }
-        while ($answer >= 1) {
-            ++$p10;
-            $answer /= 10;
-        }
-        // ... and have the answer rounded of to the correct length.
-        $answer = round($answer, $answerlength);
-
-        // If we rounded up to 1.0, place the answer back into 0.[1-9][0-9]* format.
-        if ($answer >= 1) {
-            ++$p10;
-            $answer /= 10;
-        }
-
-        // Have the answer written on a suitable format:
-        // either scientific or plain numeric.
-        if (-2 > $p10 || 4 < $p10) {
-            // Use scientific format.
-            $exponent = 'e'.--$p10;
-            $answer *= 10;
-            if (1 == $answerlength) {
-                $calculated->answer = $sign.$answer.$exponent;
-            } else {
-                // Attach additional zeros at the end of $answer.
-                $answer .= (1 == strlen($answer) ? '.' : '')
-                    . '00000000000000000000000000000000000000000x';
-                $calculated->answer = $sign
-                    .substr($answer, 0, $answerlength +1).$exponent;
-            }
-        } else {
-            // Stick to plain numeric format.
-            $answer *= "1e$p10";
-            if (0.1 <= $answer / "1e$answerlength") {
-                $calculated->answer = $sign.$answer;
-            } else {
-                // Could be an idea to add some zeros here.
-                $answer .= (preg_match('~^[0-9]*$~', $answer) ? '.' : '')
-                    . '00000000000000000000000000000000000000000x';
-                $oklen = $answerlength + ($p10 < 1 ? 2-$p10 : 1);
-                $calculated->answer = $sign.substr($answer, 0, $oklen);
-            }
-        }
-
-    } else {
-        $calculated->answer = 0.0;
-    }
     if ($unit != '') {
-            $calculated->answer = $calculated->answer . ' ' . $unit;
+        $calculated->answer = $calculated->answer . ' ' . $unit;
     }
 
     // Return the result.
