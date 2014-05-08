@@ -205,6 +205,15 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         if (isset($question->options->synchronize)) {
             $question->synchronize = $question->options->synchronize;
         }
+        if (isset($question->options->correctanswerbase)) {
+            $question->correctanswerbase = $question->options->correctanswerbase;
+        }
+        if (isset($question->options->correctanswerlengthint)) {
+            $question->correctanswerlengthint = $question->options->correctanswerlengthint;
+        }
+        if (isset($question->options->correctanswerlengthfrac)) {
+            $question->correctanswerlengthfrac = $question->options->correctanswerlengthfrac;
+        }
 
         return $question;
     }
@@ -219,12 +228,8 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
             unset($this->_form->_defaultValues["tolerancetype[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
 
             $question->tolerancetype[$key]       = $answer->tolerancetype;
-            $question->correctanswerlength[$key] = $answer->correctanswerlength;
-            $question->correctanswerformat[$key] = $answer->correctanswerformat;
             $key++;
         }
 
