@@ -672,7 +672,7 @@ function qtype_calculatedformat_calculate_answer($formula, $individualdata,
 }
 
 
-function qtype_calculated_find_formula_errors($formula) {
+function qtype_calculatedformat_find_formula_errors($formula) {
     // Validates the formula submitted from the question edit page.
     // Returns false if everything is alright
     // otherwise it constructs an error message.
@@ -685,7 +685,7 @@ function qtype_calculated_find_formula_errors($formula) {
     $formula = strtolower(str_replace(' ', '', $formula));
 
     $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
-    $operatorornumber = "[$safeoperatorchar.0-9eE]";
+    $operatorornumber = "[$safeoperatorchar.0-9a-fA-F_bodxBODX]";
 
     while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)" .
             "\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
@@ -754,7 +754,7 @@ function qtype_calculated_find_formula_errors($formula) {
         }
     }
 
-    if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
+    if (preg_match("~[^$safeoperatorchar.0-9a-fA-F_bdoxBDOX]+~", $formula, $regs)) {
         return get_string('illegalformulasyntax', 'qtype_calculatedformat', $regs[0]);
     } else {
         // Formula just might be valid.
