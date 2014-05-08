@@ -158,6 +158,39 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->addElement('hidden', 'answernumbering', 'abc');
         $mform->setType('answernumbering', PARAM_SAFEDIR);
 
+        // Correct answer format elements.
+        $mform->addElement('header', 'correctanswersection',
+            get_string('correctanswerbaseformat', 'qtype_calculatedformat'));
+        $bases = array(
+            '0' => get_string('anybase', 'qtype_calculatedformat'),
+            '2' => get_string('binary', 'qtype_calculatedformat'),
+            '8' => get_string('octal', 'qtype_calculatedformat'),
+            '10' => get_string('decimal', 'qtype_calculatedformat'),
+            '16' => get_string('hexadecimal', 'qtype_calculatedformat'),
+        );
+        $mform->addElement('select', 'correctanswerbase',
+            get_string('requirebase', 'qtype_calculatedformat'),
+            $bases);
+        $mform->addHelpButton('correctanswerbase', 'requirebase',
+            'qtype_calculatedformat');
+        $mform->setDefault('correctanswerbase', '10');
+
+        $mform->addElement('text', 'correctanswerlengthint',
+            get_string('correctanswerlengthint', 'qtype_calculatedformat'));
+        $mform->addRule('correctanswerlengthint',
+            get_string('missingcorrectanswerlength', 'qtype_calculatedformat'),
+            'required');
+        $mform->addHelpButton('correctanswerlengthint', 'correctanswerlengthint',
+            'qtype_calculatedformat');
+
+        $mform->addElement('text', 'correctanswerlengthfrac',
+            get_string('correctanswerlengthfrac', 'qtype_calculatedformat'));
+        $mform->addRule('correctanswerlengthfrac',
+            get_string('missingcorrectanswerlength', 'qtype_calculatedformat'),
+            'required');
+        $mform->addHelpButton('correctanswerlengthfrac', 'correctanswerlengthfrac',
+            'qtype_calculatedformat');
+
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
 
