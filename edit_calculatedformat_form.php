@@ -18,8 +18,9 @@
  * Defines the editing form for the calculated question type.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,12 +31,13 @@ require_once($CFG->dirroot . '/question/type/numerical/edit_numerical_form.php')
 
 
 /**
- * Calculated question type editing form definition.
+ * Calculated question type with number formatting editing form definition.
  *
  * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_edit_form extends qtype_numerical_edit_form {
+class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
     /**
      * Handle to the question type for this question.
      *
@@ -83,36 +85,36 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $repeated[0]->setElements($answeroptions);
 
         // Update answer field and group label.
-        $repeated[0]->setLabel(get_string('answerformula', 'qtype_calculated', '{no}') . ' =');
-        $answeroptions[0]->setLabel(get_string('answerformula', 'qtype_calculated', '{no}') . ' =');
+        $repeated[0]->setLabel(get_string('answerformula', 'qtype_calculatedformat', '{no}') . ' =');
+        $answeroptions[0]->setLabel(get_string('answerformula', 'qtype_calculatedformat', '{no}') . ' =');
 
         // Get feedback field to re append later.
         $feedback = array_pop($repeated);
 
         // Create tolerance group.
         $answertolerance = array();
-        $tolerance->setLabel(get_string('tolerance', 'qtype_calculated') . '=');
+        $tolerance->setLabel(get_string('tolerance', 'qtype_calculatedformat') . '=');
         $answertolerance[] = $tolerance;
         $answertolerance[] = $mform->createElement('select', 'tolerancetype',
-                get_string('tolerancetype', 'qtype_calculated'), $this->qtypeobj->tolerance_types());
+                get_string('tolerancetype', 'qtype_calculatedformat'), $this->qtypeobj->tolerance_types());
         $repeated[] = $mform->createElement('group', 'answertolerance',
-                 get_string('tolerance', 'qtype_calculated'), $answertolerance, null, false);
+                 get_string('tolerance', 'qtype_calculatedformat'), $answertolerance, null, false);
         $repeatedoptions['tolerance']['default'] = 0.01;
 
         // Create display group.
         $answerdisplay = array();
         $answerdisplay[] = $mform->createElement('select', 'correctanswerlength',
-                get_string('answerdisplay', 'qtype_calculated'), range(0, 9));
+                get_string('answerdisplay', 'qtype_calculatedformat'), range(0, 9));
         $repeatedoptions['correctanswerlength']['default'] = 2;
 
         $answerlengthformats = array(
             '1' => get_string('decimalformat', 'qtype_numerical'),
-            '2' => get_string('significantfiguresformat', 'qtype_calculated')
+            '2' => get_string('significantfiguresformat', 'qtype_calculatedformat')
         );
         $answerdisplay[] = $mform->createElement('select', 'correctanswerformat',
-                get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+                get_string('correctanswershowsformat', 'qtype_calculatedformat'), $answerlengthformats);
         $repeated[] = $mform->createElement('group', 'answerdisplay',
-                 get_string('answerdisplay', 'qtype_calculated'), $answerdisplay, null, false);
+                 get_string('answerdisplay', 'qtype_calculatedformat'), $answerdisplay, null, false);
 
         // Add feedback.
         $repeated[] = $feedback;
@@ -127,7 +129,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
      */
     protected function definition_inner($mform) {
         $this->qtypeobj = question_bank::get_qtype($this->qtype());
-        $label = get_string('sharedwildcards', 'qtype_calculated');
+        $label = get_string('sharedwildcards', 'qtype_calculatedformat');
         $mform->addElement('hidden', 'initialcategory', 1);
         $mform->addElement('hidden', 'reload', 1);
         $mform->setType('initialcategory', PARAM_INT);
@@ -137,11 +139,11 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
                 $mform->createElement('static', 'listcategory', $label, $html2), 'name');
         if (isset($this->question->id)) {
             $mform->insertElementBefore($mform->createElement('static', 'initialname',
-                    get_string('questionstoredname', 'qtype_calculated'),
+                    get_string('questionstoredname', 'qtype_calculatedformat'),
                     $this->initialname), 'name');
         };
         $addfieldsname = 'updatecategory';
-        $addstring = get_string('updatecategory', 'qtype_calculated');
+        $addstring = get_string('updatecategory', 'qtype_calculatedformat');
         $mform->registerNoSubmitButton($addfieldsname);
 
         $mform->insertElementBefore(
@@ -156,7 +158,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $mform->addElement('hidden', 'answernumbering', 'abc');
         $mform->setType('answernumbering', PARAM_SAFEDIR);
 
-        $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculated', '{no}'),
+        $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
 
         $repeated = array();
@@ -246,7 +248,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         if (empty($mandatorydatasets)) {
             foreach ($answers as $key => $answer) {
                 $errors['answeroptions['.$key.']'] =
-                        get_string('atleastonewildcard', 'qtype_calculated');
+                        get_string('atleastonewildcard', 'qtype_calculatedformat');
             }
         }
 
@@ -257,7 +259,7 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
                 if ($data['correctanswerformat'][$key] == 2 &&
                         $data['correctanswerlength'][$key] == '0') {
                     $errors['answerdisplay['.$key.']'] =
-                            get_string('zerosignificantfiguresnotallowed', 'qtype_calculated');
+                            get_string('zerosignificantfiguresnotallowed', 'qtype_calculatedformat');
                 }
             }
         }
