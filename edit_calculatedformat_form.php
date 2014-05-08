@@ -147,18 +147,19 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->addElement('header', 'correctanswersection',
             get_string('correctanswerbaseformat', 'qtype_calculatedformat'));
         $bases = array(
-            '0' => get_string('anybase', 'qtype_calculatedformat'),
-            '2' => get_string('binary', 'qtype_calculatedformat'),
-            '8' => get_string('octal', 'qtype_calculatedformat'),
-            '10' => get_string('decimal', 'qtype_calculatedformat'),
-            '16' => get_string('hexadecimal', 'qtype_calculatedformat'),
+            0 => get_string('anybase', 'qtype_calculatedformat'),
+            2 => get_string('binary', 'qtype_calculatedformat'),
+            8 => get_string('octal', 'qtype_calculatedformat'),
+            10 => get_string('decimal', 'qtype_calculatedformat'),
+            16 => get_string('hexadecimal', 'qtype_calculatedformat'),
         );
         $mform->addElement('select', 'correctanswerbase',
             get_string('requirebase', 'qtype_calculatedformat'),
             $bases);
         $mform->addHelpButton('correctanswerbase', 'requirebase',
             'qtype_calculatedformat');
-        $mform->setDefault('correctanswerbase', '10');
+        $mform->setDefault('correctanswerbase', 10);
+        $mform->setType('correctanswerbase', PARAM_INT);
 
         $mform->addElement('text', 'correctanswerlengthint',
             get_string('correctanswerlengthint', 'qtype_calculatedformat'));
@@ -167,6 +168,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'required');
         $mform->addHelpButton('correctanswerlengthint', 'correctanswerlengthint',
             'qtype_calculatedformat');
+        $mform->setType('correctanswerlengthint', PARAM_INT);
 
         $mform->addElement('text', 'correctanswerlengthfrac',
             get_string('correctanswerlengthfrac', 'qtype_calculatedformat'));
@@ -175,6 +177,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'required');
         $mform->addHelpButton('correctanswerlengthfrac', 'correctanswerlengthfrac',
             'qtype_calculatedformat');
+        $mform->setType('correctanswerlengthfrac', PARAM_INT);
 
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
