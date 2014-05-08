@@ -281,13 +281,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         // Validate the answer format.
         foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-            if (trim($answer)) {
-                if ($data['correctanswerformat'][$key] == 2 &&
-                        $data['correctanswerlength'][$key] == '0') {
-                    $errors['answerdisplay['.$key.']'] =
-                            get_string('zerosignificantfiguresnotallowed', 'qtype_calculatedformat');
-                }
-            }
         }
 
         return $errors;
