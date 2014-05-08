@@ -101,21 +101,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
                  get_string('tolerance', 'qtype_calculatedformat'), $answertolerance, null, false);
         $repeatedoptions['tolerance']['default'] = 0.01;
 
-        // Create display group.
-        $answerdisplay = array();
-        $answerdisplay[] = $mform->createElement('select', 'correctanswerlength',
-                get_string('answerdisplay', 'qtype_calculatedformat'), range(0, 9));
-        $repeatedoptions['correctanswerlength']['default'] = 2;
-
-        $answerlengthformats = array(
-            '1' => get_string('decimalformat', 'qtype_numerical'),
-            '2' => get_string('significantfiguresformat', 'qtype_calculatedformat')
-        );
-        $answerdisplay[] = $mform->createElement('select', 'correctanswerformat',
-                get_string('correctanswershowsformat', 'qtype_calculatedformat'), $answerlengthformats);
-        $repeated[] = $mform->createElement('group', 'answerdisplay',
-                 get_string('answerdisplay', 'qtype_calculatedformat'), $answerdisplay, null, false);
-
         // Add feedback.
         $repeated[] = $feedback;
 
