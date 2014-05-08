@@ -108,7 +108,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
     }
 
     protected function definition() {
-        $labelsharedwildcard = get_string("sharedwildcard", "qtype_calculated");
+        $labelsharedwildcard = get_string("sharedwildcard", "qtype_calculatedformat");
         $mform =& $this->_form;
         $mform->setDisableShortforms();
 
@@ -118,25 +118,25 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         } else {
             $this->noofitems = 0;
         }
-        $label = get_string("sharedwildcards", "qtype_calculated");
+        $label = get_string("sharedwildcards", "qtype_calculatedformat");
 
         $html2 = $this->qtypeobj->print_dataset_definitions_category_shared(
                 $this->question, $this->datasetdefs);
         $mform->addElement('static', 'listcategory', $label, $html2);
         // ...----------------------------------------------------------------------.
         $mform->addElement('submit', 'updatedatasets',
-                get_string('updatedatasetparam', 'qtype_calculated'));
+                get_string('updatedatasetparam', 'qtype_calculatedformat'));
         $mform->registerNoSubmitButton('updatedatasets');
         $mform->addElement('header', 'additemhdr',
-                get_string('itemtoadd', 'qtype_calculated'));
+                get_string('itemtoadd', 'qtype_calculatedformat'));
         $idx = 1;
         $data = array();
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
         foreach ($this->datasetdefs as $defkey => $datasetdef) {
             if ($datasetdef->category |= 0 ) {
-                $name = get_string('sharedwildcard', 'qtype_calculated', $datasetdef->name);
+                $name = get_string('sharedwildcard', 'qtype_calculatedformat', $datasetdef->name);
             } else {
-                $name = get_string('wildcard', 'qtype_calculated', $datasetdef->name);
+                $name = get_string('wildcard', 'qtype_calculatedformat', $datasetdef->name);
             }
             $mform->addElement('text', "number[$j]", $name);
             $mform->setType("number[$j]", PARAM_RAW); // This parameter will be validated in validation().
@@ -152,9 +152,9 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         }
 
         $mform->addElement('header', 'updateanswershdr',
-                get_string('answerstoleranceparam', 'qtype_calculated'));
+                get_string('answerstoleranceparam', 'qtype_calculatedformat'));
         $mform->addElement('submit', 'updateanswers',
-                get_string('updatetolerancesparam', 'qtype_calculated'));
+                get_string('updatetolerancesparam', 'qtype_calculatedformat'));
         $mform->setAdvanced('updateanswers', true);
         $mform->registerNoSubmitButton('updateanswers');
 
@@ -171,17 +171,11 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $mform->addElement('hidden', 'tolerancetype['.$key.']', '');
                 $mform->setType('tolerancetype['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerancetype['.$key.']', true);
-                $mform->addElement('hidden', 'correctanswerlength['.$key.']', '');
-                $mform->setType('correctanswerlength['.$key.']', PARAM_RAW);
-                $mform->setAdvanced('correctanswerlength['.$key.']', true);
-                $mform->addElement('hidden', 'correctanswerformat['.$key.']', '');
-                $mform->setType('correctanswerformat['.$key.']', PARAM_RAW);
-                $mform->setAdvanced('correctanswerformat['.$key.']', true);
             } else if ( $ans !== '' ) {
                 $mform->addElement('static', 'answercomment[' . ($this->noofitems+$key1) . ']',
                         $ans);
                 $mform->addElement('text', 'tolerance['.$key.']',
-                        get_string('tolerance', 'qtype_calculated'));
+                        get_string('tolerance', 'qtype_calculatedformat'));
                 $mform->setType('tolerance['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerance['.$key.']', true);
                 $mform->addElement('select', 'tolerancetype['.$key.']',
@@ -189,18 +183,6 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                         $this->qtypeobj->tolerance_types());
                 $mform->setAdvanced('tolerancetype['.$key.']', true);
 
-                $mform->addElement('select', 'correctanswerlength['.$key.']',
-                        get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
-                $mform->setAdvanced('correctanswerlength['.$key.']', true);
-
-                $answerlengthformats = array(
-                    '1' => get_string('decimalformat', 'qtype_numerical'),
-                    '2' => get_string('significantfiguresformat', 'qtype_calculated')
-                );
-                $mform->addElement('select', 'correctanswerformat['.$key.']',
-                        get_string('correctanswershowsformat', 'qtype_calculated'),
-                        $answerlengthformats);
-                $mform->setAdvanced('correctanswerformat['.$key.']', true);
                 $mform->addElement('static', 'dividertolerance', '', '<hr />');
                 $mform->setAdvanced('dividertolerance', true);
             }
@@ -225,24 +207,24 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         if ($this->qtypeobj->supports_dataset_item_generation()) {
             $radiogrp = array();
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]',
-                    null, get_string('reuseifpossible', 'qtype_calculated'), 0);
+                    null, get_string('reuseifpossible', 'qtype_calculatedformat'), 0);
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]',
-                    null, get_string('forceregenerationshared', 'qtype_calculated'), 1);
+                    null, get_string('forceregenerationshared', 'qtype_calculatedformat'), 1);
             $radiogrp[] =& $mform->createElement('radio', 'nextpageparam[forceregeneration]',
-                    null, get_string('forceregenerationall', 'qtype_calculated'), 2);
+                    null, get_string('forceregenerationall', 'qtype_calculatedformat'), 2);
             $mform->addGroup($radiogrp, 'forceregenerationgrp',
-                    get_string('nextitemtoadd', 'qtype_calculated'), "<br/>", false);
+                    get_string('nextitemtoadd', 'qtype_calculatedformat'), "<br/>", false);
         }
 
-        $mform->addElement('submit', 'getnextbutton', get_string('getnextnow', 'qtype_calculated'));
+        $mform->addElement('submit', 'getnextbutton', get_string('getnextnow', 'qtype_calculatedformat'));
         $mform->addElement('static', "dividera", '', '<hr />');
         $addgrp = array();
         $addgrp[] =& $mform->createElement('submit', 'addbutton', get_string('add', 'moodle'));
         $addgrp[] =& $mform->createElement('select', "selectadd",
-                get_string('additem', 'qtype_calculated'), $addremoveoptions);
+                get_string('additem', 'qtype_calculatedformat'), $addremoveoptions);
         $addgrp[] = & $mform->createElement('static', "stat", "Items",
-                get_string('newsetwildcardvalues', 'qtype_calculatedsimple'));
-        $mform->addGroup($addgrp, 'addgrp', get_string('additem', 'qtype_calculated'), ' ', false);
+                get_string('newsetwildcardvalues', 'qtype_calculatedformat'));
+        $mform->addGroup($addgrp, 'addgrp', get_string('additem', 'qtype_calculatedformat'), ' ', false);
         $mform->addElement('static', "divideradd", '', '');
         if ($this->noofitems > 0) {
             $mform->addElement('header', 'deleteitemhdr', get_string('delete', 'moodle'));
@@ -250,21 +232,21 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             $deletegrp[] = $mform->createElement('submit', 'deletebutton',
                     get_string('delete', 'moodle'));
             $deletegrp[] = $mform->createElement('select', 'selectdelete',
-                    get_string('deleteitem', 'qtype_calculated')."1", $addremoveoptions);
+                    get_string('deleteitem', 'qtype_calculatedformat')."1", $addremoveoptions);
             $deletegrp[] = $mform->createElement('static', "stat", "Items",
-                    get_string('setwildcardvalues', 'qtype_calculatedsimple'));
+                    get_string('setwildcardvalues', 'qtype_calculatedformat'));
             $mform->addGroup($deletegrp, 'deletegrp', '', '   ', false);
         } else {
             $mform->addElement('static', 'warning', '', '<span class="error">' .
-                    get_string('youmustaddatleastoneitem', 'qtype_calculated').'</span>');
+                    get_string('youmustaddatleastoneitem', 'qtype_calculatedformat').'</span>');
         }
 
         $addgrp1 = array();
         $addgrp1[] = $mform->createElement('submit', 'showbutton',
-                get_string('showitems', 'qtype_calculated'));
+                get_string('showitems', 'qtype_calculatedformat'));
         $addgrp1[] = $mform->createElement('select', "selectshow", '' , $showoptions);
         $addgrp1[] = $mform->createElement('static', "stat", '',
-                get_string('setwildcardvalues', 'qtype_calculated'));
+                get_string('setwildcardvalues', 'qtype_calculatedformat'));
         $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         $mform->registerNoSubmitButton('showbutton');
         $mform->closeHeaderBefore('addgrp1');
@@ -274,16 +256,16 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         for ($i = $this->noofitems; $i >= 1; $i--) {
             if ($k > 0) {
                 $mform->addElement('header', 'setnoheader' . $i, "<b>" .
-                        get_string('setno', 'qtype_calculated', $i)."</b>&nbsp;&nbsp;");
+                        get_string('setno', 'qtype_calculatedformat', $i)."</b>&nbsp;&nbsp;");
             }
             foreach ($this->datasetdefs as $defkey => $datasetdef) {
                 if ($k > 0) {
                     if ($datasetdef->category == 0 ) {
                         $mform->addElement('text', "number[$j]",
-                                get_string('wildcard', 'qtype_calculated', $datasetdef->name));
+                                get_string('wildcard', 'qtype_calculatedformat', $datasetdef->name));
                     } else {
                         $mform->addElement('text', "number[$j]", get_string(
-                                'sharedwildcard', 'qtype_calculated', $datasetdef->name));
+                                'sharedwildcard', 'qtype_calculatedformat', $datasetdef->name));
                     }
 
                 } else {
@@ -310,7 +292,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                     $mform->addElement('static', "divider1[$j]", '',
                             'Formulas {=..} in question text');
                     foreach ($textequations as $key => $equation) {
-                        if ($formulaerrors = qtype_calculated_find_formula_errors($equation)) {
+                        if ($formulaerrors = qtype_calculatedformat_find_formula_errors($equation)) {
                             $str = $formulaerrors;
                         } else {
                             eval('$str = '.$equation.';');
@@ -359,20 +341,6 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                             $fromform->tolerancetype[$key]= $fromform->tolerancetype[$key][0];
                         }
                         $answer->tolerancetype = $fromform->tolerancetype[$key];
-                        $fromform->correctanswerlength[$key]= $this->_form->getElementValue(
-                                'correctanswerlength['.$key.']');
-                        if (is_array($fromform->correctanswerlength[$key])) {
-                            $fromform->correctanswerlength[$key] =
-                                    $fromform->correctanswerlength[$key][0];
-                        }
-                        $answer->correctanswerlength = $fromform->correctanswerlength[$key];
-                        $fromform->correctanswerformat[$key] = $this->_form->getElementValue(
-                                'correctanswerformat['.$key.']');
-                        if (is_array($fromform->correctanswerformat[$key])) {
-                            $fromform->correctanswerformat[$key] =
-                                    $fromform->correctanswerformat[$key][0];
-                        }
-                        $answer->correctanswerformat = $fromform->correctanswerformat[$key];
                     }
                     $this->qtypeobj->save_question_calculated($question, $fromform);
 
@@ -380,8 +348,6 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                     foreach ($answers as $key => $answer) {
                         $formdata['tolerance['.$key.']'] = $answer->tolerance;
                         $formdata['tolerancetype['.$key.']'] = $answer->tolerancetype;
-                        $formdata['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
-                        $formdata['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
                     }
                 }
             }
@@ -465,7 +431,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
         if ($this->outsidelimit) {
             $formdata['outsidelimit']= '<span class="error">' .
-                    get_string('oneanswertrueansweroutsidelimits', 'qtype_calculated') . '</span>';
+                    get_string('oneanswertrueansweroutsidelimits', 'qtype_calculatedformat') . '</span>';
         }
         $formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $formdata);
 
@@ -479,23 +445,23 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         }
         if ($this->outsidelimit) {
             $errors['outsidelimits'] =
-                    get_string('oneanswertrueansweroutsidelimits', 'qtype_calculated');
+                    get_string('oneanswertrueansweroutsidelimits', 'qtype_calculatedformat');
         }
         $numbers = $data['number'];
         foreach ($numbers as $key => $number) {
             if (! is_numeric($number)) {
                 if (stristr($number, ',')) {
-                    $errors['number['.$key.']'] = get_string('nocommaallowed', 'qtype_calculated');
+                    $errors['number['.$key.']'] = get_string('nocommaallowed', 'qtype_calculatedformat');
                 } else {
-                    $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_calculated');
+                    $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_calculatedformat');
                 }
             } else if (stristr($number, 'x')) {
                 $a = new stdClass();
                 $a->name = '';
                 $a->value = $number;
-                $errors['number['.$key.']'] = get_string('hexanotallowed', 'qtype_calculated', $a);
+                $errors['number['.$key.']'] = get_string('hexanotallowed', 'qtype_calculatedformat', $a);
             } else if (is_nan($number)) {
-                $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_calculated');
+                $errors['number['.$key.']'] = get_string('notvalidnumber', 'qtype_calculatedformat');
             }
         }
         return $errors;

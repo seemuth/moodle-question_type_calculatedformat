@@ -15,11 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the calculated question data set definitions.
+ * Defines the editing form for the calculated question with number formatting
+ * data set definitions.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,9 +32,11 @@ require_once($CFG->dirroot . '/question/type/edit_question_form.php');
 
 
 /**
- * Calculated question data set definitions editing form definition.
+ * Calculated question with number formatting: data set definitions editing
+ * form definition.
  *
  * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_dataset_dependent_definitions_form extends question_wizard_form {
@@ -91,24 +95,24 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
         $datadefscat= array();
         $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
-        $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculated')."</div>";
+        $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculatedformat')."</div>";
         // Explaining the role of datasets so other strings can be shortened.
         $mform->addElement('html', $label);
         $mform->addElement('header', 'mandatoryhdr',
-                get_string('mandatoryhdr', 'qtype_calculated'));
-        $labelsharedwildcard = get_string('sharedwildcard', 'qtype_calculated');
+                get_string('mandatoryhdr', 'qtype_calculatedformat'));
+        $labelsharedwildcard = get_string('sharedwildcard', 'qtype_calculatedformat');
 
         foreach ($mandatorydatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) =
                         $this->qtypeobj->dataset_options($this->question, $datasetname);
                 unset($options['0']); // Mandatory...
-                $label = get_string('wildcard', 'qtype_calculated', $datasetname);
+                $label = get_string('wildcard', 'qtype_calculatedformat', $datasetname);
                 $mform->addElement('select', "dataset[$key]", $label, $options);
                 if (isset($datadefscat[$datasetname])) {
                     $mform->addElement('static', "there is a category",
-                            get_string('sharedwildcard', 'qtype_calculated', $datasetname),
-                            get_string('dataitemdefined', 'qtype_calculated',
+                            get_string('sharedwildcard', 'qtype_calculatedformat', $datasetname),
+                            get_string('dataitemdefined', 'qtype_calculatedformat',
                             $datadefscat[$datasetname]));
                 }
                 $mform->setDefault("dataset[$key]", $selected);
@@ -116,18 +120,18 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
                 $key++;
             }
         }
-        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', 'qtype_calculated'));
+        $mform->addElement('header', 'possiblehdr', get_string('possiblehdr', 'qtype_calculatedformat'));
 
         foreach ($possibledatasets as $datasetname) {
             if (!isset($datasetmenus[$datasetname])) {
                 list($options, $selected) = $this->qtypeobj->dataset_options(
                         $this->question, $datasetname, false);
-                $label = get_string('wildcard', 'qtype_calculated', $datasetname);
+                $label = get_string('wildcard', 'qtype_calculatedformat', $datasetname);
                 $mform->addElement('select', "dataset[$key]", $label, $options);
                 if (isset($datadefscat[$datasetname])) {
                     $mform->addElement('static', "there is a category",
-                            get_string('sharedwildcard', 'qtype_calculated', $datasetname),
-                            get_string('dataitemdefined', 'qtype_calculated',
+                            get_string('sharedwildcard', 'qtype_calculatedformat', $datasetname),
+                            get_string('dataitemdefined', 'qtype_calculatedformat',
                                     $datadefscat[$datasetname]));
                 }
 
@@ -138,13 +142,13 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
         }
         // Temporary strings.
         $mform->addElement('header', 'synchronizehdr',
-                get_string('synchronize', 'qtype_calculated'));
+                get_string('synchronize', 'qtype_calculatedformat'));
         $mform->addElement('radio', 'synchronize', '',
-                get_string('synchronizeno', 'qtype_calculated'), 0);
+                get_string('synchronizeno', 'qtype_calculatedformat'), 0);
         $mform->addElement('radio', 'synchronize', '',
-                get_string('synchronizeyes', 'qtype_calculated'), 1);
+                get_string('synchronizeyes', 'qtype_calculatedformat'), 1);
         $mform->addElement('radio', 'synchronize', '',
-                get_string('synchronizeyesdisplay', 'qtype_calculated'), 2);
+                get_string('synchronizeyesdisplay', 'qtype_calculatedformat'), 2);
         if (isset($this->question->options) &&
                 isset($this->question->options->synchronize)) {
             $mform->setDefault('synchronize', $this->question->options->synchronize);
@@ -152,7 +156,7 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
             $mform->setDefault('synchronize', 0);
         }
 
-        $this->add_action_buttons(false, get_string('nextpage', 'qtype_calculated'));
+        $this->add_action_buttons(false, get_string('nextpage', 'qtype_calculatedformat'));
 
         $this->add_hidden_fields();
 
@@ -175,7 +179,7 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
         if (!$countvalid) {
             foreach ($datasets as $key => $dataset) {
                 $errors['dataset['.$key.']'] =
-                        get_string('atleastonerealdataset', 'qtype_calculated');
+                        get_string('atleastonerealdataset', 'qtype_calculatedformat');
             }
         }
         return $errors;
