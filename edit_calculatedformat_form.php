@@ -242,6 +242,8 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
 
     public function validation($data, $files) {
 
+        $errors = parent::validation($data, $files);
+
         // Verifying for errors in {=...} in question text.
         $qtext = "";
         $qtextremaining = $data['questiontext']['text'];
@@ -262,8 +264,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
                 }
             }
         }
-
-        $errors = parent::validation($data, $files);
 
         // Check that the answers use datasets.
         $answers = $data['answer'];
