@@ -667,8 +667,7 @@ function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     }
 
     $calculated->answer = qtype_calculatedformat_format_in_base(
-        $calculated->answer,
-        $base, $lengthint, $lengthfrac
+        $answer, $base, $lengthint, $lengthfrac
     );
 
     if ($unit != '') {
