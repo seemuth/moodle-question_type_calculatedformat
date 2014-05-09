@@ -945,8 +945,11 @@ class qtype_calculatedformat_answer_processor
             return array(null, null, null);
         }
 
+        $valuestrlen = strlen($valuestr);
         $value = 0;
-        foreach ($valuestr as $c) {
+        for ($i = 0; $i < $valuestrlen; $i++) {
+            $c = $valuestr[$i];
+
             $value *= $base;
 
             if (($c >= '0') && ($c <= '9')) {
@@ -995,7 +998,7 @@ class qtype_calculatedformat_answer_processor
      *      Or return false if the response is invalid.
      */
     public function parse_to_float($response) {
-        list($value, $unit, $multiplier) = $this->parse_response_given_base($response);
+        list($value, $unit, $multiplier) = $this->apply_units($response);
         if (is_null($value)) {
             return false;
         }
