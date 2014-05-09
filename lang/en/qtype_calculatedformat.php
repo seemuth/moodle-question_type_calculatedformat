@@ -81,6 +81,7 @@ $string['hexanotallowed'] = 'Dataset <strong>{$a->name}</strong> hexadecimal for
 $string['illegalbase'] = 'Illegal base \'{$a}\'';
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'{$a}\'';
 $string['incorrectfeedback'] = 'For any incorrect response';
+$string['inbase'] = 'in base {$a}';
 $string['item(s)'] = 'item(s)';
 $string['itemno'] = 'Item {$a}';
 $string['itemscount']='Items<br />Count';
