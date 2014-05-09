@@ -941,7 +941,7 @@ class qtype_calculatedformat_answer_processor
         // Convert as integer, then adjust for radix point afterward.
         $valuestr = $int . $frac;
 
-        if (preg_match('[^' . $validcharsre . ']', $valuestr)) {
+        if (preg_match('/[^' . $validcharsre . ']/', $valuestr)) {
             return array(null, null, null);
         }
 
