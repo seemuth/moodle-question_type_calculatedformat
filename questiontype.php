@@ -601,7 +601,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
-                $formattedanswer->answer = $ap->parse_to_float($formattedanswer->answer);
+                $formattedanswer->answer = $this->ap->parse_to_float($formattedanswer->answer);
                 if ($formattedanswer->answer < $answer->min ||
                         $formattedanswer->answer > $answer->max) {
                     $comment->outsidelimit = true;
@@ -801,7 +801,7 @@ class qtype_calculatedformat_answer_processor
     }
 
     /**
-     * Create the regular expression that {@link parse_to_float()} requires.
+     * Create the regular expression that {@link parse_reponse_given_base()} requires.
      * @return string
      */
     protected function build_regex() {
