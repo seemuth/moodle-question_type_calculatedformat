@@ -44,14 +44,14 @@ class qtype_calculatedformat_question extends qtype_calculated_question
     public function start_attempt(question_attempt_step $step, $variant) {
         qtype_calculatedformat_question_helper::start_attempt($this, $step, $variant);
 
-        // Skip parent (qtype_calculated_question), because that would conflict
+        // Skip parent (qtype_calculated_question), because that would conflict.
         qtype_numerical_question::start_attempt($step, $variant);
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
         qtype_calculatedformat_question_helper::apply_attempt_state($this, $step);
 
-        // Skip parent (qtype_calculated_question), because that would conflict
+        // Skip parent (qtype_calculated_question), because that would conflict.
         qtype_numerical_question::apply_attempt_state($step);
     }
 
@@ -316,9 +316,9 @@ class qtype_calculatedformat_variable_substituter {
      * @return float the computed result.
      */
     protected function calculate_raw($expression) {
-        $html_ops = array('&amp;', '&lt;', '&gt;');
-        $raw_ops = array('&', '<', '>');
-        $expression = str_replace($html_ops, $raw_ops, $expression);
+        $htmlops = array('&amp;', '&lt;', '&gt;');
+        $rawops = array('&', '<', '>');
+        $expression = str_replace($htmlops, $rawops, $expression);
 
         // This validation trick from http://php.net/manual/en/function.eval.php .
         if (!@eval('return true; $result = ' . $expression . ';')) {
@@ -359,9 +359,9 @@ class qtype_calculatedformat_variable_substituter {
      */
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $re_format = '(%\d*(?:\.\d+)?[bodxBODX])?';
-        $re_expr = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
-        $text = preg_replace_callback('~\{' . $re_format . $re_expr . '}~',
+        $formatre = '(%\d*(?:\.\d+)?[bodxBODX])?';
+        $exprre = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
+        $text = preg_replace_callback('~\{' . $formatre . $exprre . '}~',
                 function ($matches) use ($vs) {
                     $calc = $vs->calculate($matches[2]);
                     $ret = $vs->format_by_fmt($matches[1], $calc);

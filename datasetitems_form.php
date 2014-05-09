@@ -123,7 +123,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $html2 = $this->qtypeobj->print_dataset_definitions_category_shared(
                 $this->question, $this->datasetdefs);
         $mform->addElement('static', 'listcategory', $label, $html2);
-        // ...----------------------------------------------------------------------.
+        // --------------------------------------------------------------------------
         $mform->addElement('submit', 'updatedatasets',
                 get_string('updatedatasetparam', 'qtype_calculatedformat'));
         $mform->registerNoSubmitButton('updatedatasets');
@@ -131,7 +131,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 get_string('itemtoadd', 'qtype_calculatedformat'));
         $idx = 1;
         $data = array();
-        $j = (($this->noofitems) * count($this->datasetdefs))+1;
+        $j = (($this->noofitems) * count($this->datasetdefs)) + 1;
         foreach ($this->datasetdefs as $defkey => $datasetdef) {
             if ($datasetdef->category |= 0 ) {
                 $name = get_string('sharedwildcard', 'qtype_calculatedformat', $datasetdef->name);
@@ -164,7 +164,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             $ans = shorten_text($answer->answer, 17, true);
             if ($ans === '*') {
                 $mform->addElement('static',
-                        'answercomment[' . ($this->noofitems+$key1) . ']', $ans);
+                        'answercomment[' . ($this->noofitems + $key1) . ']', $ans);
                 $mform->addElement('hidden', 'tolerance['.$key.']', '');
                 $mform->setType('tolerance['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerance['.$key.']', true);
@@ -172,7 +172,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $mform->setType('tolerancetype['.$key.']', PARAM_RAW);
                 $mform->setAdvanced('tolerancetype['.$key.']', true);
             } else if ( $ans !== '' ) {
-                $mform->addElement('static', 'answercomment[' . ($this->noofitems+$key1) . ']',
+                $mform->addElement('static', 'answercomment[' . ($this->noofitems + $key1) . ']',
                         $ans);
                 $mform->addElement('text', 'tolerance['.$key.']',
                         get_string('tolerance', 'qtype_calculatedformat'));
@@ -190,16 +190,16 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         }
 
         $addremoveoptions = array();
-        $addremoveoptions['1']='1';
-        for ($i=10; $i<=100; $i+=10) {
-             $addremoveoptions["$i"]="$i";
+        $addremoveoptions['1'] = '1';
+        for ($i = 10; $i <= 100; $i += 10) {
+             $addremoveoptions["$i"] = "$i";
         }
         $showoptions = Array();
-        $showoptions['1']='1';
-        $showoptions['2']='2';
-        $showoptions['5']='5';
-        for ($i=10; $i<=100; $i+=10) {
-             $showoptions["$i"]="$i";
+        $showoptions['1'] = '1';
+        $showoptions['2'] = '2';
+        $showoptions['5'] = '5';
+        for ($i = 10; $i <= 100; $i += 10) {
+             $showoptions["$i"] = "$i";
         }
         $mform->addElement('header', 'addhdr', get_string('add', 'moodle'));
         $mform->closeHeaderBefore('addhdr');
@@ -250,7 +250,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         $mform->registerNoSubmitButton('showbutton');
         $mform->closeHeaderBefore('addgrp1');
-        // ...----------------------------------------------------------------------.
+        // --------------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
         $k = optional_param('selectshow', 1, PARAM_INT);
         for ($i = $this->noofitems; $i >= 1; $i--) {
@@ -277,7 +277,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
                 $mform->addElement('hidden', "definition[$j]");
                 $mform->setType("definition[$j]", PARAM_NOTAGS);
-                $data[$datasetdef->name] =$datasetdef->items[$i]->value;
+                $data[$datasetdef->name] = $datasetdef->items[$i]->value;
 
                 $j--;
             }
@@ -307,9 +307,9 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
         }
         $mform->addElement('static', 'outsidelimit', '', '');
-        // ...----------------------------------------------------------------------
+        // -------------------------------------------------------------------------
         // Non standard name for button element needed so not using add_action_buttons.
-        if (!($this->noofitems==0) ) {
+        if (!($this->noofitems == 0) ) {
             $mform->addElement('submit', 'savechanges', get_string('savechanges'));
             $mform->closeHeaderBefore('savechanges');
         }
@@ -332,13 +332,13 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 if (optional_param('updateanswers', false, PARAM_BOOL) ||
                         optional_param('updatedatasets', false, PARAM_BOOL)) {
                     foreach ($answers as $key => $answer) {
-                        $fromform->tolerance[$key]= $this->_form->getElementValue(
+                        $fromform->tolerance[$key] = $this->_form->getElementValue(
                                 'tolerance['.$key.']');
                         $answer->tolerance = $fromform->tolerance[$key];
-                        $fromform->tolerancetype[$key]= $this->_form->getElementValue(
+                        $fromform->tolerancetype[$key] = $this->_form->getElementValue(
                                 'tolerancetype['.$key.']');
                         if (is_array($fromform->tolerancetype[$key])) {
-                            $fromform->tolerancetype[$key]= $fromform->tolerancetype[$key][0];
+                            $fromform->tolerancetype[$key] = $fromform->tolerancetype[$key][0];
                         }
                         $answer->tolerancetype = $fromform->tolerancetype[$key];
                     }
@@ -369,9 +369,9 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 $this->qtypeobj, $question, $answers, $data, $itemnumber
             );
             if ($comment->outsidelimit) {
-                $this->outsidelimit=$comment->outsidelimit;
+                $this->outsidelimit = $comment->outsidelimit;
             }
-            $totalcomment='';
+            $totalcomment = '';
             foreach ($question->options->answers as $key => $answer) {
                 $totalcomment .= $comment->stranswers[$key].'<br/>';
             }
@@ -381,11 +381,11 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
         $formdata['selectdelete'] = '1';
         $formdata['selectadd'] = '1';
-        $j = $this->noofitems * count($this->datasetdefs)+1;
+        $j = $this->noofitems * count($this->datasetdefs) + 1;
         $data = array(); // Data for comment_on_question_datasetitems later.
         // Dataset generation defaults.
         if ($this->qtypeobj->supports_dataset_item_generation()) {
-            $itemnumber = $this->noofitems+1;
+            $itemnumber = $this->noofitems + 1;
             foreach ($this->datasetdefs as $defid => $datasetdef) {
                 if (!optional_param('updatedatasets', false, PARAM_BOOL) &&
                         !optional_param('updateanswers', false, PARAM_BOOL)) {
@@ -424,16 +424,16 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             $answers, $data, ($this->noofitems + 1)
         );
         if (isset($comment->outsidelimit) && $comment->outsidelimit) {
-            $this->outsidelimit=$comment->outsidelimit;
+            $this->outsidelimit = $comment->outsidelimit;
         }
         $key1 = 1;
         foreach ($question->options->answers as $key => $answer) {
-            $formdata['answercomment['.($this->noofitems+$key1).']'] = $comment->stranswers[$key];
+            $formdata['answercomment['.($this->noofitems + $key1).']'] = $comment->stranswers[$key];
             $key1++;
         }
 
         if ($this->outsidelimit) {
-            $formdata['outsidelimit']= '<span class="error">' .
+            $formdata['outsidelimit'] = '<span class="error">' .
                     get_string('oneanswertrueansweroutsidelimits', 'qtype_calculatedformat') . '</span>';
         }
         $formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $formdata);
@@ -443,7 +443,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
     public function validation($data, $files) {
         $errors = array();
-        if (isset($data['savechanges']) && ($this->noofitems==0) ) {
+        if (isset($data['savechanges']) && ($this->noofitems == 0) ) {
             $errors['warning'] = get_string('warning', 'mnet');
         }
         if ($this->outsidelimit) {

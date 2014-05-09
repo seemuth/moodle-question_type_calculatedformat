@@ -114,7 +114,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $options->synchronize = 0;
         }
         $options->single = 0;
-        $options->answernumbering =  $question->answernumbering;
+        $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
 
         $options->correctanswerbase = $question->correctanswerbase;
@@ -437,7 +437,7 @@ class qtype_calculatedformat extends qtype_calculated {
             return $question;
         }
 
-        $wizardnow =  optional_param('wizardnow', '', PARAM_ALPHA);
+        $wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
         $id = optional_param('id', 0, PARAM_INT); // Question id.
         // In case 'question':
         // For a new question $form->id is empty
@@ -461,7 +461,7 @@ class qtype_calculatedformat extends qtype_calculated {
                         $this->addnamecategory($question);
                     }
                 } else if (!empty($form->makecopy)) {
-                    $questionfromid =  $form->id;
+                    $questionfromid = $form->id;
                     $question = parent::save_question($question, $form);
                     // Prepare the datasets.
                     $this->preparedatasets($form, $questionfromid);
@@ -568,7 +568,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $unit = '';
         }
 
-        $ap = qtype_calculatedformat::make_answer_processor(
+        $ap = $this->make_answer_processor(
             $question->options->correctanswerbase,
             $question->options->correctanswerlengthint,
             $question->options->correctanswerlengthfrac,
@@ -587,7 +587,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $answers = fullclone($answers);
         $errors = '';
         $delimiter = ': ';
-        $virtualqtype =  $qtypeobj->get_virtual_qtype();
+        $virtualqtype = $qtypeobj->get_virtual_qtype();
         foreach ($answers as $key => $answer) {
             $formula = $this->substitute_variables($answer->answer, $data);
             $formattedanswer = qtype_calculatedformat_calculate_answer(
@@ -676,7 +676,7 @@ class qtype_calculatedformat extends qtype_calculated {
 function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     $tolerance, $tolerancetype, $base, $lengthint, $lengthfrac, $unit = '') {
     // The return value has these properties: .
-    // ->answer    the correct answer, formatted properly
+    // ->answer    the correct answer, formatted properly.
     $calculated = new stdClass();
     // Exchange formula variables with the correct values...
     $answer = question_bank::get_qtype('calculatedformat')->substitute_variables_and_eval(

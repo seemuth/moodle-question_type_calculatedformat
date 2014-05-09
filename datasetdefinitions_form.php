@@ -92,8 +92,8 @@ class question_dataset_dependent_definitions_form extends question_wizard_form {
         }
 
         $key = 0;
-        $datadefscat= array();
-        $datadefscat  = $this->qtypeobj->get_dataset_definitions_category($this->question);
+        $datadefscat = array();
+        $datadefscat = $this->qtypeobj->get_dataset_definitions_category($this->question);
         $datasetmenus = array();
         $label = "<div class='mdl-align'>".get_string('datasetrole', 'qtype_calculatedformat')."</div>";
         // Explaining the role of datasets so other strings can be shortened.

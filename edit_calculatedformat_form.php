@@ -60,7 +60,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             if (isset($this->question->id)) {
                 // Remove prefix #{..}# if exists.
                 $this->initialname = $question->name;
-                $regs= array();
+                $regs = array();
                 if (preg_match('~#\{([^[:space:]]*)#~', $question->name , $regs)) {
                     $question->name = str_replace($regs[0], '', $question->name);
                 };
