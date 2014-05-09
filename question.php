@@ -368,7 +368,7 @@ class qtype_calculatedformat_variable_substituter {
                 function ($matches) use ($vs) {
                     $calc = $vs->calculate($matches[2]);
                     $ret = $vs->format_by_fmt($matches[1], $calc);
-                    if is_null($ret) {
+                    if (is_null($ret)) {
                         $ret = $vs->format_simple($calc);
                     }
                 }, $text);
