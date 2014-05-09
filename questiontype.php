@@ -574,9 +574,6 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthfrac,
             $question->options->units, $question->options->unitsleft);
         $base = $question->options->correctanswerbase;
-        if ($base < 2) {
-            $base = 10;
-        }
         if ($base == 2) {
             $niceprefix = '0b';
         } else if ($base == 8) {
@@ -596,7 +593,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $formattedanswer = qtype_calculatedformat_calculate_answer(
                 $answer->answer, $data, $answer->tolerance,
                 $answer->tolerancetype,
-                $base,
+                $question->options->correctanswerbase,
                 $question->options->correctanswerlengthint,
                 $question->options->correctanswerlengthfrac,
                 $unit);
