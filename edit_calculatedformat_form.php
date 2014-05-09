@@ -168,6 +168,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'required');
         $mform->addHelpButton('correctanswerlengthint', 'correctanswerlengthint',
             'qtype_calculatedformat');
+        $mform->setDefault('correctanswerlengthint', 1);
         $mform->setType('correctanswerlengthint', PARAM_INT);
 
         $mform->addElement('text', 'correctanswerlengthfrac',
@@ -177,6 +178,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'required');
         $mform->addHelpButton('correctanswerlengthfrac', 'correctanswerlengthfrac',
             'qtype_calculatedformat');
+        $mform->setDefault('correctanswerlengthfrac', 0);
         $mform->setType('correctanswerlengthfrac', PARAM_INT);
 
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
