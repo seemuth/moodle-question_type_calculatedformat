@@ -95,7 +95,7 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
         $mod = $answer % $base;
         $answer = intval(floor($answer / $base));
 
-        $x .= digits[$mod];
+        $x .= $digits[$mod];
     }
 
     // Insert required number of digits.
