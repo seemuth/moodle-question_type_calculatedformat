@@ -950,11 +950,11 @@ class qtype_calculatedformat_answer_processor
             $value *= $base;
 
             if (($c >= '0') && ($c <= '9')) {
-                $value += ($c - '0');
+                $value += $c;
             } else if (($c >= 'A') && ($c <= 'Z')) {
-                $value += ($c - 'A');
+                $value += (ord($c) - ord('A'));
             } else if (($c >= 'a') && ($c <= 'z')) {
-                $value += ($c - 'a');
+                $value += ($ord(c) - ord('a'));
             } else {
                 debugging('unexpected character: ' . $c);
                 return array(null, null, null);
