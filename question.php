@@ -245,6 +245,7 @@ class qtype_calculatedformat_variable_substituter {
             list($fullmatch, $lengthint, $lengthfrac, $basestr) = $regs;
 
             $base = 0;
+            $basestr = strtolower($basestr);
             if ($basestr == 'b') {
                 $base = 2;
 
@@ -254,7 +255,7 @@ class qtype_calculatedformat_variable_substituter {
             } else if ($basestr == 'd') {
                 $base = 10;
 
-            } else if ($basestr == 'h') {
+            } else if ($basestr == 'x') {
                 $base = 16;
 
             } else {
