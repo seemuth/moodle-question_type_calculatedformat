@@ -620,7 +620,7 @@ class qtype_calculatedformat extends qtype_calculated {
                     $niceprefix .
                     $formattedanswer->answer .
                     ' (' .
-                    $parsedanswer
+                    $parsedanswer .
                     ')<br/>'
                 );
                 $correcttrue = new stdClass();
