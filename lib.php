@@ -97,7 +97,11 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
 
     // Do not group fractional digits.
-    $digitsbeforegroup = $groupdigits + $lengthfrac;
+    if ($groupdigits > 0) {
+        $digitsbeforegroup = $groupdigits + $lengthfrac;
+    } else {
+        $digitsbeforegroup = 0;
+    }
 
     // Convert to string in given base (in reverse order at first).
     $neededdigits = $lengthint + $lengthfrac;
