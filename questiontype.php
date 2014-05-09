@@ -819,7 +819,7 @@ class qtype_calculatedformat_answer_processor
         $thousandssep = preg_quote($this->thousandssep, '/');
         $digits = '0-9a-zA-Z';
         $signre = '([+-]?)';
-        $baseprefixre = '(0[bodxBODX])';
+        $baseprefixre = '((?:0[bodxBODX])?)';
         $intre = '([' . $thousandssep . $digits . '_]*)';
         $fracre = $decsep . '([' . $digits . '_]*)';
 
