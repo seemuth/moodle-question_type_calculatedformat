@@ -957,7 +957,7 @@ class qtype_calculatedformat_answer_processor
             } else if (($c >= 'A') && ($c <= 'Z')) {
                 $value += (ord($c) - ord('A'));
             } else if (($c >= 'a') && ($c <= 'z')) {
-                $value += ($ord($c) - ord('a'));
+                $value += (ord($c) - ord('a'));
             } else {
                 debugging('unexpected character: ' . $c);
                 return array(null, null, null);
