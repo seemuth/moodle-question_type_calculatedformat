@@ -57,7 +57,7 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
  * @param int $base render number in this base (2 <= $base <= 36)
  * @return string formatted number.
  */
-public function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
+function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
     $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     if (($base < 2) || ($base > 36)) {
