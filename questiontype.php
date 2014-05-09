@@ -573,6 +573,10 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthint,
             $question->options->correctanswerlengthfrac,
             $question->options->units, $question->options->unitsleft);
+        $nicebase = $question->options->correctanswerbase;
+        if ($nicebase < 2) {
+            $nicebase = 10;
+        }
 
         $answers = fullclone($answers);
         $errors = '';
@@ -604,10 +608,6 @@ class qtype_calculatedformat extends qtype_calculated {
             } else {
                 $formula = shorten_text($formula, 57, true);
                 $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
-                $nicebase = $base;
-                if ($nicebase < 2) {
-                    $nicebase = 10;
-                }
                 $comment->stranswers[$key] = (
                     $formula .
                     ' = ' .
