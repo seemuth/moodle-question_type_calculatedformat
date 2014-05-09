@@ -604,7 +604,14 @@ class qtype_calculatedformat extends qtype_calculated {
             } else {
                 $formula = shorten_text($formula, 57, true);
                 $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
-                $comment->stranswers[$key] = $formula . ' = ' . $formattedanswer->answer . ' (' . $parsedanswer . ')<br/>';
+                $nicebase = $question->options->correctanswerbase;
+                if ($nicebase < 2) {
+                    $nicebase = 10;
+                }
+                $comment->stranswers[$key] = get_string(
+                    'formulainbase', 'qtype_calculatedformat',
+                    $formula, $formattedanswer->answer, $nicebase, $parsedanswer,
+                ) . '<br/>';
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
