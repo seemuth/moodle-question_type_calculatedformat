@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/question/type/questionbase.php');
 require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
+require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 require_once($CFG->dirroot . '/question/type/calculatedformat/question.php');
 require_once($CFG->dirroot . '/question/type/calculatedformat/lib.php');
@@ -268,10 +269,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $base, $lengthint, $lengthfrac, $units, $unitsleft
     ) {
         if (empty($units)) {
-            return new qtype_calculatedformat_answer_processor(
-                $base, $lengthint, $lengthfrac,
-                array()
-            );
+            return new qtype_calculatedformat_answer_processor($base, array());
         }
 
         $cleanedunits = array();
@@ -280,8 +278,7 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         return new qtype_calculatedformat_answer_processor(
-            $base, $lengthint, $lengthfrac,
-            $cleanedunits, $unitsleft
+            $base, $cleanedunits, $unitsleft
         );
     }
 
@@ -766,5 +763,234 @@ function qtype_calculatedformat_find_formula_errors($formula) {
     } else {
         // Formula just might be valid.
         return false;
+    }
+}
+
+
+/**
+ * This class processes numbers with units and in appropriate bases.
+ *
+ * @copyright 2010 The Open University
+ * @copyright  2014 Daniel P. Seemuth
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class qtype_calculatedformat_answer_processor
+    extends qtype_numerical_answer_processor
+{
+    /** @var int required base, or 0 if any base is acceptable. */
+    protected $base;
+
+    public function __construct($base, $units, $unitsbefore = false,
+        $decsep = null, $thousandssep = null
+    ) {
+
+        parent::__construct($units, $unitsbefore, $decsep, $thousandssep);
+
+        if (!is_numeric($base)) {
+            throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
+        }
+
+        $base = intval($base);
+        if ($base < 2) {
+            $this->base = 0;
+        } else if ($base <= 36) {
+            $this->base = $base;
+        } else {
+            throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
+        }
+    }
+
+    /**
+     * Create the regular expression that {@link parse_to_float()} requires.
+     * @return string
+     */
+    protected function build_regex() {
+        if (!is_null($this->regex)) {
+            return $this->regex;
+        }
+
+        $decsep = preg_quote($this->decsep, '/');
+        $thousandssep = preg_quote($this->thousandssep, '/');
+        $digits = '0-9a-zA-Z';
+        $signre = '([+-]?)';
+        $baseprefixre = '(0[bodxBODX])';
+        $intre = '([' . $thousandssep . $digits . '_]*)';
+        $fracre = $decsep . '([' . $digits . '_]*)';
+
+        $numberbit = "$signre$baseprefixre$intre(?:$fracre)?";
+
+        if ($this->unitsbefore) {
+            $this->regex = "/$numberbit$/";
+        } else {
+            $this->regex = "/^$numberbit/";
+        }
+        return $this->regex;
+    }
+
+    /**
+     * Take a string which is a number with or without a sign, a base, and a
+     * radix point, and possibly followed by one of the units, and split it
+     * into bits.
+     * @param string $response a value, optionally with a unit.
+     * @return array five strings (some of which may be blank): the sign, the
+     * base prefix (i.e., 0b, 0o, 0d, or 0x), the digits before
+     * and after the decimal point, and the unit. All five will be
+     * null if the response cannot be parsed.
+     */
+    protected function parse_response_given_base($response) {
+        if (!preg_match($this->build_regex(), $response, $matches)) {
+            return array(null, null, null, null, null);
+        }
+
+        $matches += array('', '', '', '', ''); // Fill in any missing matches.
+        list($matchedpart, $sign, $baseprefix, $int, $frac) = $matches;
+
+        if ($this->base >= 2) {
+            // There should be no prefix in the response, so prepend to $int.
+            if ($baseprefix !== '') {
+                $int = $baseprefix . $int;
+                $baseprefix = '';
+            }
+        }
+
+        // Strip out thousands separators and group separators.
+        $search = array($this->thousandssep, '_');
+        $replace = array('', '');
+        $int = str_replace($search, $replace, $int);
+        $frac = str_replace($search, $replace, $frac);
+
+        // Must be either something before, or something after the decimal point.
+        // (The only way to do this in the regex would make it much more complicated.)
+        if ($int === '' && $frac === '') {
+            return array(null, null, null, null, null);
+        }
+
+        if ($this->unitsbefore) {
+            $unit = substr($response, 0, -strlen($matchedpart));
+        } else {
+            $unit = substr($response, strlen($matchedpart));
+        }
+        $unit = trim($unit);
+
+        return array($sign, $baseprefix, $int, $frac, $unit);
+    }
+
+    protected function parse_response($response) {
+        throw new coding_exception('Incompatible function parse_response');
+    }
+
+    /**
+     * Takes a number in almost any localised form, in a given or detected base,
+     * and possibly with a unit after it. It separates off the unit, if present,
+     * and converts to the default unit, by using the given unit multiplier.
+     *
+     * @param string $response a value, optionally with a base prefix, and
+     *      optionally with a unit.
+     * @return array(numeric, string, numeric) the value with the unit stripped,
+     *      and normalised by the unit multiplier, if any, and the unit string,
+     *      for reference.
+     */
+    public function apply_units($response, $separateunit = null) {
+        // Strip spaces (which may be thousands separators).
+        $response = str_replace(' ', '', $response);
+
+        list($sign, $baseprefix, $int, $frac, $unit) = $this->parse_response_given_base($response);
+
+        if (($int === null) && ($frac === null)) {
+            return array(null, null, null);
+        }
+
+        if ($this->base >= 2) {
+            $base = $this->base;
+        } else {
+            // Detect base from response.
+            $baseprefix = strtolower($baseprefix);
+            if ($baseprefix === '') {
+                $base = 10;
+            } else if ($baseprefix === '0b') {
+                $base = 2;
+            } else if ($baseprefix === '0o') {
+                $base = 8;
+            } else if ($baseprefix === '0d') {
+                $base = 10;
+            } else if ($baseprefix === '0x') {
+                $base = 16;
+            } else {
+                return array(null, null, null);
+            }
+        }
+
+        $validcharsre = array(
+            2 => '01',
+            8 => '0-7',
+            10 => '0-9',
+            16 => '0-9a-fA-F',
+        )[$base];
+        if (!$validcharsre) {
+            throw new moodle_exception('illegalbase', 'qtype_calculatedformat',
+                $base);
+        }
+
+        // Convert as integer, then adjust for radix point afterward.
+        $valuestr = $int . $frac;
+
+        if (preg_match('[^' . $validcharsre . ']', $valuestr)) {
+            return array(null, null, null);
+        }
+
+        $value = 0;
+        foreach ($valuestr as $c) {
+            $value *= $base;
+
+            if (($c >= '0') && ($c <= '9')) {
+                $value += ($c - '0');
+            } else if (($c >= 'A') && ($c <= 'Z')) {
+                $value += ($c - 'A');
+            } else if (($c >= 'a') && ($c <= 'z')) {
+                $value += ($c - 'a');
+            } else {
+                debugging('unexpected character: ' . $c);
+                return array(null, null, null);
+            }
+        }
+
+        if (strlen($frac) > 0) {
+            // Adjust radix point.
+            $value /= pow($base, strlen($frac));
+        }
+
+        if (!is_null($separateunit)) {
+            $unit = $separateunit;
+        }
+
+        if ($this->is_known_unit($unit)) {
+            $multiplier = 1 / $this->units[$unit];
+        } else {
+            $multiplier = null;
+        }
+
+        return array($value, $unit, $multiplier);
+    }
+
+    /**
+     * Takes a number in almost any localised form, in a given or detected base,
+     * and possibly with a unit after it. It applies the unit multiplier, if
+     * applicable.
+     *
+     * @param string $response a value, optionally with a base prefix, and
+     *      optionally with a unit.
+     * @return false|numeric the value with the unit stripped, and with the
+     *      multiplier applied (if present).
+     *      Or return false if the response is invalid.
+     */
+    public function parse_to_float($response) {
+        list($value, $unit, $multiplier) = $this->parse_response_given_base($response);
+        if (is_null($value)) {
+            return false;
+        }
+        if (!is_null($multiplier)) {
+            $value *= $multiplier;
+        }
+        return $value;
     }
 }
