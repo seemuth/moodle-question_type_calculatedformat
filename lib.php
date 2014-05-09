@@ -60,7 +60,10 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
 function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
     $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    if (($base < 2) || ($base > 36)) {
+    if ($base < 2) {
+        $base = 10;
+    }
+    if ($base > 36) {
         throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
     }
 
