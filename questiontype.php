@@ -603,13 +603,13 @@ class qtype_calculatedformat extends qtype_calculated {
                         get_string('anyvalue', 'qtype_calculatedformat') . '<br/><br/><br/>';
             } else {
                 $formula = shorten_text($formula, 57, true);
-                $comment->stranswers[$key] = $formula . ' = ' . $formattedanswer->answer . '<br/>';
+                $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
+                $comment->stranswers[$key] = $formula . ' = ' . $formattedanswer->answer . ' (' . $parsedanswer . ')<br/>';
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
-                $formattedanswer->answer = $ap->parse_to_float($formattedanswer->answer);
-                if ($formattedanswer->answer < $answer->min ||
-                        $formattedanswer->answer > $answer->max) {
+                if ($parsedanswer < $answer->min ||
+                        $parsedanswer > $answer->max) {
                     $comment->outsidelimit = true;
                     $comment->answers[$key] = $key;
                     $comment->stranswers[$key] .=
