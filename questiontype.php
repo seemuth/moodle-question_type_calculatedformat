@@ -601,7 +601,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
-                $formattedanswer->answer = $this->ap->parse_to_float($formattedanswer->answer);
+                $formattedanswer->answer = $question->ap->parse_to_float($formattedanswer->answer);
                 if ($formattedanswer->answer < $answer->min ||
                         $formattedanswer->answer > $answer->max) {
                     $comment->outsidelimit = true;
