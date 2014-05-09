@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calculated question type upgrade code.
+ * Calculated question type with number formatting upgrade code.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,10 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Upgrade code for the calculated question type.
+ * Upgrade code for the calculated question type with number formatting.
  * @param int $oldversion the version we are upgrading from.
  */
-function xmldb_qtype_calculated_upgrade($oldversion) {
+function xmldb_qtype_calculatedformat_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
