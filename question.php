@@ -241,7 +241,7 @@ class qtype_calculatedformat_variable_substituter {
 
     /**
      * Given a number format:
-     *      `%' (THOUSANDSSEP `_')? NUM (`.' NUM)? [bdoh]
+     *      `%' ([,_])? NUM (`.' NUM)? [bdoh]
      *      (group by thousands or 4 digits, NUM integer digits,
      *      NUM fractional digits, base)
      * format the number in the given base with the given # of digits.
@@ -255,7 +255,7 @@ class qtype_calculatedformat_variable_substituter {
      * @return string formatted number.
      */
     public function format_by_fmt($fmt, $x) {
-        $groupre = '(?:[_' . preg_quote($this->thousandssep, '/') . '])?';
+        $groupre = '(?:[,_])?';
         $regex = '/^%(' . $groupre . ')(\d*)(?:\.(\d+))?([bodxBODX])$/';
         if (preg_match($regex, $fmt, $regs)) {
             list($fullmatch, $group, $lengthint, $lengthfrac, $basestr) = $regs;
@@ -281,7 +281,7 @@ class qtype_calculatedformat_variable_substituter {
             $lengthint = intval($lengthint);
             $lengthfrac = intval($lengthfrac);
 
-            if ($group == $this->thousandssep) {
+            if ($group == ',') {
                 $groupdigits = 3;
             } else if ($group == '_') {
                 $groupdigits = 4;
@@ -395,7 +395,7 @@ class qtype_calculatedformat_variable_substituter {
      */
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $groupre = '(?:[_' . preg_quote($this->thousandssep, '~') . '])?';
+        $groupre = '(?:[,_])?';
         $formatre = '(%' . $groupre . '\d*(?:\.\d+)?[bodxBODX])?';
         $exprre = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
         $text = preg_replace_callback('~\{' . $formatre . $exprre . '}~',
