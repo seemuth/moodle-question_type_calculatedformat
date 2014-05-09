@@ -61,13 +61,9 @@ class qtype_calculatedformat_question extends qtype_calculated_question
 
         foreach ($this->answers as $ans) {
             if ($ans->answer && $ans->answer !== '*') {
-                $ans->answer = $this->vs->calculate($ans->answer,
-                    $ans->correctanswerlengthint, $ans->correctanswerlengthfrac,
-                    $ans->correctanswerformat);
+                $ans->answer = $this->vs->calculate($ans->answer);
             }
-            $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback,
-                    $ans->correctanswerlengthint, $ans->correctanswerlengthfrac,
-                    $ans->correctanswerformat);
+            $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback);
         }
     }
 
