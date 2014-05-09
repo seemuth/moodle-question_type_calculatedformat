@@ -69,7 +69,7 @@ $string['existingcategory3'] = 'a link from an already existing set of links tha
 $string['forceregeneration'] = 'force regeneration';
 $string['forceregenerationall'] = 'forceregeneration of all wildcards';
 $string['forceregenerationshared'] = 'forceregeneration of only non-shared wildcards';
-$string['formulainbaseparsed'] = '{$a} = {$b} (base {$c}) = {$d}';
+$string['formulainbaseparsed'] = '{$a[0]} = {$a[1]} (base {$a[2]}) = {$a[3]}';
 $string['functiontakesatleasttwo'] = 'The function {$a} must have at least two arguments';
 $string['functiontakesnoargs'] = 'The function {$a} does not take any arguments';
 $string['functiontakesonearg'] = 'The function {$a} must have exactly one argument';

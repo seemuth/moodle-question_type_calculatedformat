@@ -610,7 +610,9 @@ class qtype_calculatedformat extends qtype_calculated {
                 }
                 $comment->stranswers[$key] = get_string(
                     'formulainbaseparsed', 'qtype_calculatedformat',
-                    $formula, $formattedanswer->answer, $nicebase, $parsedanswer
+                    array(
+                        $formula, $formattedanswer->answer, $nicebase, $parsedanswer
+                    )
                 ) . '<br/>';
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
