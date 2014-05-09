@@ -966,6 +966,10 @@ class qtype_calculatedformat_answer_processor
             $value /= pow($base, strlen($frac));
         }
 
+        if ($sign === '-') {
+            $value = -$value;
+        }
+
         if (!is_null($separateunit)) {
             $unit = $separateunit;
         }
