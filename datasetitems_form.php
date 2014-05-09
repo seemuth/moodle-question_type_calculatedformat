@@ -123,7 +123,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $html2 = $this->qtypeobj->print_dataset_definitions_category_shared(
                 $this->question, $this->datasetdefs);
         $mform->addElement('static', 'listcategory', $label, $html2);
-        // --------------------------------------------------------------------------
+        // ...-----------------------------------------------------------------------
         $mform->addElement('submit', 'updatedatasets',
                 get_string('updatedatasetparam', 'qtype_calculatedformat'));
         $mform->registerNoSubmitButton('updatedatasets');
@@ -159,7 +159,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $mform->registerNoSubmitButton('updateanswers');
 
         $answers = fullclone($this->question->options->answers);
-        $key1 =1;
+        $key1 = 1;
         foreach ($answers as $key => $answer) {
             $ans = shorten_text($answer->answer, 17, true);
             if ($ans === '*') {
@@ -250,7 +250,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $mform->addGroup($addgrp1, 'addgrp1', '', '   ', false);
         $mform->registerNoSubmitButton('showbutton');
         $mform->closeHeaderBefore('addgrp1');
-        // --------------------------------------------------------------------------
+        // ...-----------------------------------------------------------------------
         $j = $this->noofitems * count($this->datasetdefs);
         $k = optional_param('selectshow', 1, PARAM_INT);
         for ($i = $this->noofitems; $i >= 1; $i--) {
@@ -307,7 +307,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
 
         }
         $mform->addElement('static', 'outsidelimit', '', '');
-        // -------------------------------------------------------------------------
+        // ...----------------------------------------------------------------------
         // Non standard name for button element needed so not using add_action_buttons.
         if (!($this->noofitems == 0) ) {
             $mform->addElement('submit', 'savechanges', get_string('savechanges'));
