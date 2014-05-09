@@ -920,12 +920,13 @@ class qtype_calculatedformat_answer_processor
             }
         }
 
-        $validcharsre = array(
+        $basevalidchars = array(
             2 => '01',
             8 => '0-7',
             10 => '0-9',
             16 => '0-9a-fA-F',
-        )[$base];
+        );
+        $validcharsre = $basevalidchars[$base];
         if (!$validcharsre) {
             throw new moodle_exception('illegalbase', 'qtype_calculatedformat',
                 $base);
