@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
 require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
 require_once($CFG->dirroot . '/question/type/calculatedformat/question.php');
+require_once($CFG->dirroot . '/question/type/calculatedformat/lib.php');
 
 
 /**
