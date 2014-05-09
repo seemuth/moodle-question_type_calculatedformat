@@ -365,8 +365,9 @@ class question_dataset_dependent_items_form extends question_wizard_form {
                 }
                 $j--;
             }
-            $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj, $question->id,
-                    $question->questiontext, $answers, $data, $itemnumber);
+            $comment = $this->qtypeobj->comment_on_question_datasetitems(
+                $this->qtypeobj, $question, $answers, $data, $itemnumber
+            );
             if ($comment->outsidelimit) {
                 $this->outsidelimit=$comment->outsidelimit;
             }
@@ -381,7 +382,7 @@ class question_dataset_dependent_items_form extends question_wizard_form {
         $formdata['selectdelete'] = '1';
         $formdata['selectadd'] = '1';
         $j = $this->noofitems * count($this->datasetdefs)+1;
-        $data = array(); // Data for comment_on_datasetitems later.
+        $data = array(); // Data for comment_on_question_datasetitems later.
         // Dataset generation defaults.
         if ($this->qtypeobj->supports_dataset_item_generation()) {
             $itemnumber = $this->noofitems+1;
@@ -418,8 +419,10 @@ class question_dataset_dependent_items_form extends question_wizard_form {
             }
         }
 
-        $comment = $this->qtypeobj->comment_on_datasetitems($this->qtypeobj, $question->id,
-                $question->questiontext, $answers, $data, ($this->noofitems + 1));
+        $comment = $this->qtypeobj->comment_on_question_datasetitems(
+            $this->qtypeobj, $question,
+            $answers, $data, ($this->noofitems + 1)
+        );
         if (isset($comment->outsidelimit) && $comment->outsidelimit) {
             $this->outsidelimit=$comment->outsidelimit;
         }

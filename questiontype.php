@@ -548,8 +548,15 @@ class qtype_calculatedformat extends qtype_calculated {
         }
     }
 
-    public function comment_on_datasetitems($qtypeobj, $question,
-            $answers, $data, $number) {
+    public function comment_on_datasetitems($qtypeobj, $questionid, $questiontext,
+        $answers, $data, $number
+    ) {
+        throw new coding_exception('Incompatible function comment_on_datasetitems');
+    }
+
+    public function comment_on_question_datasetitems($qtypeobj, $question,
+        $answers, $data, $number
+    ) {
         global $DB;
         $comment = new stdClass();
         $comment->stranswers = array();
