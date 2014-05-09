@@ -573,9 +573,15 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthint,
             $question->options->correctanswerlengthfrac,
             $question->options->units, $question->options->unitsleft);
-        $nicebase = $question->options->correctanswerbase;
-        if ($nicebase < 2) {
-            $nicebase = 10;
+        $base = $question->options->correctanswerbase;
+        if ($base == 2) {
+            $niceprefix = '0b';
+        } else if ($base == 8) {
+            $niceprefix = '0o';
+        } else if ($base == 16) {
+            $niceprefix = '0x';
+        } else {
+            $niceprefix = '';
         }
 
         $answers = fullclone($answers);
@@ -611,12 +617,11 @@ class qtype_calculatedformat extends qtype_calculated {
                 $comment->stranswers[$key] = (
                     $formula .
                     ' = ' .
+                    $niceprefix .
                     $formattedanswer->answer .
                     ' (' .
-                    get_string('inbase', 'qtype_calculatedformat', $nicebase) .
-                    ') = ' .
-                    $parsedanswer .
-                    '<br/>'
+                    $parsedanswer
+                    ')<br/>'
                 );
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
