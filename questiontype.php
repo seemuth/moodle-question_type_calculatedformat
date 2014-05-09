@@ -568,6 +568,12 @@ class qtype_calculatedformat extends qtype_calculated {
             $unit = '';
         }
 
+        $ap = qtype_calculatedformat::make_answer_processor(
+            $question->options->correctanswerbase,
+            $question->options->correctanswerlengthint,
+            $question->options->correctanswerlengthfrac,
+            $question->options->units, $question->options->unitsleft);
+
         $answers = fullclone($answers);
         $errors = '';
         $delimiter = ': ';
@@ -601,7 +607,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $correcttrue = new stdClass();
                 $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
-                $formattedanswer->answer = $question->ap->parse_to_float($formattedanswer->answer);
+                $formattedanswer->answer = $ap->parse_to_float($formattedanswer->answer);
                 if ($formattedanswer->answer < $answer->min ||
                         $formattedanswer->answer > $answer->max) {
                     $comment->outsidelimit = true;
