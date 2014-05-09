@@ -359,7 +359,7 @@ class qtype_calculatedformat_variable_substituter {
      */
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $re_format = '(\d+(?:\.\d+)?[bodxBODX])?';
+        $re_format = '(%\d+(?:\.\d+)?[bodxBODX])?';
         $re_expr = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
         $text = preg_replace_callback('~\{' . $re_format . $re_expr . '}~',
                 function ($matches) use ($vs) {
@@ -368,6 +368,7 @@ class qtype_calculatedformat_variable_substituter {
                     if (is_null($ret)) {
                         $ret = $vs->format_simple($calc);
                     }
+                    return $ret;
                 }, $text);
         return $this->substitute_values_pretty($text);
     }
