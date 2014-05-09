@@ -107,6 +107,9 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
         $x .= str_repeat('0', $needed);
     }
 
+    // Include sign if applicable.
+    $x .= $sign;
+
     // Reverse string to get proper format.
     $x = strrev($x);
 
