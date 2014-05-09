@@ -75,7 +75,9 @@ class qtype_calculatedformat_question extends qtype_calculated_question
 
         $response = array('answer' => $this->vs->format_in_base($answer->answer,
             $this->correctanswerbase,
-            $this->correctanswerlengthint, $this->correctanswerlengthfrac));
+            $this->correctanswerlengthint, $this->correctanswerlengthfrac,
+            $this->correctanswergroupdigits
+        ));
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
@@ -130,7 +132,9 @@ abstract class qtype_calculatedformat_question_helper {
 
         $question->vs = new qtype_calculatedformat_variable_substituter(
                 $question->datasetloader->get_values($variant),
-                get_string('decsep', 'langconfig'));
+                get_string('decsep', 'langconfig'),
+                get_string('thousandssep', 'langconfig')
+            );
         $question->calculate_all_expressions();
 
         foreach ($question->vs->get_values() as $name => $value) {
@@ -150,7 +154,10 @@ abstract class qtype_calculatedformat_question_helper {
         }
 
         $question->vs = new qtype_calculatedformat_variable_substituter(
-                $values, get_string('decsep', 'langconfig'));
+            $values,
+            get_string('decsep', 'langconfig'),
+            get_string('thousandssep', 'langconfig')
+        );
         $question->calculate_all_expressions();
     }
 }
@@ -178,6 +185,9 @@ class qtype_calculatedformat_variable_substituter {
     /** @var string character to use for the decimal point in displayed numbers. */
     protected $decimalpoint;
 
+    /** @var string character to use for the thousands separator in displayed numbers. */
+    protected $thousandssep;
+
     /** @var array variable names wrapped in {...}. Used by {@link substitute_values()}. */
     protected $search;
 
@@ -197,9 +207,10 @@ class qtype_calculatedformat_variable_substituter {
      * Constructor
      * @param array $values variable name => value.
      */
-    public function __construct(array $values, $decimalpoint) {
+    public function __construct(array $values, $decimalpoint, $thousandssep) {
         $this->values = $values;
         $this->decimalpoint = $decimalpoint;
+        $this->thousandssep = $thousandssep;
 
         // Prepare an array for {@link substitute_values()}.
         $this->search = array();
@@ -230,19 +241,24 @@ class qtype_calculatedformat_variable_substituter {
 
     /**
      * Given a number format:
-     *      `%' NUM (`.' NUM)? [bdoh]
+     *      `%' (THOUSANDSSEP `_')? NUM (`.' NUM)? [bdoh]
+     *      (group by thousands or 4 digits, NUM integer digits,
+     *      NUM fractional digits, base)
      * format the number in the given base with the given # of digits.
      *
      * If the number format is not valid, return null.
      *
      * @param string $fmt the number format, e.g.:
-     *      4.2d for 4 integer digits, 2 fractional digits, in base 10 (decimal)
+     *      %_3.2d for group by 4 digits, 3 integer digits,
+     *      2 fractional digits, in base 10 (decimal)
      * @param number $x the number to format
      * @return string formatted number.
      */
     public function format_by_fmt($fmt, $x) {
-        if (preg_match('/^%(\d*)(?:\.(\d+))?([bodxBODX])$/', $fmt, $regs)) {
-            list($fullmatch, $lengthint, $lengthfrac, $basestr) = $regs;
+        $groupre = '(?:[_' . preg_quote($this->thousandssep, '/') . '])?';
+        $regex = '/^%(' . $groupre . ')(\d*)(?:\.(\d+))?([bodxBODX])$/';
+        if (preg_match($regex, $fmt, $regs)) {
+            list($fullmatch, $group, $lengthint, $lengthfrac, $basestr) = $regs;
 
             $base = 0;
             $basestr = strtolower($basestr);
@@ -265,7 +281,17 @@ class qtype_calculatedformat_variable_substituter {
             $lengthint = intval($lengthint);
             $lengthfrac = intval($lengthfrac);
 
-            return $this->format_in_base($x, $base, $lengthint, $lengthfrac);
+            if ($group == $this->thousandssep) {
+                $groupdigits = 3;
+            } else if ($group == '_') {
+                $groupdigits = 4;
+            } else {
+                $groupdigits = 0;
+            }
+
+            return $this->format_in_base(
+                $x, $base, $lengthint, $lengthfrac, $groupdigits
+            );
         }
 
         // Not a valid format.
@@ -276,14 +302,24 @@ class qtype_calculatedformat_variable_substituter {
      * Display a number properly formatted in a certain base, with a certain
      * number of digits before and after the radix point.
      * @param number $x the number to format
+     * @param int $base render number in this base (2 <= $base <= 36)
      * @param int $lengthint expand to this many digits before the radix point
      * @param int $lengthfrac restrict to this many digits after the radix point
-     * @param int $base render number in this base (2 <= $base <= 36)
+     * @param int $groupdigits separate groups of this many digits
+     *      if 3, then use thousands separator; otherwise use underscore.
      * @return string formatted number.
      */
-    public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0) {
-        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac);
-        return str_replace('.', $this->decimalpoint, $formatted);
+    public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0,
+        $groupdigits = 0
+    ) {
+        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits);
+        $formatted = str_replace('.', $this->decimalpoint, $formatted);
+
+        if ($groupdigits == 3) {
+            $formatted = str_replace('_', $this->thousandssep, $formatted);
+        }
+
+        return $formatted;
     }
 
     /**
@@ -359,7 +395,8 @@ class qtype_calculatedformat_variable_substituter {
      */
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
-        $formatre = '(%\d*(?:\.\d+)?[bodxBODX])?';
+        $groupre = '(?:[_' . preg_quote($this->thousandssep, '~') . '])?';
+        $formatre = '(%' . $groupre . '\d*(?:\.\d+)?[bodxBODX])?';
         $exprre = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
         $text = preg_replace_callback('~\{' . $formatre . $exprre . '}~',
                 function ($matches) use ($vs) {
@@ -372,5 +409,4 @@ class qtype_calculatedformat_variable_substituter {
                 }, $text);
         return $this->substitute_values_pretty($text);
     }
-
 }

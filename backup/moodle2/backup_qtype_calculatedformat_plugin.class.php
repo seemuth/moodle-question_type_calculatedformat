@@ -75,7 +75,9 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering',
             'correctanswerbase',
-            'correctanswerlengthint', 'correctanswerlengthfrac'));
+            'correctanswerlengthint', 'correctanswerlengthfrac',
+            'correctanswergroupdigits'
+        ));
 
         // Now the own qtype tree.
         $pluginwrapper->add_child($calculatedrecords);

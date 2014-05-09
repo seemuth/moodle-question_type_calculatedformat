@@ -181,6 +181,22 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->setDefault('correctanswerlengthfrac', 0);
         $mform->setType('correctanswerlengthfrac', PARAM_INT);
 
+        $groupoptions = array(
+            0 => get_string('nogrouping', 'qtype_calculatedformat'),
+            3 => get_string(
+                'groupthree', 'qtype_calculatedformat',
+                get_string('thousandssep', 'langconfig')
+            ),
+            4 => get_string('groupfour', 'qtype_calculatedformat', '_'),
+        );
+        $mform->addElement('select', 'correctanswergroupdigits',
+            get_string('groupdigits', 'qtype_calculatedformat'),
+            $groupoptions);
+        $mform->addHelpButton('correctanswergroupdigits', 'groupdigits',
+            'qtype_calculatedformat');
+        $mform->setDefault('correctanswergroupdigits', 0);
+        $mform->setType('correctanswergroupdigits', PARAM_INT);
+
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
 
@@ -215,6 +231,9 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         }
         if (isset($question->options->correctanswerlengthfrac)) {
             $question->correctanswerlengthfrac = $question->options->correctanswerlengthfrac;
+        }
+        if (isset($question->options->correctanswergroupdigits)) {
+            $question->correctanswergroupdigits = $question->options->correctanswergroupdigits;
         }
 
         return $question;
