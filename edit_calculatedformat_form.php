@@ -277,7 +277,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             $qtext = $qtext.$qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
             if (!empty($regs1[1]) && $formulaerrors =
-                    qtype_calculated_find_formula_errors($regs1[1])) {
+                    qtype_calculatedformat_find_formula_errors($regs1[1])) {
                 if (!isset($errors['questiontext'])) {
                     $errors['questiontext'] = $formulaerrors.':'.$regs1[1];
                 } else {
@@ -308,14 +308,14 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
     }
 
     protected function is_valid_answer($answer, $data) {
-        return !qtype_calculated_find_formula_errors($answer);
+        return !qtype_calculatedformat_find_formula_errors($answer);
     }
 
     protected function valid_answer_message($answer) {
         if (!$answer) {
             return get_string('mustenteraformulaorstar', 'qtype_numerical');
         } else {
-            return qtype_calculated_find_formula_errors($answer);
+            return qtype_calculatedformat_find_formula_errors($answer);
         }
     }
 }
