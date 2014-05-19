@@ -247,6 +247,9 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         if (isset($question->options->correctanswergroupdigits)) {
             $question->correctanswergroupdigits = $question->options->correctanswergroupdigits;
         }
+        if (isset($question->options->exactdigits)) {
+            $question->exactdigits = $question->options->exactdigits;
+        }
 
         return $question;
     }
