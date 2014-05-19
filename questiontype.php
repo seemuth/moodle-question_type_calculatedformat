@@ -609,9 +609,33 @@ class qtype_calculatedformat extends qtype_calculated {
                 $answer->min = ' ';
             } else {
                 eval('$ansvalue = '.$formula.';');
+
+                $base = $question->options->correctanswerbase;
+                if (($base == 2) || ($base == 8) || ($base == 16)) {
+                    // Compute value and tolerance given specific format.
+                    list($ansvalue, $format_tolerance) = qtype_calculatedformat_mask_value(
+                        $ansvalue,
+                        $question->options->correctanswerbase,
+                        $question->options->correctanswerlengthint,
+                        $question->options->correctanswerlengthfrac
+                    );
+                }
+
                 $ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $answer->tolerance);
                 $ans->tolerancetype = $answer->tolerancetype;
                 list($answer->min, $answer->max) = $ans->get_tolerance_interval($answer);
+
+                if (isset($format_tolerance)) {
+                    $alt_ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $format_tolerance);
+                    $alt_ans->tolerancetype = 'nominal';
+                    list($alt_min, $alt_max) = $alt_ans->get_tolerance_interval();
+
+                    // Choose wider interval.
+                    if (($alt_max - $alt_min) > ($answer->max - $answer->min)) {
+                        $answer->min = $alt_min;
+                        $answer->max = $alt_max;
+                    }
+                }
             }
             if ($answer->min === '') {
                 // This should mean that something is wrong.

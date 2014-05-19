@@ -102,23 +102,9 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     // Mask to exact number of digits, if required.
     if ($exactdigits) {
         if (($base == 2) || ($base == 8) || ($base == 16)) {
-            $numbits = 0;
-            for ($mask = 1; $mask < $base; $mask <<= 1) {
-                $numbits++;
-            }
-
-            // Include both $lengthint and $lengthfrac because add . later.
-            $numbits *= ($lengthint + $lengthfrac);
-
-            // Construct mask with exact bit length.
-            $mask = 0;
-            for ($i = 0; $i < $numbits; $i++) {
-                $mask <<= 1;
-                $mask |= 1;
-            }
-
-            // Mask off extra bits and remove sign.
-            $answer &= $mask;
+            list($answer, $tolerance) = qtype_calculatedformat_mask_value(
+                $answer, $base, $lengthint, $lengthfrac
+            );
             $sign = '';
         }
     }
@@ -162,4 +148,52 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
 
     return $x;
+}
+
+/**
+ * Fix a number to exactly the required number of digits in binary, octal, or
+ * hexadecimal.
+ * @param number $x the number to fix
+ * @param int $lengthint expand to this many digits before the radix point
+ * @param int $lengthfrac restrict to this many digits after the radix point
+ * @return array->number (number fitted to required number of digits, tolerance)
+ */
+function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
+    if (($base != 2) || ($base != 8) || ($base != 16)) {
+        throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
+    }
+
+    $numbits = 0;
+    for ($mask = 1; $mask < $base; $mask <<= 1) {
+        $numbits++;
+    }
+
+    $powbase = pow($base, $lengthfrac);
+
+    // Round properly to correct # of digits.
+    $x *= $powbase;
+    $x = intval(round($x));
+
+    $numbits *= ($lengthint + $lengthfrac);
+
+    // Construct mask with exact bit length.
+    $mask = 0;
+    for ($i = 0; $i < $numbits; $i++) {
+        $mask <<= 1;
+        $mask |= 1;
+    }
+
+    // Mask off extra bits.
+    $x &= $mask;
+
+    // Convert back to fractional and compute tolerance.
+    $x /= $powbase;
+
+    if ($lengthfrac > 0) {
+        $tolerance = 1 / (2 * $powbase);
+    } else {
+        $tolerance = 0;
+    }
+
+    return array($x, $tolerance);
 }
