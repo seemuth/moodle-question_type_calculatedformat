@@ -171,6 +171,18 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->setDefault('correctanswerlengthint', 1);
         $mform->setType('correctanswerlengthint', PARAM_INT);
 
+        $exactdigitsoptions = array(
+            0 => get_string('mindigits', 'qtype_calculatedformat'),
+            1 => get_string('exactdigits', 'qtype_calculatedformat'),
+        );
+        $mform->addElement('select', 'exactdigits',
+            get_string('minexactdigits', 'qtype_calculatedformat'),
+            $exactdigitsoptions);
+        $mform->addHelpButton('exactdigits', 'minexactdigits',
+            'qtype_calculatedformat');
+        $mform->setDefault('exactdigits', 0);
+        $mform->setType('exactdigits', PARAM_INT);
+
         $mform->addElement('text', 'correctanswerlengthfrac',
             get_string('correctanswerlengthfrac', 'qtype_calculatedformat'));
         $mform->addRule('correctanswerlengthfrac',

@@ -66,6 +66,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthint = 0;
             $question->options->correctanswerlengthfrac = 0;
             $question->options->correctanswergroupdigits = 0;
+            $question->options->exactdigits = 0;
         }
 
         if (!$question->options->answers = $DB->get_records_sql("
@@ -122,6 +123,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $options->correctanswerlengthint = $question->correctanswerlengthint;
         $options->correctanswerlengthfrac = $question->correctanswerlengthfrac;
         $options->correctanswergroupdigits = $question->correctanswergroupdigits;
+        $options->exactdigits = $question->exactdigits;
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback',
                 'incorrectfeedback') as $feedbackname) {
@@ -255,6 +257,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $question->correctanswerlengthint = $questiondata->options->correctanswerlengthint;
         $question->correctanswerlengthfrac = $questiondata->options->correctanswerlengthfrac;
         $question->correctanswergroupdigits = $questiondata->options->correctanswergroupdigits;
+        $question->exactdigits = $questiondata->options->exactdigits;
 
         $question->unitdisplay = $questiondata->options->showunits;
         $question->unitgradingtype = $questiondata->options->unitgradingtype;
@@ -600,6 +603,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $question->options->correctanswerlengthint,
                 $question->options->correctanswerlengthfrac,
                 $question->options->correctanswergroupdigits,
+                $question->options->exactdigits,
                 $unit);
             if ($formula === '*') {
                 $answer->min = ' ';
@@ -679,7 +683,7 @@ class qtype_calculatedformat extends qtype_calculated {
 
 function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     $tolerance, $tolerancetype,
-    $base, $lengthint, $lengthfrac, $groupdigits,
+    $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits,
     $unit = ''
 ) {
     // The return value has these properties: .
@@ -695,7 +699,7 @@ function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     }
 
     $calculated->answer = qtype_calculatedformat_format_in_base(
-        $answer, $base, $lengthint, $lengthfrac, $groupdigits
+        $answer, $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits
     );
 
     if ($unit != '') {

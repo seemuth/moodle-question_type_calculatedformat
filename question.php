@@ -133,7 +133,8 @@ abstract class qtype_calculatedformat_question_helper {
         $question->vs = new qtype_calculatedformat_variable_substituter(
                 $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'),
-                get_string('thousandssep', 'langconfig')
+                get_string('thousandssep', 'langconfig'),
+                $question->options->exactdigits
             );
         $question->calculate_all_expressions();
 
@@ -156,7 +157,8 @@ abstract class qtype_calculatedformat_question_helper {
         $question->vs = new qtype_calculatedformat_variable_substituter(
             $values,
             get_string('decsep', 'langconfig'),
-            get_string('thousandssep', 'langconfig')
+            get_string('thousandssep', 'langconfig'),
+            $question->options->exactdigits
         );
         $question->calculate_all_expressions();
     }
@@ -204,13 +206,19 @@ class qtype_calculatedformat_variable_substituter {
     protected $prettyvalue;
 
     /**
+     * @var bool if true, then formulas will be computed with exact number of
+     * digits, rather than minimum number for integer digits.
+     * Used by {@link format_in_base()}.
+
+    /**
      * Constructor
      * @param array $values variable name => value.
      */
-    public function __construct(array $values, $decimalpoint, $thousandssep) {
+    public function __construct(array $values, $decimalpoint, $thousandssep, $exactdigits) {
         $this->values = $values;
         $this->decimalpoint = $decimalpoint;
         $this->thousandssep = $thousandssep;
+        $this->exactdigits = $exactdigits;
 
         // Prepare an array for {@link substitute_values()}.
         $this->search = array();
@@ -312,7 +320,7 @@ class qtype_calculatedformat_variable_substituter {
     public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0,
         $groupdigits = 0
     ) {
-        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits);
+        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits, $this->exactdigits);
         $formatted = str_replace('.', $this->decimalpoint, $formatted);
 
         if ($groupdigits == 3) {

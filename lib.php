@@ -55,9 +55,12 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
  * @param int $lengthint expand to this many digits before the radix point
  * @param int $lengthfrac restrict to this many digits after the radix point
  * @param int $base render number in this base (2 <= $base <= 36)
+ * @param int $groupdigits optionally separate groups of this many digits
+ * @param bool $exactdigits if true, fix to exactly $lengthint integer digits
+ *      (only heeded for binary, octal, and hexadecimal)
  * @return string formatted number.
  */
-function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0) {
+function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0, $exactdigits = 0) {
     $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     if ($base < 2) {
@@ -94,6 +97,30 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
 
     if ($answer == 0) {
         $sign = '';
+    }
+
+    // Mask to exact number of digits, if required.
+    if ($exactdigits) {
+        if (($base == 2) || ($base == 8) || ($base == 16)) {
+            $numbits = 0;
+            for ($mask = 1; $mask < $base; $mask <<= 1) {
+                $numbits++;
+            }
+
+            // Include both $lengthint and $lengthfrac because add . later.
+            $numbits *= ($lengthint + $lengthfrac);
+
+            // Construct mask with exact bit length.
+            $mask = 0;
+            for ($i = 0; $i < $numbits; $i++) {
+                $mask <<= 1;
+                $mask |= 1;
+            }
+
+            // Mask off extra bits and remove sign.
+            $answer &= $mask;
+            $sign = '';
+        }
     }
 
     // Do not group fractional digits.
