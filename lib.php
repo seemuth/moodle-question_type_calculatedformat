@@ -159,7 +159,7 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
  * @return array->number (number fitted to required number of digits, tolerance)
  */
 function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
-    if (($base != 2) || ($base != 8) || ($base != 16)) {
+    if (($base != 2) && ($base != 8) && ($base != 16)) {
         throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
     }
 
