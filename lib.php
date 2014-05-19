@@ -102,6 +102,11 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     // Mask to exact number of digits, if required.
     if ($exactdigits) {
         if (($base == 2) || ($base == 8) || ($base == 16)) {
+            // Re-negate if answer was negative.
+            if ($sign == '-') {
+                $answer = -$answer;
+            }
+
             list($answer, $tolerance) = qtype_calculatedformat_mask_value(
                 $answer, $base, $lengthint, $lengthfrac
             );
