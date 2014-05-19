@@ -73,7 +73,21 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             return array();
         }
 
-        $response = array('answer' => $this->vs->format_in_base($answer->answer,
+        // Include base prefix, if applicable.
+        if ($this->correctanswerbase == 2) {
+            $baseprefix = '0b';
+
+        } else if ($this->correctanswerbase == 8) {
+            $baseprefix = '0o';
+
+        } else if ($this->correctanswerbase == 16) {
+            $baseprefix = '0x';
+
+        } else {
+            $baseprefix = '';
+        }
+
+        $response = array('answer' => $baseprefix . $this->vs->format_in_base($answer->answer,
             $this->correctanswerbase,
             $this->correctanswerlengthint, $this->correctanswerlengthfrac,
             $this->correctanswergroupdigits
