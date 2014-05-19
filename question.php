@@ -59,9 +59,28 @@ class qtype_calculatedformat_question extends qtype_calculated_question
         $this->questiontext = $this->vs->replace_expressions_in_text($this->questiontext);
         $this->generalfeedback = $this->vs->replace_expressions_in_text($this->generalfeedback);
 
+        $maskanswers = false;
+        if ($this->exactdigits) {
+            if (
+                ($this->correctanswerbase == 2) ||
+                ($this->correctanswerbase == 8) ||
+                ($this->correctanswerbase == 16)
+            ) {
+                $maskanswers = true;
+            }
+        }
+
         foreach ($this->answers as $ans) {
             if ($ans->answer && $ans->answer !== '*') {
                 $ans->answer = $this->vs->calculate($ans->answer);
+                if ($maskanswers) {
+                    $ans->answer = qtype_calculatedformat_mask_value(
+                        $ans->answer,
+                        $this->correctanswerbase,
+                        $this->correctanswerlengthint,
+                        $this->correctanswerlengthfrac
+                    );
+                }
             }
             $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback);
         }
