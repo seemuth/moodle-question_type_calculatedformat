@@ -134,7 +134,7 @@ abstract class qtype_calculatedformat_question_helper {
                 $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'),
                 get_string('thousandssep', 'langconfig'),
-                $question->options->exactdigits
+                $question->exactdigits
             );
         $question->calculate_all_expressions();
 
@@ -158,7 +158,7 @@ abstract class qtype_calculatedformat_question_helper {
             $values,
             get_string('decsep', 'langconfig'),
             get_string('thousandssep', 'langconfig'),
-            $question->options->exactdigits
+            $question->exactdigits
         );
         $question->calculate_all_expressions();
     }
