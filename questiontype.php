@@ -626,14 +626,14 @@ class qtype_calculatedformat extends qtype_calculated {
                 list($answer->min, $answer->max) = $ans->get_tolerance_interval($answer);
 
                 if (isset($format_tolerance)) {
-                    $alt_ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $format_tolerance);
-                    $alt_ans->tolerancetype = 'nominal';
-                    list($alt_min, $alt_max) = $alt_ans->get_tolerance_interval();
+                    $altans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $format_tolerance);
+                    $altans->tolerancetype = 'nominal';
+                    list($altmin, $altmax) = $altans->get_tolerance_interval();
 
                     // Choose wider interval.
-                    if (($alt_max - $alt_min) > ($answer->max - $answer->min)) {
-                        $answer->min = $alt_min;
-                        $answer->max = $alt_max;
+                    if (($altmax - $altmin) > ($answer->max - $answer->min)) {
+                        $answer->min = $altmin;
+                        $answer->max = $altmax;
                     }
                 }
             }
