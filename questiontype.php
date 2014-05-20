@@ -630,7 +630,10 @@ class qtype_calculatedformat extends qtype_calculated {
                         get_string('anyvalue', 'qtype_calculatedformat') . '<br/><br/><br/>';
             } else {
                 $formula = shorten_text($formula, 57, true);
-                $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
+                $parsedanswer = $ap->parse_to_float(
+                    $formattedanswer->answer,
+                    $question->options->correctanswerbase
+                );
 
                 $comment->stranswers[$key] = (
                     $formula .
@@ -1031,11 +1034,34 @@ class qtype_calculatedformat_answer_processor
      *
      * @param string $response a value, optionally with a base prefix, and
      *      optionally with a unit.
+     * @param int expectbase if positive, strip base prefix from input if present
      * @return false|numeric the value with the unit stripped, and with the
      *      multiplier applied (if present).
      *      Or return false if the response is invalid.
      */
-    public function parse_to_float($response) {
+    public function parse_to_float($response, $expectbase = 0) {
+        if ($expectbase == 2) {
+            $baseprefix = '0b';
+
+        } else if ($expectbase == 8) {
+            $baseprefix = '0o';
+
+        } else if ($expectbase == 10) {
+            $baseprefix = '0d';
+
+        } else if ($expectbase == 16) {
+            $baseprefix = '0x';
+
+        } else {
+            $baseprefix = '';
+        }
+
+        if ($baseprefix != '') {
+            $prefixre = preg_quote($baseprefix, '/');
+            $regex = '/^(-?)(' . $prefixre . ')/i';
+            $response = preg_replace($regex, '$1', $response);
+        }
+
         list($value, $unit, $multiplier) = $this->apply_units($response);
         if (is_null($value)) {
             return false;
