@@ -106,11 +106,20 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             $baseprefix = '';
         }
 
-        $response = array('answer' => $baseprefix . $this->vs->format_in_base($answer->answer,
+        $formattedanswer = $this->vs->format_in_base($answer->answer,
             $this->correctanswerbase,
             $this->correctanswerlengthint, $this->correctanswerlengthfrac,
             $this->correctanswergroupdigits
-        ));
+        );
+
+        if ($formattedanswer[0] == '-') {
+            // Insert after minus sign.
+            $formattedanswer = substr_replace($formattedanswer, $baseprefix, 1, 0);
+        } else {
+            $formattedanswer = $baseprefix . $formattedanswer;
+        }
+
+        $response = array('answer' => $formattedanswer);
 
         if ($this->has_separate_unit_field()) {
             $response['unit'] = $this->ap->get_default_unit();
