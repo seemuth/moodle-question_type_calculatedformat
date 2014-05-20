@@ -613,7 +613,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $base = $question->options->correctanswerbase;
                 if (($base == 2) || ($base == 8) || ($base == 16)) {
                     // Compute value and tolerance given specific format.
-                    list($ansvalue, $format_tolerance) = qtype_calculatedformat_mask_value(
+                    list($ansvalue, $alttolerance) = qtype_calculatedformat_mask_value(
                         $ansvalue,
                         $question->options->correctanswerbase,
                         $question->options->correctanswerlengthint,
@@ -625,8 +625,8 @@ class qtype_calculatedformat extends qtype_calculated {
                 $ans->tolerancetype = $answer->tolerancetype;
                 list($answer->min, $answer->max) = $ans->get_tolerance_interval($answer);
 
-                if (isset($format_tolerance)) {
-                    $altans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $format_tolerance);
+                if (isset($alttolerance)) {
+                    $altans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $alttolerance);
                     $altans->tolerancetype = 'nominal';
                     list($altmin, $altmax) = $altans->get_tolerance_interval();
 

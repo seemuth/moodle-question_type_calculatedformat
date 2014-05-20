@@ -74,7 +74,7 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             if ($ans->answer && $ans->answer !== '*') {
                 $ans->answer = $this->vs->calculate($ans->answer);
                 if ($maskanswers) {
-                    $ans->answer = qtype_calculatedformat_mask_value(
+                    list($ans->answer, $alttolerance) = qtype_calculatedformat_mask_value(
                         $ans->answer,
                         $this->correctanswerbase,
                         $this->correctanswerlengthint,
