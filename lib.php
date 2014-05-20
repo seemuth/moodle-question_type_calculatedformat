@@ -107,7 +107,7 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
                 $answer = -$answer;
             }
 
-            list($answer, $tolerance) = qtype_calculatedformat_mask_value(
+            $answer = qtype_calculatedformat_mask_value(
                 $answer, $base, $lengthint, $lengthfrac
             );
             $sign = '';
@@ -161,7 +161,7 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
  * @param number $x the number to fix
  * @param int $lengthint expand to this many digits before the radix point
  * @param int $lengthfrac restrict to this many digits after the radix point
- * @return array->number (number fitted to required number of digits, tolerance)
+ * @return number number fitted to required number of digits
  */
 function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
     if (($base != 2) && ($base != 8) && ($base != 16)) {
@@ -191,14 +191,8 @@ function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
     // Mask off extra bits.
     $x &= $mask;
 
-    // Convert back to fractional and compute tolerance.
+    // Convert back to fractional number.
     $x /= $powbase;
 
-    if ($lengthfrac > 0) {
-        $tolerance = 1 / (2 * $powbase);
-    } else {
-        $tolerance = 0;
-    }
-
-    return array($x, $tolerance);
+    return $x;
 }
