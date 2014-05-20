@@ -646,7 +646,6 @@ class qtype_calculatedformat extends qtype_calculated {
                 $comment->stranswers[$key] = (
                     $formula .
                     ' = ' .
-                    $niceprefix .
                     $answerwithprefix .
                     ' (' .
                     $parsedanswer .
