@@ -64,6 +64,7 @@ $string['editdatasets'] = 'Edit the wildcards datasets';
 $string['editdatasets_help'] = 'Wildcard values may be created by entering a number in each wild card field then clicking the add button. To automatically generate 10 or more values, select the number of values required before clicking the add button. A uniform distribution means any value between the limits is equally likely to be generated; a loguniform distribution means that values towards the lower limit are more likely.';
 $string['editdatasets_link'] = 'question/type/calculated';
 $string['exactdigits'] = 'Exact number of integer digits';
+$string['exactdigitsonlyvalid'] = 'Exact digits only valid for binary, octal, and hexadecimal bases.';
 $string['existingcategory1'] = 'will use an already existing shared dataset';
 $string['existingcategory2'] = 'a file from an already existing set of files that are also used by other questions in this category';
 $string['existingcategory3'] = 'a link from an already existing set of links that are also used by other questions in this category';

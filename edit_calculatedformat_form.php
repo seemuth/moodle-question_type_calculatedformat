@@ -319,6 +319,15 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             $trimmedanswer = trim($answer);
         }
 
+        // Exact digits is valid only for binary, octal, hexadecimal.
+        if ($data['exactdigits']) {
+            $base = $data['correctanswerbase'];
+            if (($base != 2) && ($base != 8) && ($base != 16)) {
+                $errors['exactdigits'] = get_string('exactdigitsonlyvalid',
+                    'qtype_calculatedformat');
+            }
+        }
+
         return $errors;
     }
 
