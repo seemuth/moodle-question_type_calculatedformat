@@ -608,14 +608,16 @@ class qtype_calculatedformat extends qtype_calculated {
                 eval('$ansvalue = '.$formula.';');
 
                 $base = $question->options->correctanswerbase;
-                if (($base == 2) || ($base == 8) || ($base == 16)) {
-                    // Compute value and tolerance given specific format.
-                    $ansvalue = qtype_calculatedformat_mask_value(
-                        $ansvalue,
-                        $question->options->correctanswerbase,
-                        $question->options->correctanswerlengthint,
-                        $question->options->correctanswerlengthfrac
-                    );
+                if ($question->options->exactdigits) {
+                    if (($base == 2) || ($base == 8) || ($base == 16)) {
+                        // Compute value and tolerance given specific format.
+                        $ansvalue = qtype_calculatedformat_mask_value(
+                            $ansvalue,
+                            $question->options->correctanswerbase,
+                            $question->options->correctanswerlengthint,
+                            $question->options->correctanswerlengthfrac
+                        );
+                    }
                 }
 
                 $ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $answer->tolerance);
