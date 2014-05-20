@@ -83,12 +83,25 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
 
     $answer = $x;
-    // Convert to positive answer.
-    if ($answer < 0) {
-        $answer = -$answer;
-        $sign = '-';
+    $sign = '';
+
+    // Mask to exact number of digits, if required.
+    if ($exactdigits) {
+        if (($base == 2) || ($base == 8) || ($base == 16)) {
+            $answer = qtype_calculatedformat_mask_value(
+                $answer, $base, $lengthint, $lengthfrac
+            );
+            // Masking off bits results in nonnegative, so don't need to set $sign.
+        }
+
     } else {
-        $sign = '';
+        // Convert to positive answer.
+        if ($answer < 0) {
+            $answer = -$answer;
+            $sign = '-';
+        } else {
+            $sign = '';
+        }
     }
 
     // Round properly to correct # of digits.
@@ -97,21 +110,6 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
 
     if ($answer == 0) {
         $sign = '';
-    }
-
-    // Mask to exact number of digits, if required.
-    if ($exactdigits) {
-        if (($base == 2) || ($base == 8) || ($base == 16)) {
-            // Re-negate if answer was negative.
-            if ($sign == '-') {
-                $answer = -$answer;
-            }
-
-            $answer = qtype_calculatedformat_mask_value(
-                $answer, $base, $lengthint, $lengthfrac
-            );
-            $sign = '';
-        }
     }
 
     // Do not group fractional digits.
