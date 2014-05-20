@@ -111,13 +111,6 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             $showprefix
         );
 
-        if ($formattedanswer[0] == '-') {
-            // Insert after minus sign.
-            $formattedanswer = substr_replace($formattedanswer, $baseprefix, 1, 0);
-        } else {
-            $formattedanswer = $baseprefix . $formattedanswer;
-        }
-
         $response = array('answer' => $formattedanswer);
 
         if ($this->has_separate_unit_field()) {
