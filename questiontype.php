@@ -634,17 +634,26 @@ class qtype_calculatedformat extends qtype_calculated {
             } else {
                 $formula = shorten_text($formula, 57, true);
                 $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
+
+                $answerwithprefix = $formattedanswer->answer;
+                if ($answerwithprefix[0] == '-') {
+                    // Insert prefix after minus sign.
+                    $answerwithprefix = substr_replace($answerwithprefix, $niceprefix, 1, 0);
+                } else {
+                    $answerwithprefix = $niceprefix . $answerwithprefix;
+                }
+
                 $comment->stranswers[$key] = (
                     $formula .
                     ' = ' .
                     $niceprefix .
-                    $formattedanswer->answer .
+                    $answerwithprefix .
                     ' (' .
                     $parsedanswer .
                     ')<br/>'
                 );
                 $correcttrue = new stdClass();
-                $correcttrue->correct = $formattedanswer->answer;
+                $correcttrue->correct = $answerwithprefix;
                 $correcttrue->true = '';
                 if ($parsedanswer < $answer->min ||
                         $parsedanswer > $answer->max) {
