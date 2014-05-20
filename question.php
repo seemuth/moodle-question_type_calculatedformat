@@ -92,24 +92,23 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             return array();
         }
 
-        // Include base prefix, if applicable.
-        if ($this->correctanswerbase == 2) {
-            $baseprefix = '0b';
+        if (
+            ($this->correctanswerbase == 2) ||
+            ($this->correctanswerbase == 8) ||
+            ($this->correctanswerbase == 16)
+        ) {
 
-        } else if ($this->correctanswerbase == 8) {
-            $baseprefix = '0o';
-
-        } else if ($this->correctanswerbase == 16) {
-            $baseprefix = '0x';
+            $showprefix = true;
 
         } else {
-            $baseprefix = '';
+            $showprefix = false;
         }
 
         $formattedanswer = $this->vs->format_in_base($answer->answer,
             $this->correctanswerbase,
             $this->correctanswerlengthint, $this->correctanswerlengthfrac,
-            $this->correctanswergroupdigits
+            $this->correctanswergroupdigits,
+            $showprefix
         );
 
         if ($formattedanswer[0] == '-') {
@@ -291,8 +290,8 @@ class qtype_calculatedformat_variable_substituter {
 
     /**
      * Given a number format:
-     *      `%' ([,_])? NUM (`.' NUM)? [bdoh]
-     *      (group by thousands or 4 digits, NUM integer digits,
+     *      `%' `p'? ([,_])? NUM (`.' NUM)? [bdoh]
+     *      (show prefix, group by thousands or 4 digits, NUM integer digits,
      *      NUM fractional digits, base)
      * format the number in the given base with the given # of digits.
      *
@@ -300,15 +299,15 @@ class qtype_calculatedformat_variable_substituter {
      *
      * @param string $fmt the number format, e.g.:
      *      %_3.2d for group by 4 digits, 3 integer digits,
-     *      2 fractional digits, in base 10 (decimal)
+     *      2 fractional digits, in base 10 (decimal), do not show prefix
      * @param number $x the number to format
      * @return string formatted number.
      */
     public function format_by_fmt($fmt, $x) {
         $groupre = '(?:[,_])?';
-        $regex = '/^%(' . $groupre . ')(\d*)(?:\.(\d+))?([bodxBODX])$/';
+        $regex = '/^%([pP]?)(' . $groupre . ')(\d*)(?:\.(\d+))?([bodxBODX])$/';
         if (preg_match($regex, $fmt, $regs)) {
-            list($fullmatch, $group, $lengthint, $lengthfrac, $basestr) = $regs;
+            list($fullmatch, $showprefix, $group, $lengthint, $lengthfrac, $basestr) = $regs;
 
             $base = 0;
             $basestr = strtolower($basestr);
@@ -339,8 +338,15 @@ class qtype_calculatedformat_variable_substituter {
                 $groupdigits = 0;
             }
 
+            $showprefix = strtolower($showprefix);
+            if ($showprefix == 'p') {
+                $showprefix = true;
+            } else {
+                $showprefix = false;
+            }
+
             return $this->format_in_base(
-                $x, $base, $lengthint, $lengthfrac, $groupdigits
+                $x, $base, $lengthint, $lengthfrac, $groupdigits, $showprefix
             );
         }
 
@@ -357,12 +363,13 @@ class qtype_calculatedformat_variable_substituter {
      * @param int $lengthfrac restrict to this many digits after the radix point
      * @param int $groupdigits separate groups of this many digits
      *      if 3, then use thousands separator; otherwise use underscore.
+     * @param int $showprefix if true, then include base prefix
      * @return string formatted number.
      */
     public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0,
-        $groupdigits = 0
+        $groupdigits = 0, $showprefix = 0
     ) {
-        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits, $this->exactdigits);
+        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits, $this->exactdigits, $showprefix);
         $formatted = str_replace('.', $this->decimalpoint, $formatted);
 
         if ($groupdigits == 3) {
@@ -446,7 +453,7 @@ class qtype_calculatedformat_variable_substituter {
     public function replace_expressions_in_text($text) {
         $vs = $this; // Can't see to use $this in a PHP closure.
         $groupre = '(?:[,_])?';
-        $formatre = '(%' . $groupre . '\d*(?:\.\d+)?[bodxBODX])?';
+        $formatre = '(%[pP]?' . $groupre . '\d*(?:\.\d+)?[bodxBODX])?';
         $exprre = '=([^{}]*(?:\{[^{}]+}[^{}]*)*)';
         $text = preg_replace_callback('~\{' . $formatre . $exprre . '}~',
                 function ($matches) use ($vs) {

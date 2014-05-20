@@ -58,9 +58,10 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
  * @param int $groupdigits optionally separate groups of this many digits
  * @param bool $exactdigits if true, fix to exactly $lengthint integer digits
  *      (only heeded for binary, octal, and hexadecimal)
+ * @param int $showprefix if true, then include base prefix
  * @return string formatted number.
  */
-function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0, $exactdigits = 0) {
+function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0, $exactdigits = 0, $showprefix = 0) {
     $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     if ($base < 2) {
@@ -139,9 +140,6 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
     $x = trim($x, '_');
 
-    // Include sign if applicable.
-    $x .= $sign;
-
     // Reverse string to get proper format.
     $x = strrev($x);
 
@@ -150,7 +148,23 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
         $x = substr_replace($x, '.', -$lengthfrac, 0);
     }
 
-    return $x;
+    $prefix = '';
+    if ($showprefix) {
+        if ($base == 2) {
+            $prefix = '0b';
+
+        } else if ($base == 8) {
+            $prefix = '0o';
+
+        } else if ($base == 10) {
+            $prefix = '0d';
+
+        } else if ($base == 16) {
+            $prefix = '0x';
+        }
+    }
+
+    return $sign . $prefix . $x;
 }
 
 /**

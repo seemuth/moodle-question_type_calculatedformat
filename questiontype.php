@@ -580,14 +580,10 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthfrac,
             $question->options->units, $question->options->unitsleft);
         $base = $question->options->correctanswerbase;
-        if ($base == 2) {
-            $niceprefix = '0b';
-        } else if ($base == 8) {
-            $niceprefix = '0o';
-        } else if ($base == 16) {
-            $niceprefix = '0x';
+        if (($base == 2) || ($base == 8) || ($base == 16)) {
+            $showprefix = true;
         } else {
-            $niceprefix = '';
+            $showprefix = false;
         }
 
         $answers = fullclone($answers);
@@ -604,6 +600,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 $question->options->correctanswerlengthfrac,
                 $question->options->correctanswergroupdigits,
                 $question->options->exactdigits,
+                $showprefix,
                 $unit);
             if ($formula === '*') {
                 $answer->min = ' ';
@@ -635,24 +632,16 @@ class qtype_calculatedformat extends qtype_calculated {
                 $formula = shorten_text($formula, 57, true);
                 $parsedanswer = $ap->parse_to_float($formattedanswer->answer);
 
-                $answerwithprefix = $formattedanswer->answer;
-                if ($answerwithprefix[0] == '-') {
-                    // Insert prefix after minus sign.
-                    $answerwithprefix = substr_replace($answerwithprefix, $niceprefix, 1, 0);
-                } else {
-                    $answerwithprefix = $niceprefix . $answerwithprefix;
-                }
-
                 $comment->stranswers[$key] = (
                     $formula .
                     ' = ' .
-                    $answerwithprefix .
+                    $formattedanswer->answer .
                     ' (' .
                     $parsedanswer .
                     ')<br/>'
                 );
                 $correcttrue = new stdClass();
-                $correcttrue->correct = $answerwithprefix;
+                $correcttrue->correct = $formattedanswer->answer;
                 $correcttrue->true = '';
                 if ($parsedanswer < $answer->min ||
                         $parsedanswer > $answer->max) {
@@ -703,7 +692,7 @@ class qtype_calculatedformat extends qtype_calculated {
 
 function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     $tolerance, $tolerancetype,
-    $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits,
+    $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits, $showprefix,
     $unit = ''
 ) {
     // The return value has these properties: .
@@ -719,7 +708,7 @@ function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     }
 
     $calculated->answer = qtype_calculatedformat_format_in_base(
-        $answer, $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits
+        $answer, $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits, $showprefix
     );
 
     if ($unit != '') {
