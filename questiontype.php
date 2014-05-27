@@ -771,8 +771,8 @@ class qtype_calculatedformat extends qtype_calculated {
                     'instruction', $question->id);
             $expout .= "    <instructions " .
                     $this->format($question->options->instructionsformat) . ">\n";
-            $expout .= $this->writetext($question->options->instructions, 3);
-            $expout .= $this->write_files($files);
+            $expout .= $format->writetext($question->options->instructions, 3);
+            $expout .= $format->write_files($files);
             $expout .= "    </instructions>\n";
         }
 
@@ -798,16 +798,16 @@ class qtype_calculatedformat extends qtype_calculated {
             $expout .= "<dataset_definitions>\n";
             foreach ($question->options->datasets as $def) {
                 $expout .= "<dataset_definition>\n";
-                $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
-                $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
+                $expout .= "    <status>".$format->writetext($def->status)."</status>\n";
+                $expout .= "    <name>".$format->writetext($def->name)."</name>\n";
                 $expout .= "    <type>calculatedformat</type>\n";
-                $expout .= "    <distribution>" . $this->writetext($def->distribution) .
+                $expout .= "    <distribution>" . $format->writetext($def->distribution) .
                         "</distribution>\n";
-                $expout .= "    <minimum>" . $this->writetext($def->minimum) .
+                $expout .= "    <minimum>" . $format->writetext($def->minimum) .
                         "</minimum>\n";
-                $expout .= "    <maximum>" . $this->writetext($def->maximum) .
+                $expout .= "    <maximum>" . $format->writetext($def->maximum) .
                         "</maximum>\n";
-                $expout .= "    <decimals>" . $this->writetext($def->decimals) .
+                $expout .= "    <decimals>" . $format->writetext($def->decimals) .
                         "</decimals>\n";
                 $expout .= "    <itemcount>$def->itemcount</itemcount>\n";
                 if ($def->itemcount > 0) {
