@@ -692,6 +692,143 @@ class qtype_calculatedformat extends qtype_calculated {
         }
         return $str;
     }
+
+    // Import/export code adapted from question/type/randomsamatch/questiontype.php
+    // and question/format/xml/format.php .
+
+    /**
+     * Defines the table which extends the question table. This allows the base
+     * questiontype to automatically save, backup and restore the extra fields.
+     *
+     * @return an array with the table name (first) and then the column names
+     * (apart from id and questionid)
+     */
+    public function extra_question_fields() {
+        return array(
+            'qtype_calculatedfmt_opts',
+            'synchronize',
+            'single',
+            'shuffleanswers',
+            'answernumbering',
+            'correctanswerbase',
+            'correctanswerlengthint',
+            'correctanswerlengthfrac',
+            'correctanswergroupdigits',
+            'exactdigits',
+        );
+    }
+
+    /**
+     * Defines the table which extends the answer table. This allows the base
+     * questiontype to automatically save, backup and restore the extra fields.
+     *
+     * @return an array with the table name (first) and then the column names
+     * (apart from id and questionid)
+     */
+    public function extra_answer_fields() {
+        return array(
+            'qtype_calculatedfmt',
+            'tolerance',
+            'tolerancetype',
+        );
+    }
+
+    /**
+     * Returns question ID field name.
+     * @return string question ID field name.
+     */
+    public function questionid_column_name() {
+        return 'question';
+    }
+
+    /**
+     * Exports the question to Moodle XML format.
+     *
+     * @param object $question question to be exported into XML format
+     * @param qformat_xml $format format class exporting the question
+     * @param object $extra extra information (not required for exporting this question in this format)
+     * @return string containing the question data in XML format
+     */
+    public function export_to_xml($question, qformat_xml $format, $extra=null) {
+        $expout = '';
+
+        $expout .= question_type::export_to_xml($question, $format);
+
+        $expout .= $format->write_combined_feedback($question->options,
+                                                    $question->id,
+                                                    $question->contextid);
+
+        $unitfields = array('unitgradingtype', 'unitpenalty', 'showunits', 'unitsleft');
+        foreach ($unitfields as $field) {
+            if (isset($question->options->$field)) {
+                $expout .= "    <{$field}>" .
+                    $question->options->$field . "</{$field}>\n";
+            }
+        }
+
+        if (isset($question->options->instructionsformat)) {
+            $files = $fs->get_area_files($contextid, $component,
+                    'instruction', $question->id);
+            $expout .= "    <instructions " .
+                    $this->format($question->options->instructionsformat) . ">\n";
+            $expout .= $this->writetext($question->options->instructions, 3);
+            $expout .= $this->write_files($files);
+            $expout .= "    </instructions>\n";
+        }
+
+        if (isset($question->options->units)) {
+            $units = $question->options->units;
+            if (count($units)) {
+                $expout .= "<units>\n";
+                foreach ($units as $unit) {
+                    $expout .= "  <unit>\n";
+                    $expout .= "    <multiplier>{$unit->multiplier}</multiplier>\n";
+                    $expout .= "    <unit_name>{$unit->unit}</unit_name>\n";
+                    $expout .= "  </unit>\n";
+                }
+                $expout .= "</units>\n";
+            }
+        }
+
+        // The tag $question->export_process has been set so we get all the
+        // data items in the database from the function
+        // qtype_calculated::get_question_options calculatedsimple defaults
+        // to calculated.
+        if (isset($question->options->datasets) && count($question->options->datasets)) {
+            $expout .= "<dataset_definitions>\n";
+            foreach ($question->options->datasets as $def) {
+                $expout .= "<dataset_definition>\n";
+                $expout .= "    <status>".$this->writetext($def->status)."</status>\n";
+                $expout .= "    <name>".$this->writetext($def->name)."</name>\n";
+                $expout .= "    <type>calculatedformat</type>\n";
+                $expout .= "    <distribution>" . $this->writetext($def->distribution) .
+                        "</distribution>\n";
+                $expout .= "    <minimum>" . $this->writetext($def->minimum) .
+                        "</minimum>\n";
+                $expout .= "    <maximum>" . $this->writetext($def->maximum) .
+                        "</maximum>\n";
+                $expout .= "    <decimals>" . $this->writetext($def->decimals) .
+                        "</decimals>\n";
+                $expout .= "    <itemcount>$def->itemcount</itemcount>\n";
+                if ($def->itemcount > 0) {
+                    $expout .= "    <dataset_items>\n";
+                    foreach ($def->items as $item) {
+                          $expout .= "        <dataset_item>\n";
+                          $expout .= "           <number>".$item->itemnumber."</number>\n";
+                          $expout .= "           <value>".$item->value."</value>\n";
+                          $expout .= "        </dataset_item>\n";
+                    }
+                    $expout .= "    </dataset_items>\n";
+                    $expout .= "    <number_of_items>" . $def->number_of_items .
+                            "</number_of_items>\n";
+                }
+                $expout .= "</dataset_definition>\n";
+            }
+            $expout .= "</dataset_definitions>\n";
+        }
+
+        return $expout;
+    }
 }
 
 
@@ -1073,4 +1210,5 @@ class qtype_calculatedformat_answer_processor
         }
         return $value;
     }
+
 }
