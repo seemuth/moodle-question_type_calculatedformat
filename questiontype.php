@@ -49,7 +49,7 @@ class qtype_calculatedformat extends qtype_calculated {
         // First get the datasets and default options.
         // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
         global $CFG, $DB, $OUTPUT;
-        if (!$question->options = $DB->get_record('question_calculatedfmt_opts',
+        if (!$question->options = $DB->get_record('qtype_calculatedfmt_opts',
                 array('question' => $question->id))) {
             $question->options = new stdClass();
             $question->options->synchronize = 0;
@@ -72,7 +72,7 @@ class qtype_calculatedformat extends qtype_calculated {
         if (!$question->options->answers = $DB->get_records_sql("
             SELECT a.*, c.tolerance, c.tolerancetype
             FROM {question_answers} a,
-                 {question_calculatedfmt} c
+                 {qtype_calculatedfmt} c
             WHERE a.question = ?
             AND   a.id = c.answer
             ORDER BY a.id ASC", array($question->id))) {
@@ -102,7 +102,7 @@ class qtype_calculatedformat extends qtype_calculated {
         }
         // Calculated options.
         $update = true;
-        $options = $DB->get_record('question_calculatedfmt_opts',
+        $options = $DB->get_record('qtype_calculatedfmt_opts',
                 array('question' => $question->id));
         if (!$options) {
             $update = false;
@@ -133,16 +133,16 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         if ($update) {
-            $DB->update_record('question_calculatedfmt_opts', $options);
+            $DB->update_record('qtype_calculatedfmt_opts', $options);
         } else {
-            $DB->insert_record('question_calculatedfmt_opts', $options);
+            $DB->insert_record('qtype_calculatedfmt_opts', $options);
         }
 
         // Get old versions of the objects.
         $oldanswers = $DB->get_records('question_answers',
                 array('question' => $question->id), 'id ASC');
 
-        $oldoptions = $DB->get_records('question_calculatedfmt',
+        $oldoptions = $DB->get_records('qtype_calculatedfmt',
                 array('question' => $question->id), 'answer ASC');
 
         // Save the units.
@@ -197,10 +197,10 @@ class qtype_calculatedformat extends qtype_calculated {
             // Save options.
             if (isset($options->id)) {
                 // Reusing existing record.
-                $DB->update_record('question_calculatedfmt', $options);
+                $DB->update_record('qtype_calculatedfmt', $options);
             } else {
                 // New options.
-                $DB->insert_record('question_calculatedfmt', $options);
+                $DB->insert_record('qtype_calculatedfmt', $options);
             }
         }
 
@@ -214,7 +214,7 @@ class qtype_calculatedformat extends qtype_calculated {
         // Delete old answer records.
         if (!empty($oldoptions)) {
             foreach ($oldoptions as $oo) {
-                $DB->delete_records('question_calculatedfmt', array('id' => $oo->id));
+                $DB->delete_records('qtype_calculatedfmt', array('id' => $oo->id));
             }
         }
 
@@ -491,14 +491,14 @@ class qtype_calculatedformat extends qtype_calculated {
             case 'datasetdefinitions':
                 // Calculated options.
                 // It cannot go here without having done the first page,
-                // so the question_calculatedfmt_opts should exist.
+                // so the qtype_calculatedfmt_opts should exist.
                 // We only need to update the synchronize field.
                 if (isset($form->synchronize)) {
                     $optionssynchronize = $form->synchronize;
                 } else {
                     $optionssynchronize = 0;
                 }
-                $DB->set_field('question_calculatedfmt_opts', 'synchronize', $optionssynchronize,
+                $DB->set_field('qtype_calculatedfmt_opts', 'synchronize', $optionssynchronize,
                         array('question' => $question->id));
                 if (isset($form->synchronize) && $form->synchronize == 2) {
                     $this->addnamecategory($question);
@@ -520,8 +520,8 @@ class qtype_calculatedformat extends qtype_calculated {
     public function delete_question($questionid, $contextid) {
         global $DB;
 
-        $DB->delete_records('question_calculatedfmt', array('question' => $questionid));
-        $DB->delete_records('question_calculatedfmt_opts', array('question' => $questionid));
+        $DB->delete_records('qtype_calculatedfmt', array('question' => $questionid));
+        $DB->delete_records('qtype_calculatedfmt_opts', array('question' => $questionid));
         $DB->delete_records('question_numerical_units', array('question' => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
@@ -544,10 +544,10 @@ class qtype_calculatedformat extends qtype_calculated {
         global $DB;
 
         foreach ($question->options->answers as $key => $answer) {
-            if ($options = $DB->get_record('question_calculatedfmt', array('answer' => $key))) {
+            if ($options = $DB->get_record('qtype_calculatedfmt', array('answer' => $key))) {
                 $options->tolerance = trim($fromform->tolerance[$key]);
                 $options->tolerancetype  = trim($fromform->tolerancetype[$key]);
-                $DB->update_record('question_calculatedfmt', $options);
+                $DB->update_record('qtype_calculatedfmt', $options);
             }
         }
     }

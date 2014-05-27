@@ -87,7 +87,7 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
             $data->question = $newquestionid;
             $data->answer = $this->get_mappingid('question_answer', $data->answer);
             // Insert record.
-            $newitemid = $DB->insert_record('question_calculatedfmt', $data);
+            $newitemid = $DB->insert_record('qtype_calculatedfmt', $data);
         }
     }
 
@@ -112,7 +112,7 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
             // Adjust some columns.
             $data->question = $newquestionid;
             // Insert record.
-            $newitemid = $DB->insert_record('question_calculatedfmt_opts', $data);
+            $newitemid = $DB->insert_record('qtype_calculatedfmt_opts', $data);
         }
     }
 }
