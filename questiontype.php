@@ -757,33 +757,33 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         // Get common parts.
-        $qo = $format->import_headers($this);
+        $qo = $format->import_headers($question);
 
         $qo->qtype = $this->name();
 
         // Header parts particular to calculated*.
-        $qo->synchronize = $format->getpath($this, array('#', 'synchronize', 0, '#'), 0);
-        $single = $format->getpath($this, array('#', 'single', 0, '#'), 'true');
+        $qo->synchronize = $format->getpath($question, array('#', 'synchronize', 0, '#'), 0);
+        $single = $format->getpath($question, array('#', 'single', 0, '#'), 'true');
         $qo->single = $format->trans_single($single);
-        $shuffleanswers = $format->getpath($this, array('#', 'shuffleanswers', 0, '#'), 'false');
-        $qo->answernumbering = $format->getpath($this,
+        $shuffleanswers = $format->getpath($question, array('#', 'shuffleanswers', 0, '#'), 'false');
+        $qo->answernumbering = $format->getpath($question,
                 array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $format->trans_single($shuffleanswers);
 
-        $qo->correctanswerbase = $format->getpath($this, array('$', 'correctanswerbase', 0, '#'), 10);
-        $qo->correctanswerlengthint = $format->getpath($this, array('$', 'correctanswerlengthint', 0, '#'), 0);
-        $qo->correctanswerlengthfrac = $format->getpath($this, array('$', 'correctanswerlengthfrac', 0, '#'), 0);
-        $qo->correctanswergroupdigits = $format->getpath($this, array('$', 'correctanswergroupdigits', 0, '#'), 10);
-        $qo->exactdigits = $format->getpath($this, array('$', 'exactdigits', 0, '#'), 10);
+        $qo->correctanswerbase = $format->getpath($question, array('$', 'correctanswerbase', 0, '#'), 10);
+        $qo->correctanswerlengthint = $format->getpath($question, array('$', 'correctanswerlengthint', 0, '#'), 0);
+        $qo->correctanswerlengthfrac = $format->getpath($question, array('$', 'correctanswerlengthfrac', 0, '#'), 0);
+        $qo->correctanswergroupdigits = $format->getpath($question, array('$', 'correctanswergroupdigits', 0, '#'), 10);
+        $qo->exactdigits = $format->getpath($question, array('$', 'exactdigits', 0, '#'), 10);
 
-        $format->import_combined_feedback($qo, $this);
+        $format->import_combined_feedback($qo, $question);
 
-        $qo->unitgradingtype = $format->getpath($this,
+        $qo->unitgradingtype = $format->getpath($question,
                 array('#', 'unitgradingtype', 0, '#'), 0);
-        $qo->unitpenalty = $format->getpath($this, array('#', 'unitpenalty', 0, '#'), null);
-        $qo->showunits = $format->getpath($this, array('#', 'showunits', 0, '#'), 0);
-        $qo->unitsleft = $format->getpath($this, array('#', 'unitsleft', 0, '#'), 0);
-        $qo->instructions = $format->getpath($this,
+        $qo->unitpenalty = $format->getpath($question, array('#', 'unitpenalty', 0, '#'), null);
+        $qo->showunits = $format->getpath($question, array('#', 'showunits', 0, '#'), 0);
+        $qo->unitsleft = $format->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
+        $qo->instructions = $format->getpath($question,
                 array('#', 'instructions', 0, '#', 'text', 0, '#'), '', true);
         if (!empty($instructions)) {
             $qo->instructions = $format->import_text_with_files($instructions,
@@ -791,7 +791,7 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         // Get answers array.
-        $answers = $this['#']['answer'];
+        $answers = $question['#']['answer'];
         $qo->answers = array();
         $qo->feedback = array();
         $qo->fraction = array();
@@ -817,15 +817,15 @@ class qtype_calculatedformat extends qtype_calculated {
         }
         // Get units array.
         $qo->unit = array();
-        if (isset($this['#']['units'][0]['#']['unit'])) {
-            $units = $this['#']['units'][0]['#']['unit'];
+        if (isset($question['#']['units'][0]['#']['unit'])) {
+            $units = $question['#']['units'][0]['#']['unit'];
             $qo->multiplier = array();
             foreach ($units as $unit) {
                 $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
                 $qo->unit[] = $unit['#']['unit_name'][0]['#'];
             }
         }
-        $instructions = $format->getpath($this, array('#', 'instructions'), array());
+        $instructions = $format->getpath($question, array('#', 'instructions'), array());
         if (!empty($instructions)) {
             $qo->instructions = $format->import_text_with_files($instructions,
                     array('0'), '', $format->get_format($qo->questiontextformat));
@@ -840,7 +840,7 @@ class qtype_calculatedformat extends qtype_calculated {
             }
         }
 
-        $datasets = $this['#']['dataset_definitions'][0]['#']['dataset_definition'];
+        $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
         $qo->dataset = array();
         $qo->datasetindex= 0;
         foreach ($datasets as $dataset) {
@@ -881,7 +881,7 @@ class qtype_calculatedformat extends qtype_calculated {
             }
         }
 
-        $format->import_hints($qo, $this, false, false, $format->get_format($qo->questiontextformat));
+        $format->import_hints($qo, $question, false, false, $format->get_format($qo->questiontextformat));
 
         return $qo;
     }
