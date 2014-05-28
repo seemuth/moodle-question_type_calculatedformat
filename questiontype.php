@@ -742,6 +742,151 @@ class qtype_calculatedformat extends qtype_calculated {
     }
 
     /**
+     * Imports the question from Moodle XML format.
+     *
+     * @param array $xml structure containing the XML data
+     * @param object $fromform question object to fill: ignored by this function (assumed to be null)
+     * @param qformat_xml $format format class exporting the question
+     * @param object $extra extra information (not required for importing this question in this format)
+     * @return object question object
+     */
+    public function import_from_xml($xml, $fromform, qformat_xml $format, $extra=null) {
+        // Return if data type is not our own one.
+        if (!isset($xml['@']['type']) || $xml['@']['type'] != $this->name()) {
+            return false;
+        }
+
+        // Get common parts.
+        $qo = $format->import_headers($question);
+
+        $qo->qtype = $this->name();
+
+        // Header parts particular to calculated*.
+        $qo->synchronize = $format->getpath($question, array('#', 'synchronize', 0, '#'), 0);
+        $single = $format->getpath($question, array('#', 'single', 0, '#'), 'true');
+        $qo->single = $format->trans_single($single);
+        $shuffleanswers = $format->getpath($question, array('#', 'shuffleanswers', 0, '#'), 'false');
+        $qo->answernumbering = $format->getpath($question,
+                array('#', 'answernumbering', 0, '#'), 'abc');
+        $qo->shuffleanswers = $format->trans_single($shuffleanswers);
+
+        $qo->correctanswerbase = $format->getpath($question, array('$', 'correctanswerbase', 0, '#'), 10);
+        $qo->correctanswerlengthint = $format->getpath($question, array('$', 'correctanswerlengthint', 0, '#'), 0);
+        $qo->correctanswerlengthfrac = $format->getpath($question, array('$', 'correctanswerlengthfrac', 0, '#'), 0);
+        $qo->correctanswergroupdigits = $format->getpath($question, array('$', 'correctanswergroupdigits', 0, '#'), 10);
+        $qo->exactdigits = $format->getpath($question, array('$', 'exactdigits', 0, '#'), 10);
+
+        $format->import_combined_feedback($qo, $question);
+
+        $qo->unitgradingtype = $format->getpath($question,
+                array('#', 'unitgradingtype', 0, '#'), 0);
+        $qo->unitpenalty = $format->getpath($question, array('#', 'unitpenalty', 0, '#'), null);
+        $qo->showunits = $format->getpath($question, array('#', 'showunits', 0, '#'), 0);
+        $qo->unitsleft = $format->getpath($question, array('#', 'unitsleft', 0, '#'), 0);
+        $qo->instructions = $format->getpath($question,
+                array('#', 'instructions', 0, '#', 'text', 0, '#'), '', true);
+        if (!empty($instructions)) {
+            $qo->instructions = $format->import_text_with_files($instructions,
+                    array('0'), '', $format->get_format($qo->questiontextformat));
+        }
+
+        // Get answers array.
+        $answers = $question['#']['answer'];
+        $qo->answers = array();
+        $qo->feedback = array();
+        $qo->fraction = array();
+        $qo->tolerance = array();
+        $qo->tolerancetype = array();
+        $qo->feedback = array();
+        foreach ($answers as $answer) {
+            $ans = $format->import_answer($answer, true, $format->get_format($qo->questiontextformat));
+            // Answer outside of <text> is deprecated.
+            if (empty($ans->answer['text'])) {
+                $ans->answer['text'] = '*';
+            }
+            $qo->answers[] = $ans->answer;
+            $qo->feedback[] = $ans->feedback;
+            $qo->tolerance[] = $answer['#']['tolerance'][0]['#'];
+            // Fraction as a tag is deprecated.
+            if (!empty($answer['#']['fraction'][0]['#'])) {
+                $qo->fraction[] = $answer['#']['fraction'][0]['#'];
+            } else {
+                $qo->fraction[] = $answer['@']['fraction'] / 100;
+            }
+            $qo->tolerancetype[] = $answer['#']['tolerancetype'][0]['#'];
+        }
+        // Get units array.
+        $qo->unit = array();
+        if (isset($question['#']['units'][0]['#']['unit'])) {
+            $units = $question['#']['units'][0]['#']['unit'];
+            $qo->multiplier = array();
+            foreach ($units as $unit) {
+                $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
+                $qo->unit[] = $unit['#']['unit_name'][0]['#'];
+            }
+        }
+        $instructions = $format->getpath($question, array('#', 'instructions'), array());
+        if (!empty($instructions)) {
+            $qo->instructions = $format->import_text_with_files($instructions,
+                    array('0'), '', $format->get_format($qo->questiontextformat));
+        }
+
+        if (is_null($qo->unitpenalty)) {
+            // Set a good default, depending on whether there are any units defined.
+            if (empty($qo->unit)) {
+                $qo->showunits = 3; // This is qtype_numerical::UNITNONE, but we cannot refer to that constant here.
+            } else {
+                $qo->showunits = 0; // This is qtype_numerical::UNITOPTIONAL, but we cannot refer to that constant here.
+            }
+        }
+
+        $datasets = $question['#']['dataset_definitions'][0]['#']['dataset_definition'];
+        $qo->dataset = array();
+        $qo->datasetindex= 0;
+        foreach ($datasets as $dataset) {
+            $qo->datasetindex++;
+            $qo->dataset[$qo->datasetindex] = new stdClass();
+            $qo->dataset[$qo->datasetindex]->status =
+                    $format->import_text($dataset['#']['status'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->name =
+                    $format->import_text($dataset['#']['name'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->type =
+                    $dataset['#']['type'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->distribution =
+                    $format->import_text($dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->max =
+                    $format->import_text($dataset['#']['maximum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->min =
+                    $format->import_text($dataset['#']['minimum'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->length =
+                    $format->import_text($dataset['#']['decimals'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->distribution =
+                    $format->import_text($dataset['#']['distribution'][0]['#']['text']);
+            $qo->dataset[$qo->datasetindex]->itemcount = $dataset['#']['itemcount'][0]['#'];
+            $qo->dataset[$qo->datasetindex]->datasetitem = array();
+            $qo->dataset[$qo->datasetindex]->itemindex = 0;
+            $qo->dataset[$qo->datasetindex]->number_of_items =
+                    $dataset['#']['number_of_items'][0]['#'];
+            $datasetitems = $dataset['#']['dataset_items'][0]['#']['dataset_item'];
+            foreach ($datasetitems as $datasetitem) {
+                $qo->dataset[$qo->datasetindex]->itemindex++;
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex] = new stdClass();
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex]->itemnumber =
+                                $datasetitem['#']['number'][0]['#'];
+                $qo->dataset[$qo->datasetindex]->datasetitem[
+                        $qo->dataset[$qo->datasetindex]->itemindex]->value =
+                                $datasetitem['#']['value'][0]['#'];
+            }
+        }
+
+        $format->import_hints($qo, $question, false, false, $format->get_format($qo->questiontextformat));
+
+        return $qo;
+    }
+
+    /**
      * Exports the question to Moodle XML format.
      *
      * @param object $question question to be exported into XML format
