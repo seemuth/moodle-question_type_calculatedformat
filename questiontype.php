@@ -74,7 +74,7 @@ class qtype_calculatedformat extends qtype_calculated {
             FROM {question_answers} a,
                  {qtype_calculatedfmt} c
             WHERE a.question = ?
-            AND   a.id = c.answer
+            AND   a.id = c.answerid
             ORDER BY a.id ASC", array($question->id))) {
                 return false;
         }
@@ -107,7 +107,7 @@ class qtype_calculatedformat extends qtype_calculated {
         if (!$options) {
             $update = false;
             $options = new stdClass();
-            $options->question = $question->id;
+            $options->questionid = $question->id;
         }
         // As used only by calculated.
         if (isset($question->synchronize)) {
@@ -189,8 +189,8 @@ class qtype_calculatedformat extends qtype_calculated {
             if (!$options = array_shift($oldoptions)) {
                 $options = new stdClass();
             }
-            $options->question            = $question->id;
-            $options->answer              = $answer->id;
+            $options->questionid          = $question->id;
+            $options->answerid            = $answer->id;
             $options->tolerance           = trim($question->tolerance[$key]);
             $options->tolerancetype       = trim($question->tolerancetype[$key]);
 
