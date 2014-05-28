@@ -762,11 +762,11 @@ class qtype_calculatedformat extends qtype_calculated {
                 array('#', 'answernumbering', 0, '#'), 'abc');
         $qo->shuffleanswers = $format->trans_single($shuffleanswers);
 
-        $qo->correctanswerbase = $format->getpath($xml, array('$', 'correctanswerbase', 0, '#'), 10);
-        $qo->correctanswerlengthint = $format->getpath($xml, array('$', 'correctanswerlengthint', 0, '#'), 0);
-        $qo->correctanswerlengthfrac = $format->getpath($xml, array('$', 'correctanswerlengthfrac', 0, '#'), 0);
-        $qo->correctanswergroupdigits = $format->getpath($xml, array('$', 'correctanswergroupdigits', 0, '#'), 10);
-        $qo->exactdigits = $format->getpath($xml, array('$', 'exactdigits', 0, '#'), 10);
+        $qo->correctanswerbase = $format->getpath($xml, array('#', 'correctanswerbase', 0, '#'), 10);
+        $qo->correctanswerlengthint = $format->getpath($xml, array('#', 'correctanswerlengthint', 0, '#'), 0);
+        $qo->correctanswerlengthfrac = $format->getpath($xml, array('#', 'correctanswerlengthfrac', 0, '#'), 0);
+        $qo->correctanswergroupdigits = $format->getpath($xml, array('#', 'correctanswergroupdigits', 0, '#'), 10);
+        $qo->exactdigits = $format->getpath($xml, array('#', 'exactdigits', 0, '#'), 10);
 
         $format->import_combined_feedback($qo, $xml);
 
