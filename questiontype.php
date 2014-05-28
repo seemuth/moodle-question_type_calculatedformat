@@ -143,7 +143,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 array('question' => $question->id), 'id ASC');
 
         $oldoptions = $DB->get_records('qtype_calculatedfmt',
-                array('questionid' => $question->id), 'answer ASC');
+                array('questionid' => $question->id), 'answerid ASC');
 
         // Save the units.
         $virtualqtype = $this->get_virtual_qtype();
