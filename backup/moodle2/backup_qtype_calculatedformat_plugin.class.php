@@ -67,7 +67,7 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
         // Now create the qtype own structures.
         $calculatedrecords = new backup_nested_element('calculatedformat_records');
         $calculatedrecord = new backup_nested_element('calculatedformat_record', array('id'), array(
-            'answer', 'tolerance', 'tolerancetype'));
+            'answerid', 'tolerance', 'tolerancetype'));
 
         $calculatedoptions = new backup_nested_element('calculatedformat_options');
         $calculatedoption = new backup_nested_element('calculatedformat_option', array('id'), array(
@@ -89,9 +89,9 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
 
         // Set source to populate the data.
         $calculatedrecord->set_source_table('qtype_calculatedfmt',
-                array('question' => backup::VAR_PARENTID));
+                array('questionid' => backup::VAR_PARENTID));
         $calculatedoption->set_source_table('qtype_calculatedfmt_opts',
-                array('question' => backup::VAR_PARENTID));
+                array('questionid' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.
 

@@ -75,8 +75,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('question');
-        $newquestionid   = $this->get_new_parentid('question');
+        $oldquestionid   = $this->get_old_parentid('questionid');
+        $newquestionid   = $this->get_new_parentid('questionid');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
@@ -84,8 +84,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         // question_calculatedformat too.
         if ($questioncreated) {
             // Adjust some columns.
-            $data->question = $newquestionid;
-            $data->answer = $this->get_mappingid('question_answer', $data->answer);
+            $data->questionid = $newquestionid;
+            $data->answerid = $this->get_mappingid('question_answer', $data->answerid);
             // Insert record.
             $newitemid = $DB->insert_record('qtype_calculatedfmt', $data);
         }
@@ -101,8 +101,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('question');
-        $newquestionid   = $this->get_new_parentid('question');
+        $oldquestionid   = $this->get_old_parentid('questionid');
+        $newquestionid   = $this->get_new_parentid('questionid');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
@@ -110,7 +110,7 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         // question_calculatedformat too.
         if ($questioncreated) {
             // Adjust some columns.
-            $data->question = $newquestionid;
+            $data->questionid = $newquestionid;
             // Insert record.
             $newitemid = $DB->insert_record('qtype_calculatedfmt_opts', $data);
         }

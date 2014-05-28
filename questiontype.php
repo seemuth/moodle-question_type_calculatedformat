@@ -50,7 +50,7 @@ class qtype_calculatedformat extends qtype_calculated {
         // The code is used for calculated, calculatedsimple and calculatedmulti qtypes.
         global $CFG, $DB, $OUTPUT;
         if (!$question->options = $DB->get_record('qtype_calculatedfmt_opts',
-                array('question' => $question->id))) {
+                array('questionid' => $question->id))) {
             $question->options = new stdClass();
             $question->options->synchronize = 0;
             $question->options->single = 0;
@@ -103,7 +103,7 @@ class qtype_calculatedformat extends qtype_calculated {
         // Calculated options.
         $update = true;
         $options = $DB->get_record('qtype_calculatedfmt_opts',
-                array('question' => $question->id));
+                array('questionid' => $question->id));
         if (!$options) {
             $update = false;
             $options = new stdClass();
@@ -143,7 +143,7 @@ class qtype_calculatedformat extends qtype_calculated {
                 array('question' => $question->id), 'id ASC');
 
         $oldoptions = $DB->get_records('qtype_calculatedfmt',
-                array('question' => $question->id), 'answer ASC');
+                array('questionid' => $question->id), 'answer ASC');
 
         // Save the units.
         $virtualqtype = $this->get_virtual_qtype();
@@ -499,7 +499,7 @@ class qtype_calculatedformat extends qtype_calculated {
                     $optionssynchronize = 0;
                 }
                 $DB->set_field('qtype_calculatedfmt_opts', 'synchronize', $optionssynchronize,
-                        array('question' => $question->id));
+                        array('questionid' => $question->id));
                 if (isset($form->synchronize) && $form->synchronize == 2) {
                     $this->addnamecategory($question);
                 }
@@ -520,8 +520,8 @@ class qtype_calculatedformat extends qtype_calculated {
     public function delete_question($questionid, $contextid) {
         global $DB;
 
-        $DB->delete_records('qtype_calculatedfmt', array('question' => $questionid));
-        $DB->delete_records('qtype_calculatedfmt_opts', array('question' => $questionid));
+        $DB->delete_records('qtype_calculatedfmt', array('questionid' => $questionid));
+        $DB->delete_records('qtype_calculatedfmt_opts', array('questionid' => $questionid));
         $DB->delete_records('question_numerical_units', array('question' => $questionid));
         if ($datasets = $DB->get_records('question_datasets', array('question' => $questionid))) {
             foreach ($datasets as $dataset) {
@@ -544,7 +544,7 @@ class qtype_calculatedformat extends qtype_calculated {
         global $DB;
 
         foreach ($question->options->answers as $key => $answer) {
-            if ($options = $DB->get_record('qtype_calculatedfmt', array('answer' => $key))) {
+            if ($options = $DB->get_record('qtype_calculatedfmt', array('answerid' => $key))) {
                 $options->tolerance = trim($fromform->tolerance[$key]);
                 $options->tolerancetype  = trim($fromform->tolerancetype[$key]);
                 $DB->update_record('qtype_calculatedfmt', $options);
@@ -731,14 +731,6 @@ class qtype_calculatedformat extends qtype_calculated {
             'tolerance',
             'tolerancetype',
         );
-    }
-
-    /**
-     * Returns question ID field name.
-     * @return string question ID field name.
-     */
-    public function questionid_column_name() {
-        return 'question';
     }
 
     /**
