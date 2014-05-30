@@ -84,7 +84,6 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
 
     $answer = $x;
-    $sign = '';
 
     // Mask to exact number of digits, if required.
     if ($exactdigits) {
@@ -92,17 +91,16 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
             $answer = qtype_calculatedformat_mask_value(
                 $answer, $base, $lengthint, $lengthfrac
             );
-            // Masking off bits results in nonnegative, so don't need to set $sign.
+            // Masking off bits should result in nonnegative.
         }
+    }
 
+    // Convert to positive answer.
+    if ($answer < 0) {
+        $answer = -$answer;
+        $sign = '-';
     } else {
-        // Convert to positive answer.
-        if ($answer < 0) {
-            $answer = -$answer;
-            $sign = '-';
-        } else {
-            $sign = '';
-        }
+        $sign = '';
     }
 
     // Round properly to correct # of digits.
