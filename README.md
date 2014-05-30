@@ -3,8 +3,7 @@ moodle-question_type_calculatedformat
 
 This Moodle question type supports improved dataset value formatting and answer formatting, including different numeric formats:
 
-* Binary (unsigned)
-* Binary (signed, i.e., 2's complement)
+* Binary
 * Octal
 * Decimal
 * Hexadecimal
