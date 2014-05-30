@@ -16,11 +16,12 @@
 
 
 /**
- * Unit tests for the calculated question definition class.
+ * Unit tests for the calculated question definition class with number formatting.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,14 +32,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 
 /**
- * Unit tests for qtype_calculated_definition.
+ * Unit tests for qtype_calculatedformat_definition.
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_question_test extends advanced_testcase {
+class qtype_calculatedformat_question_test extends advanced_testcase {
     public function test_is_complete_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
 
         $this->assertFalse($question->is_complete_response(array()));
         $this->assertTrue($question->is_complete_response(array('answer' => '0')));
@@ -47,7 +49,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_is_gradable_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
 
         $this->assertFalse($question->is_gradable_response(array()));
         $this->assertTrue($question->is_gradable_response(array('answer' => '0')));
@@ -56,7 +58,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_grading() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -67,45 +69,97 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_get_correct_response() {
-        // Testing with 3.0 + 0.1416.
-        $question = test_question_maker::make_question('calculated');
+        // Testing with -3.0 + 0.125.
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 3);
         $values = $question->vs->get_values();
-        $this->assertSame(array('answer' => '3.01' ), $question->get_correct_response());
-        foreach ($question->answers as $answer) {
-            $answer->correctanswerlength = 2;
-            $answer->correctanswerformat = 2;
-        }
-        $this->assertSame(array('answer' => '3.0' ), $question->get_correct_response());
+        $this->assertSame(array('answer' => '-2.8750' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 2;
+        $this->assertSame(array('answer' => '-02.88' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 0;
+        $this->assertSame(array('answer' => '-3' ), $question->get_correct_response());
+        $this->correctanswerbase = 2;
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 4;
+        $this->assertSame(array('answer' => '-0b10.1110' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 4;
+        $this->assertSame(array('answer' => '-0b0010.1110' ), $question->get_correct_response());
+        $this->exactdigits = 1;
+        $this->assertSame(array('answer' => '0b1101.0010' ), $question->get_correct_response());
+        $this->correctanswerbase = 16;
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 2;
+        $this->exactdigits = 1;
+        $this->assertSame(array('answer' => '0xFD.20' ), $question->get_correct_response());
+        $this->exactdigits = 0;
+        $this->assertSame(array('answer' => '-0x02.E0' ), $question->get_correct_response());
 
         // Testing with 1.0 + 5.0.
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
-        $this->assertSame(array('answer' => '6.00' ), $question->get_correct_response());
+        $this->assertSame(array('answer' => '6.0000' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 2;
+        $this->assertSame(array('answer' => '06.00' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 0;
+        $this->assertSame(array('answer' => '6' ), $question->get_correct_response());
+        $this->correctanswerbase = 2;
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 0;
+        $this->exactdigits = 0;
+        $this->assertSame(array('answer' => '0b110' ), $question->get_correct_response());
+        $this->exactdigits = 1;
+        $this->assertSame(array('answer' => '0b10' ), $question->get_correct_response());
+        $this->correctanswerbase = 8;
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 0;
+        $this->exactdigits = 0;
+        $this->assertSame(array('answer' => '0o06' ), $question->get_correct_response());
+        $this->correctanswerbase = 16;
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 0;
+        $this->exactdigits = 0;
+        $this->assertSame(array('answer' => '0x06' ), $question->get_correct_response());
 
-        foreach ($question->answers as $answer) {
-            $answer->correctanswerlength = 2;
-            $answer->correctanswerformat = 2;
-        }
-        $this->assertSame(array('answer' => '6.0' ),
-                $question->get_correct_response());
-        // Testing with 31.0 + 0.01416 .
-        $question = test_question_maker::make_question('calculated');
+        // Testing with 31337 + 0.125.
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 4);
         $values = $question->vs->get_values();
-        $this->assertSame(array('answer' => '31.01' ), $question->get_correct_response());
-
-        foreach ($question->answers as $answer) {
-            $answer->correctanswerlength = 3;
-            $answer->correctanswerformat = 2;
-        }
-        $this->assertSame(array('answer' => '31.0' ), $question->get_correct_response());
+        $this->assertSame(array('answer' => '31337.1250' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 2;
+        $this->correctanswerlengthfrac = 2;
+        $this->assertSame(array('answer' => '31337.13' ), $question->get_correct_response());
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 0;
+        $this->assertSame(array('answer' => '31337' ), $question->get_correct_response());
+        $thousandssep = get_string('thousandssep', 'langconfig');
+        $this->groupdigits = 3;
+        $this->assertSame(array('answer' => "31{$thousandssep}337" ), $question->get_correct_response());
+        $this->correctanswerlengthfrac = 4;
+        $this->assertSame(array('answer' => "31{$thousandssep}337.1250" ), $question->get_correct_response());
+        $this->correctanswerbase = 16;
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 0;
+        $this->groupdigits = 4;
+        $this->assertSame(array('answer' => '0x7A69' ), $question->get_correct_response());
+        $this->correctanswerlengthfrac = 3;
+        $this->assertSame(array('answer' => '0x7A69.200' ), $question->get_correct_response());
+        $this->correctanswerbase = 2;
+        $this->correctanswerlengthint = 1;
+        $this->correctanswerlengthfrac = 0;
+        $this->groupdigits = 4;
+        $this->assertSame(array('answer' => '0b0100_1010_0110_1001' ), $question->get_correct_response());
+        $this->groupdigits = 0;
+        $this->assertSame(array('answer' => '0b0100101001101001' ), $question->get_correct_response());
 
     }
 
     public function test_get_question_summary() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -114,7 +168,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_summarise_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -122,7 +176,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_classify_response() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
 
@@ -141,7 +195,7 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_classify_response_no_star() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         unset($question->answers[17]);
         $question->start_attempt(new question_attempt_step(), 1);
         $values = $question->vs->get_values();
@@ -161,18 +215,18 @@ class qtype_calculated_question_test extends advanced_testcase {
     }
 
     public function test_get_variants_selection_seed_q_not_synchronised() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $this->assertEquals($question->stamp, $question->get_variants_selection_seed());
     }
 
     public function test_get_variants_selection_seed_q_synchronised_datasets_not() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->synchronised = true;
         $this->assertEquals($question->stamp, $question->get_variants_selection_seed());
     }
 
     public function test_get_variants_selection_seed_q_synchronised() {
-        $question = test_question_maker::make_question('calculated');
+        $question = test_question_maker::make_question('calculatedformat');
         $question->synchronised = true;
         $question->datasetloader->set_are_synchronised($question->category, true);
         $this->assertEquals('category' . $question->category,

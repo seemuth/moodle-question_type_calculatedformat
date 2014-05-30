@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) question/type/calculated/questiontype.php.
+ * Unit tests for (some of) question/type/calculatedformat/questiontype.php.
  *
- * @package    qtype_calculated
+ * @package    qtype_calculatedformat
  * @copyright  2012 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,27 +27,28 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/question/type/calculated/questiontype.php');
-require_once($CFG->dirroot . '/question/type/calculated/tests/helper.php');
+require_once($CFG->dirroot . '/question/type/calculatedformat/questiontype.php');
+require_once($CFG->dirroot . '/question/type/calculatedformat/tests/helper.php');
 
 
 /**
- * Unit tests for question/type/calculated/questiontype.php.
+ * Unit tests for question/type/calculatedformat/questiontype.php.
  *
  * @copyright  2012 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test extends advanced_testcase {
+class qtype_calculatedformat_test extends advanced_testcase {
     public static $includecoverage = array(
         'question/type/questiontypebase.php',
-        'question/type/calculated/questiontype.php'
+        'question/type/calculatedformat/questiontype.php'
     );
 
     protected $tolerance = 0.00000001;
     protected $qtype;
 
     protected function setUp() {
-        $this->qtype = new qtype_calculated();
+        $this->qtype = new qtype_calculatedformat();
     }
 
     protected function tearDown() {
@@ -54,7 +56,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_name() {
-        $this->assertEquals($this->qtype->name(), 'calculated');
+        $this->assertEquals($this->qtype->name(), 'calculatedformat');
     }
 
     public function test_can_analyse_responses() {
@@ -62,7 +64,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_get_random_guess_score() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = test_question_maker::get_question_data('calculatedformat');
         $q->options->answers[17]->fraction = 0.1;
         $this->assertEquals(0.1, $this->qtype->get_random_guess_score($q));
     }
@@ -72,11 +74,11 @@ class qtype_calculated_test extends advanced_testcase {
         $a->answer = $ans;
         $a->tolerance = $tolerance;
         $a->tolerancetype = get_string($type, 'qtype_numerical');
-        return get_string('answerwithtolerance', 'qtype_calculated', $a);
+        return get_string('answerwithtolerance', 'qtype_calculatedformat', $a);
     }
 
     public function test_get_possible_responses() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = test_question_maker::get_question_data('calculatedformat');
 
         $this->assertEquals(array(
             $q->id => array(
@@ -91,7 +93,7 @@ class qtype_calculated_test extends advanced_testcase {
     }
 
     public function test_get_possible_responses_no_star() {
-        $q = test_question_maker::get_question_data('calculated');
+        $q = test_question_maker::get_question_data('calculatedformat');
         unset($q->options->answers[17]);
 
         $this->assertEquals(array(

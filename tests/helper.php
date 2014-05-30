@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test helpers for the calculated question type.
+ * Test helpers for the calculated question type with number formatting.
  *
  * @package    qtype
- * @subpackage calculated
+ * @subpackage calculatedformat
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,30 +27,31 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/question/type/calculated/question.php');
+require_once($CFG->dirroot . '/question/type/calculatedformat/question.php');
 require_once($CFG->dirroot . '/question/type/numerical/question.php');
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 
 /**
- * Test helper class for the calculated question type.
+ * Test helper class for the calculated question type with number formatting.
  *
  * @copyright  2011 The Open University
+ * @copyright  2014 Daniel P. Seemuth
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test_helper extends question_test_helper {
+class qtype_calculatedformat_test_helper extends question_test_helper {
     public function get_test_questions() {
         return array('sum');
     }
 
     /**
      * Makes a calculated question about summing two numbers.
-     * @return qtype_calculated_question
+     * @return qtype_calculatedformat_question
      */
-    public function make_calculated_question_sum() {
-        question_bank::load_question_definition_classes('calculated');
-        $q = new qtype_calculated_question();
+    public function make_calculatedformat_question_sum() {
+        question_bank::load_question_definition_classes('calculatedformat');
+        $q = new qtype_calculatedformat_question();
         test_question_maker::initialise_a_question($q);
         $q->name = 'Simple sum';
         $q->questiontext = 'What is {a} + {b}?';
@@ -62,38 +63,39 @@ class qtype_calculated_test_helper extends question_test_helper {
                     FORMAT_HTML, 0),
             17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
         );
-        foreach ($q->answers as $answer) {
-            $answer->correctanswerlength = 2;
-            $answer->correctanswerformat = 1;
-        }
 
-        $q->qtype = question_bank::get_qtype('calculated');
+        $q->qtype = question_bank::get_qtype('calculatedformat');
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
-        $q->ap = new qtype_numerical_answer_processor(array());
+        $q->ap = new qtype_calculatedformat_answer_processor(10, array());
         $q->synchronised = false;
+        $q->correctanswerbase = 10;
+        $q->correctanswerlengthint = 1;
+        $q->correctanswerlengthfrac = 4;
+        $q->correctanswergroupdigits = 0;
+        $q->exactdigits = 0;
 
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
             array('a' => 1, 'b' => 5),
             array('a' => 3, 'b' => 4),
-            array('a' => 3, 'b' => 0.01416),
-            array('a' => 31, 'b' => 0.01416),
+            array('a' => -3, 'b' => 0.125),
+            array('a' => 31337, 'b' => 0.125),
         ));
 
         return $q;
     }
 
     /**
-     * Makes a calculated question about summing two numbers.
-     * @return qtype_calculated_question
+     * Makes a calculatedformat question about summing two numbers.
+     * @return qtype_calculatedformat_question
      */
-    public function get_calculated_question_data_sum() {
-        question_bank::load_question_definition_classes('calculated');
+    public function get_calculatedformat_question_data_sum() {
+        question_bank::load_question_definition_classes('calculatedformat');
         $qdata = new stdClass();
         test_question_maker::initialise_question_data($qdata);
 
-        $qdata->qtype = 'calculated';
+        $qdata->qtype = 'calculatedformat';
         $qdata->name = 'Simple sum';
         $qdata->questiontext = 'What is {a} + {b}?';
         $qdata->generalfeedback = 'Generalfeedback: {={a} + {b}} is the right answer.';
@@ -105,16 +107,18 @@ class qtype_calculated_test_helper extends question_test_helper {
         $qdata->options->unitsleft = 0;
         $qdata->options->synchronize = 0;
 
+        $qdata->options->correctanswerbase = 10;
+        $qdata->options->correctanswerlengthint = 1;
+        $qdata->options->correctanswerlengthfrac = 4;
+        $qdata->options->correctanswergroupdigits = 0;
+        $qdata->options->exactdigits = 0;
+
         $qdata->options->answers = array(
             13 => new qtype_numerical_answer(13, '{a} + {b}', 1.0, 'Very good.', FORMAT_HTML, 0.001),
             14 => new qtype_numerical_answer(14, '{a} - {b}', 0.0, 'Add. not subtract!.',
                     FORMAT_HTML, 0.001),
             17 => new qtype_numerical_answer(17, '*', 0.0, 'Completely wrong.', FORMAT_HTML, 0),
         );
-        foreach ($qdata->options->answers as $answer) {
-            $answer->correctanswerlength = 2;
-            $answer->correctanswerformat = 1;
-        }
 
         $qdata->options->units = array();
 
