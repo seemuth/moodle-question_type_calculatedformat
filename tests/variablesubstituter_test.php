@@ -159,17 +159,17 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('00.12', $vs->format_in_base(0.12345, 10, 2, 2));
         $this->assertSame('0.0012', $vs->format_in_base(0.0012345, 10, 1, 4));
 
-        $this->assertSame('12,345.01', $vs->format_in_base(12345.01, 10, 1, 2, 3);
+        $this->assertSame('12,345.01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
 
         $val = 22.375;
         $this->assertSame('0x16.6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
         $this->assertSame('16.6', $vs->format_in_base($val, 16, 1, 1));
         $this->assertSame('16', $vs->format_in_base($val, 16, 1, 0));
 
-        $this->assertSame('0b0001_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
-        $this->assertSame('0001_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4));
-        $this->assertSame('00010110.0110', $vs->format_in_base($val, 2, 4, 4));
-        $this->assertSame('00010110.10', $vs->format_in_base($val, 2, 4, 2));
+        $this->assertSame('0b1_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
+        $this->assertSame('1_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4));
+        $this->assertSame('10110.0110', $vs->format_in_base($val, 2, 4, 4));
+        $this->assertSame('10110.10', $vs->format_in_base($val, 2, 4, 2));
 
         $this->assertSame('0o26.3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
         $this->assertSame('26.3', $vs->format_in_base($val, 8, 1, 1));
@@ -192,17 +192,17 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('00,12', $vs->format_in_base(0.12345, 10, 2, 2));
         $this->assertSame('0,0012', $vs->format_in_base(0.0012345, 10, 1, 4));
 
-        $this->assertSame('12.345,01', $vs->format_in_base(12345.01, 10, 1, 2, 3);
+        $this->assertSame('12.345,01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
 
         $val = 22.375;
         $this->assertSame('0x16,6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
         $this->assertSame('16,6', $vs->format_in_base($val, 16, 1, 1));
         $this->assertSame('16', $vs->format_in_base($val, 16, 1, 0));
 
-        $this->assertSame('0b0001_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
-        $this->assertSame('0001_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4));
-        $this->assertSame('00010110,0110', $vs->format_in_base($val, 2, 4, 4));
-        $this->assertSame('00010110,10', $vs->format_in_base($val, 2, 4, 2));
+        $this->assertSame('0b1_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
+        $this->assertSame('1_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4));
+        $this->assertSame('10110,0110', $vs->format_in_base($val, 2, 4, 4));
+        $this->assertSame('10110,10', $vs->format_in_base($val, 2, 4, 2));
 
         $this->assertSame('0o26,3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
         $this->assertSame('26,3', $vs->format_in_base($val, 8, 1, 1));
@@ -225,7 +225,7 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('00.12', $vs->format_in_base(0.12345, 10, 2, 2));
         $this->assertSame('0.0012', $vs->format_in_base(0.0012345, 10, 1, 4));
 
-        $this->assertSame('12,345.01', $vs->format_in_base(12345.01, 10, 1, 2, 3);
+        $this->assertSame('12,345.01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
 
         $val = 22.375;
         $this->assertSame('0x6.6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
@@ -258,7 +258,7 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('00,12', $vs->format_in_base(0.12345, 10, 2, 2));
         $this->assertSame('0,0012', $vs->format_in_base(0.0012345, 10, 1, 4));
 
-        $this->assertSame('12.345,01', $vs->format_in_base(12345.01, 10, 1, 2, 3);
+        $this->assertSame('12.345,01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
 
         $val = 22.375;
         $this->assertSame('0x6,6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
