@@ -363,7 +363,7 @@ class qtype_calculatedformat_variable_substituter {
     public function format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0,
         $groupdigits = 0, $showprefix = 0
     ) {
-        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits, $this->exactdigits, $showprefix);
+        $formatted = qtype_calculatedformat_format_in_base($x, $base, $lengthint, $lengthfrac, $groupdigits, $showprefix);
         $formatted = str_replace('.', $this->decimalpoint, $formatted);
 
         if ($groupdigits == 3) {

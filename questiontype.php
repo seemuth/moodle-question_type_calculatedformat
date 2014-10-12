@@ -987,7 +987,7 @@ function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     }
 
     $calculated->answer = qtype_calculatedformat_format_in_base(
-        $answer, $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits, $showprefix
+        $answer, $base, $lengthint, $lengthfrac, $groupdigits, $showprefix
     );
 
     if ($unit != '') {

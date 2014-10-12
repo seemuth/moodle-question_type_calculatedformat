@@ -56,23 +56,25 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
  * @param int $lengthint expand to this many digits before the radix point
  * @param int $lengthfrac restrict to this many digits after the radix point
  * @param int $groupdigits optionally separate groups of this many digits
- * @param bool $exactdigits if true, fix to exactly $lengthint integer digits
- *      (only heeded for binary, octal, and hexadecimal)
  * @param int $showprefix if true, then include base prefix
  * @return string formatted number.
  */
-function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0, $exactdigits = 0, $showprefix = 0) {
+function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $lengthfrac = 0, $groupdigits = 0, $showprefix = 0) {
     $digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    if ($base < 2) {
-        $base = 10;
-    }
-    if ($base > 36) {
+    if (($base != 2) && ($base != 8) && ($base != 10) && ($base != 16)) {
         throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
     }
 
+    $base = intval($base);
+    $lengthint = intval($lengthint);
+    $lengthfrac = intval($lengthfrac);
+
+    $masklengthint = $lengthint;
+
     if ($lengthint < 1) {
         $lengthint = 1;
+        $masklengthint = 0;
     }
 
     if ($lengthfrac < 0) {
@@ -84,66 +86,55 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     }
 
     $answer = $x;
+    $sign = '';
 
-    // Mask to exact number of digits, if required.
-    if ($exactdigits) {
-        if (($base == 2) || ($base == 8) || ($base == 16)) {
-            $answer = qtype_calculatedformat_mask_value(
-                $answer, $base, $lengthint, $lengthfrac
-            );
-            // Masking off bits should result in nonnegative.
+    if (($base == 2) || ($base == 8) || ($base == 16)) {
+        // Mask to exact number of digits, if required.
+        $answer = qtype_calculatedformat_mask_value(
+            $answer, $base, $masklengthint, $lengthfrac
+        );
+
+        // Round properly to correct # of digits.
+        $answer *= pow($base, $lengthfrac);
+        $answer = intval(round($answer));
+
+    } else {
+        // Convert to positive answer.
+        if ($answer < 0) {
+            $answer = -$answer;
+            $sign = '-';
         }
     }
 
-    // Convert to positive answer.
-    if ($answer < 0) {
-        $answer = -$answer;
-        $sign = '-';
+    if ($base == 2) {
+        $x = sprintf('%0' . ($lengthint + $lengthfrac) . 'b', $answer);
+    } else if ($base == 8) {
+        $x = sprintf('%0' . ($lengthint + $lengthfrac) . 'o', $answer);
+    } else if ($base == 16) {
+        $x = sprintf('%0' . ($lengthint + $lengthfrac) . 'X', $answer);
     } else {
-        $sign = '';
+        $x = sprintf('%0' . $lengthint . '.' . $lengthfrac . 'f', $answer);
     }
 
-    // Round properly to correct # of digits.
-    $answer *= pow($base, $lengthfrac);
-    $answer = intval(round($answer));
-
-    if ($answer == 0) {
-        $sign = '';
+    if ($base != 10) {
+        // Insert radix point if there are fractional digits.
+        if ($lengthfrac > 0) {
+            $x = substr_replace($x, '.', -$lengthfrac, 0);
+        }
     }
 
-    // Do not group fractional digits.
-    if ($groupdigits > 0) {
-        $digitsbeforegroup = $groupdigits + $lengthfrac;
-    } else {
-        $digitsbeforegroup = 0;
-    }
+    if (($base == 2) || ($base == 8) || ($base == 16)) {
+        if ($masklengthint < 1) {
+            // Strip leading zeros.
+            $x = ltrim($x, '0');
 
-    // Convert to string in given base (in reverse order at first).
-    $neededdigits = $lengthint + $lengthfrac;
-    $x = '';
-    while (($answer > 0) || ($neededdigits > 0)) {
-        $mod = $answer % $base;
-        $answer = intval(floor($answer / $base));
+            if (strlen($x) < 1) {
+                $x = '0';
 
-        $x .= $digits[$mod];
-        $neededdigits--;
-
-        if ($digitsbeforegroup > 0) {
-            $digitsbeforegroup--;
-            if ($digitsbeforegroup == 0) {
-                $x .= '_';
-                $digitsbeforegroup = $groupdigits;
+            } else if ($x[0] == '.') {
+                $x = '0' . $x;
             }
         }
-    }
-    $x = trim($x, '_');
-
-    // Reverse string to get proper format.
-    $x = strrev($x);
-
-    // Insert radix point if there are fractional digits.
-    if ($lengthfrac > 0) {
-        $x = substr_replace($x, '.', -$lengthfrac, 0);
     }
 
     $prefix = '';
@@ -181,6 +172,10 @@ function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
     $numbits = 0;
     for ($mask = 1; $mask < $base; $mask <<= 1) {
         $numbits++;
+    }
+
+    if ($lengthint < 1) {
+        $lengthint = (32 / $numbits) - $lengthfrac;
     }
 
     $powbase = pow($base, $lengthfrac);
