@@ -113,7 +113,12 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     } else if ($base == 16) {
         $x = sprintf('%0' . ($lengthint + $lengthfrac) . 'X', $answer);
     } else {
-        $x = sprintf('%0' . $lengthint . '.' . $lengthfrac . 'f', $answer);
+        $width = $lengthint;
+        if ($lengthfrac > 0) {
+            // Include fractional digits and decimal point.
+            $width += $lengthfrac + 1;
+        }
+        $x = sprintf('%0' . $width . '.' . $lengthfrac . 'f', $answer);
     }
 
     if ($base != 10) {
