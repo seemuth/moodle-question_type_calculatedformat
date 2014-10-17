@@ -166,7 +166,7 @@ abstract class qtype_calculatedformat_question_helper {
         $question->vs = new qtype_calculatedformat_variable_substituter(
                 $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'),
-                get_string('thousandssep', 'langconfig'),
+                get_string('thousandssep', 'langconfig')
             );
         $question->calculate_all_expressions();
 
@@ -189,7 +189,7 @@ abstract class qtype_calculatedformat_question_helper {
         $question->vs = new qtype_calculatedformat_variable_substituter(
             $values,
             get_string('decsep', 'langconfig'),
-            get_string('thousandssep', 'langconfig'),
+            get_string('thousandssep', 'langconfig')
         );
         $question->calculate_all_expressions();
     }
