@@ -52,7 +52,7 @@ function qtype_calculatedformat_pluginfile($course, $cm, $context, $filearea, $a
  * Display a number properly formatted in a certain base, with a certain
  * number of digits before and after the radix point.
  * @param number $x the number to format
- * @param int $base render number in this base (2 <= $base <= 36)
+ * @param int $base render number in this base (2, 8, 10, or 16)
  * @param int $lengthint expand to this many digits before the radix point
  * @param int $lengthfrac restrict to this many digits after the radix point
  * @param int $groupdigits optionally separate groups of this many digits
