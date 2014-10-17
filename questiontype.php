@@ -599,7 +599,6 @@ class qtype_calculatedformat extends qtype_calculated {
                 $question->options->correctanswerlengthint,
                 $question->options->correctanswerlengthfrac,
                 $question->options->correctanswergroupdigits,
-                $question->options->exactdigits,
                 $showprefix,
                 $unit);
             if ($formula === '*') {
@@ -608,16 +607,14 @@ class qtype_calculatedformat extends qtype_calculated {
                 eval('$ansvalue = '.$formula.';');
 
                 $base = $question->options->correctanswerbase;
-                if ($question->options->exactdigits) {
-                    if (($base == 2) || ($base == 8) || ($base == 16)) {
-                        // Compute value and tolerance given specific format.
-                        $ansvalue = qtype_calculatedformat_mask_value(
-                            $ansvalue,
-                            $question->options->correctanswerbase,
-                            $question->options->correctanswerlengthint,
-                            $question->options->correctanswerlengthfrac
-                        );
-                    }
+                if (($base == 2) || ($base == 8) || ($base == 16)) {
+                    // Compute value and tolerance given specific format.
+                    $ansvalue = qtype_calculatedformat_mask_value(
+                        $ansvalue,
+                        $question->options->correctanswerbase,
+                        $question->options->correctanswerlengthint,
+                        $question->options->correctanswerlengthfrac
+                    );
                 }
 
                 $ans = new qtype_numerical_answer(0, $ansvalue, 0, '', 0, $answer->tolerance);
@@ -971,7 +968,7 @@ class qtype_calculatedformat extends qtype_calculated {
 
 function qtype_calculatedformat_calculate_answer($formula, $individualdata,
     $tolerance, $tolerancetype,
-    $base, $lengthint, $lengthfrac, $groupdigits, $exactdigits, $showprefix,
+    $base, $lengthint, $lengthfrac, $groupdigits, $showprefix,
     $unit = ''
 ) {
     // The return value has these properties: .

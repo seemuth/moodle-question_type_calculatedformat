@@ -61,14 +61,12 @@ class qtype_calculatedformat_question extends qtype_calculated_question
         $this->generalfeedback = $this->vs->replace_expressions_in_text($this->generalfeedback);
 
         $maskanswers = false;
-        if ($this->exactdigits) {
-            if (
-                ($this->correctanswerbase == 2) ||
-                ($this->correctanswerbase == 8) ||
-                ($this->correctanswerbase == 16)
-            ) {
-                $maskanswers = true;
-            }
+        if (
+            ($this->correctanswerbase == 2) ||
+            ($this->correctanswerbase == 8) ||
+            ($this->correctanswerbase == 16)
+        ) {
+            $maskanswers = true;
         }
 
         foreach ($this->answers as $ans) {
@@ -169,7 +167,6 @@ abstract class qtype_calculatedformat_question_helper {
                 $question->datasetloader->get_values($variant),
                 get_string('decsep', 'langconfig'),
                 get_string('thousandssep', 'langconfig'),
-                $question->exactdigits
             );
         $question->calculate_all_expressions();
 
@@ -193,7 +190,6 @@ abstract class qtype_calculatedformat_question_helper {
             $values,
             get_string('decsep', 'langconfig'),
             get_string('thousandssep', 'langconfig'),
-            $question->exactdigits
         );
         $question->calculate_all_expressions();
     }
@@ -249,11 +245,10 @@ class qtype_calculatedformat_variable_substituter {
      * Constructor
      * @param array $values variable name => value.
      */
-    public function __construct(array $values, $decimalpoint, $thousandssep, $exactdigits) {
+    public function __construct(array $values, $decimalpoint, $thousandssep) {
         $this->values = $values;
         $this->decimalpoint = $decimalpoint;
         $this->thousandssep = $thousandssep;
-        $this->exactdigits = $exactdigits;
 
         // Prepare an array for {@link substitute_values()}.
         $this->search = array();
