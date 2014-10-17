@@ -160,7 +160,7 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
  * Fix a number to exactly the required number of digits in binary, octal, or
  * hexadecimal.
  * @param number $x the number to fix
- * @param int $lengthint expand to this many digits before the radix point
+ * @param int $lengthint restrict to this many digits before the radix point
  * @param int $lengthfrac restrict to this many digits after the radix point
  * @return number number fitted to required number of digits
  */
@@ -175,7 +175,7 @@ function qtype_calculatedformat_mask_value($x, $base, $lengthint, $lengthfrac) {
     }
 
     if ($lengthint < 1) {
-        $lengthint = (32 / $numbits) - $lengthfrac;
+        return $x;
     }
 
     $powbase = pow($base, $lengthfrac);
