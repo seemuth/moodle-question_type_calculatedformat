@@ -81,20 +81,17 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerlengthfrac = 0;
         $this->assertSame(array('answer' => '-3' ), $question->get_correct_response());
         $question->correctanswerbase = 2;
-        $question->correctanswerlengthint = 1;
+        $question->correctanswerlengthint = 2;
         $question->correctanswerlengthfrac = 4;
-        $this->assertSame(array('answer' => '-0b10.1110' ), $question->get_correct_response());
+        $this->assertSame(array('answer' => '0b01.0010' ), $question->get_correct_response());
         $question->correctanswerlengthint = 4;
-        $this->assertSame(array('answer' => '-0b0010.1110' ), $question->get_correct_response());
-        $question->vs->exactdigits = $question->exactdigits = 1;
         $this->assertSame(array('answer' => '0b1101.0010' ), $question->get_correct_response());
         $question->correctanswerbase = 16;
         $question->correctanswerlengthint = 2;
         $question->correctanswerlengthfrac = 2;
-        $question->vs->exactdigits = $question->exactdigits = 1;
         $this->assertSame(array('answer' => '0xFD.20' ), $question->get_correct_response());
-        $question->vs->exactdigits = $question->exactdigits = 0;
-        $this->assertSame(array('answer' => '-0x02.E0' ), $question->get_correct_response());
+        $question->correctanswerlengthint = 4;
+        $this->assertSame(array('answer' => '0xFFFD.20' ), $question->get_correct_response());
 
         // Testing with 1.0 + 5.0.
         $question = test_question_maker::make_question('calculatedformat');
@@ -108,21 +105,22 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerlengthfrac = 0;
         $this->assertSame(array('answer' => '6' ), $question->get_correct_response());
         $question->correctanswerbase = 2;
-        $question->correctanswerlengthint = 2;
+        $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
-        $question->vs->exactdigits = $question->exactdigits = 0;
         $this->assertSame(array('answer' => '0b110' ), $question->get_correct_response());
-        $question->vs->exactdigits = $question->exactdigits = 1;
+        $question->correctanswerlengthint = 2;
         $this->assertSame(array('answer' => '0b10' ), $question->get_correct_response());
         $question->correctanswerbase = 8;
-        $question->correctanswerlengthint = 2;
+        $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
-        $question->vs->exactdigits = $question->exactdigits = 0;
+        $this->assertSame(array('answer' => '0o6' ), $question->get_correct_response());
+        $question->correctanswerlengthint = 2;
         $this->assertSame(array('answer' => '0o06' ), $question->get_correct_response());
         $question->correctanswerbase = 16;
-        $question->correctanswerlengthint = 2;
+        $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
-        $question->vs->exactdigits = $question->exactdigits = 0;
+        $this->assertSame(array('answer' => '0x6' ), $question->get_correct_response());
+        $question->correctanswerlengthint = 2;
         $this->assertSame(array('answer' => '0x06' ), $question->get_correct_response());
 
         // Testing with 31337 + 0.125.
@@ -142,14 +140,14 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerlengthfrac = 4;
         $this->assertSame(array('answer' => "31{$thousandssep}337.1250" ), $question->get_correct_response());
         $question->correctanswerbase = 16;
-        $question->correctanswerlengthint = 1;
+        $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
         $question->correctanswergroupdigits = 4;
         $this->assertSame(array('answer' => '0x7A69' ), $question->get_correct_response());
         $question->correctanswerlengthfrac = 3;
         $this->assertSame(array('answer' => '0x7A69.200' ), $question->get_correct_response());
         $question->correctanswerbase = 2;
-        $question->correctanswerlengthint = 1;
+        $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
         $question->correctanswergroupdigits = 4;
         $this->assertSame(array('answer' => '0b111_1010_0110_1001' ), $question->get_correct_response());

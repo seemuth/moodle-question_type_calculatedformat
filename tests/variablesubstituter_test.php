@@ -143,78 +143,11 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
                 $vs->replace_expressions_in_text('phi ({phi}) + pi ({pi}) = {={phi} + {pi}}'));
     }
 
-    public function test_format_float_dot_mindigits() {
+    public function test_format_float_dot() {
         $vs = new qtype_calculatedformat_variable_substituter(
             array('a' => -1, 'b' => 2),
             '.',
-            ',',
-            false
-        );
-        $this->assertSame('0', $vs->format_in_base(0.12345));
-
-        $this->assertSame('0.12345', $vs->format_in_base(0.12345, 10, 1, 5));
-        $this->assertSame('0.12', $vs->format_in_base(0.12345, 10, 1, 2));
-        $this->assertSame('0.1235', $vs->format_in_base(0.12345, 10, 1, 4));
-
-        $this->assertSame('00.12', $vs->format_in_base(0.12345, 10, 2, 2));
-        $this->assertSame('0.0012', $vs->format_in_base(0.0012345, 10, 1, 4));
-
-        $this->assertSame('12,345.01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
-
-        $val = 22.375;
-        $this->assertSame('0x16.6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
-        $this->assertSame('16.6', $vs->format_in_base($val, 16, 1, 1));
-        $this->assertSame('16', $vs->format_in_base($val, 16, 1, 0));
-
-        $this->assertSame('0b1_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
-        $this->assertSame('1_0110.0110', $vs->format_in_base($val, 2, 4, 4, 4));
-        $this->assertSame('10110.0110', $vs->format_in_base($val, 2, 4, 4));
-        $this->assertSame('10110.10', $vs->format_in_base($val, 2, 4, 2));
-
-        $this->assertSame('0o26.3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
-        $this->assertSame('26.3', $vs->format_in_base($val, 8, 1, 1));
-        $this->assertSame('26', $vs->format_in_base($val, 8, 1, 0));
-    }
-
-    public function test_format_float_comma_mindigits() {
-        $vs = new qtype_calculatedformat_variable_substituter(
-            array('a' => -1, 'b' => 2),
-            ',',
-            '.',
-            false
-        );
-        $this->assertSame('0', $vs->format_in_base(0.12345));
-
-        $this->assertSame('0,12345', $vs->format_in_base(0.12345, 10, 1, 5));
-        $this->assertSame('0,12', $vs->format_in_base(0.12345, 10, 1, 2));
-        $this->assertSame('0,1235', $vs->format_in_base(0.12345, 10, 1, 4));
-
-        $this->assertSame('00,12', $vs->format_in_base(0.12345, 10, 2, 2));
-        $this->assertSame('0,0012', $vs->format_in_base(0.0012345, 10, 1, 4));
-
-        $this->assertSame('12.345,01', $vs->format_in_base(12345.01, 10, 1, 2, 3));
-
-        $val = 22.375;
-        $this->assertSame('0x16,6', $vs->format_in_base($val, 16, 1, 1, 0, 1));
-        $this->assertSame('16,6', $vs->format_in_base($val, 16, 1, 1));
-        $this->assertSame('16', $vs->format_in_base($val, 16, 1, 0));
-
-        $this->assertSame('0b1_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
-        $this->assertSame('1_0110,0110', $vs->format_in_base($val, 2, 4, 4, 4));
-        $this->assertSame('10110,0110', $vs->format_in_base($val, 2, 4, 4));
-        $this->assertSame('10110,10', $vs->format_in_base($val, 2, 4, 2));
-
-        $this->assertSame('0o26,3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
-        $this->assertSame('26,3', $vs->format_in_base($val, 8, 1, 1));
-        $this->assertSame('26', $vs->format_in_base($val, 8, 1, 0));
-    }
-
-    public function test_format_float_dot_exactdigits() {
-        $vs = new qtype_calculatedformat_variable_substituter(
-            array('a' => -1, 'b' => 2),
-            '.',
-            ',',
-            true
+            ','
         );
         $this->assertSame('0', $vs->format_in_base(0.12345));
 
@@ -232,22 +165,30 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('6.6', $vs->format_in_base($val, 16, 1, 1));
         $this->assertSame('6', $vs->format_in_base($val, 16, 1, 0));
 
+        $this->assertSame('0x16.6', $vs->format_in_base($val, 16, 0, 1, 0, 1));
+        $this->assertSame('16.6', $vs->format_in_base($val, 16, 0, 1));
+        $this->assertSame('16', $vs->format_in_base($val, 16, 0, 0));
+
         $this->assertSame('0b0110.0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
         $this->assertSame('0110.0110', $vs->format_in_base($val, 2, 4, 4, 4));
         $this->assertSame('0110.0110', $vs->format_in_base($val, 2, 4, 4));
         $this->assertSame('0110.10', $vs->format_in_base($val, 2, 4, 2));
+
+        $this->assertSame('0b1_0110.0110', $vs->format_in_base($val, 2, 0, 4, 4, 1));
+        $this->assertSame('1_0110.0110', $vs->format_in_base($val, 2, 0, 4, 4));
+        $this->assertSame('10110.0110', $vs->format_in_base($val, 2, 0, 4));
+        $this->assertSame('10110.10', $vs->format_in_base($val, 2, 0, 2));
 
         $this->assertSame('0o6.3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
         $this->assertSame('6.3', $vs->format_in_base($val, 8, 1, 1));
         $this->assertSame('6', $vs->format_in_base($val, 8, 1, 0));
     }
 
-    public function test_format_float_comma_exactdigits() {
+    public function test_format_float_comma() {
         $vs = new qtype_calculatedformat_variable_substituter(
             array('a' => -1, 'b' => 2),
             ',',
-            '.',
-            true
+            '.'
         );
         $this->assertSame('0', $vs->format_in_base(0.12345));
 
@@ -265,10 +206,19 @@ class qtype_calculatedformat_variable_substituter_test extends advanced_testcase
         $this->assertSame('6,6', $vs->format_in_base($val, 16, 1, 1));
         $this->assertSame('6', $vs->format_in_base($val, 16, 1, 0));
 
+        $this->assertSame('0x16,6', $vs->format_in_base($val, 16, 0, 1, 0, 1));
+        $this->assertSame('16,6', $vs->format_in_base($val, 16, 0, 1));
+        $this->assertSame('16', $vs->format_in_base($val, 16, 0, 0));
+
         $this->assertSame('0b0110,0110', $vs->format_in_base($val, 2, 4, 4, 4, 1));
         $this->assertSame('0110,0110', $vs->format_in_base($val, 2, 4, 4, 4));
         $this->assertSame('0110,0110', $vs->format_in_base($val, 2, 4, 4));
         $this->assertSame('0110,10', $vs->format_in_base($val, 2, 4, 2));
+
+        $this->assertSame('0b1_0110,0110', $vs->format_in_base($val, 2, 0, 4, 4, 1));
+        $this->assertSame('1_0110,0110', $vs->format_in_base($val, 2, 0, 4, 4));
+        $this->assertSame('10110,0110', $vs->format_in_base($val, 2, 0, 4));
+        $this->assertSame('10110,10', $vs->format_in_base($val, 2, 0, 2));
 
         $this->assertSame('0o6,3', $vs->format_in_base($val, 8, 1, 1, 4, 1));
         $this->assertSame('6,3', $vs->format_in_base($val, 8, 1, 1));

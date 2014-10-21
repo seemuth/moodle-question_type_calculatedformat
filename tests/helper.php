@@ -80,7 +80,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
             array('a' => 1, 'b' => 5),
             array('a' => 3, 'b' => 4),
             array('a' => -3, 'b' => 0.125),
-            array('a' => 31337, 'b' => 0.125),
+            array('a' => 31337, 'b' => 0.12501),
         ));
 
         return $q;
