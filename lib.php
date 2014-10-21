@@ -142,6 +142,30 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
         }
     }
 
+    if ($groupdigits > 0) {
+        $parts = explode('.', $x, 2);
+        if (count($parts) > 1) {
+            $integer = $parts[0];
+            $fraction = $parts[1];
+        } else {
+            $integer = $x;
+            $fraction = '';
+        }
+
+        // Add group separator(s).
+        $nextgrouppos = strlen($integer) - $groupdigits;
+        while ($nextgrouppos > 0) {
+            $integer = substr_replace($integer, '_', $nextgrouppos, 0);
+            $nextgrouppos -= $groupdigits;
+        }
+
+        if (strlen($fraction) > 0) {
+            $x = $integer . '.' . $fraction;
+        } else {
+            $x = $integer;
+        }
+    }
+
     $prefix = '';
     if ($showprefix) {
         if ($base == 2) {
