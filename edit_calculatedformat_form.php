@@ -332,6 +332,27 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             $trimmedanswer = trim($answer);
         }
 
+        // Validate correct answer length settings.
+        $tocheck = array('correctanswerlengthint', 'correctanswerlengthfrac');
+        foreach ($tocheck as $key) {
+            $val = $data[$key];
+            if (($val < 0) || ($val > 256)) {
+                $errors[$key] = get_string('illegallength',
+                    'qtype_calculatedformat',
+                    $val
+                );
+            }
+        }
+
+        // Exact digits needs positive correctanswerlengthint.
+        if ($data['exactdigits']) {
+            $correctanswerlengthint = $data['correctanswerlengthint'];
+            if ($correctanswerlengthint < 1) {
+                $errors['exactdigits'] = get_string('requireexactdigitsinvalidlength',
+                    'qtype_calculatedformat');
+            }
+        }
+
         return $errors;
     }
 
