@@ -92,7 +92,7 @@ class qtype_calculatedformat_question extends qtype_calculated_question
         }
 
         // Option 1: show as prefix.
-        if ($this->showbase == 1) {
+        if ($this->correctanswershowbase == 1) {
             $showprefix = true;
         } else {
             $showprefix = false;
@@ -106,7 +106,7 @@ class qtype_calculatedformat_question extends qtype_calculated_question
         );
 
         // Option 2: show as subscript.
-        if ($this->showbase == 2) {
+        if ($this->correctanswershowbase == 2) {
             $formattedanswer .= '<sub>' . $this->correctanswerbase . '</sub>';
         }
 
