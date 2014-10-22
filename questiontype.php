@@ -1276,7 +1276,7 @@ class qtype_calculatedformat_answer_processor
         }
 
         if ($this->exactdigits) {
-            if (! this->is_correct_length($int, $frac)) {
+            if (! $this->is_correct_length($int, $frac)) {
                 return array(null, null, null, $int, $frac);
             }
         }
