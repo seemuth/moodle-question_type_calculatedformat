@@ -346,7 +346,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
 
         // Exact digits needs specific base and positive correctanswerlengthint.
         if ($data['exactdigits']) {
-            if ($data['base'] < 2) {
+            if ($data['correctanswerbase'] < 2) {
                 $errors['exactdigits'] = get_string('requireexactdigitsillegalbase',
                     'qtype_calculatedformat');
             }
