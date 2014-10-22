@@ -269,16 +269,20 @@ class qtype_calculatedformat extends qtype_calculated {
             $questiondata->options->correctanswerbase,
             $questiondata->options->correctanswerlengthint,
             $questiondata->options->correctanswerlengthfrac,
+            $questiondata->options->exactdigits,
             $questiondata->options->units, $questiondata->options->unitsleft);
 
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
     public function make_answer_processor(
-        $base, $lengthint, $lengthfrac, $units, $unitsleft
+        $base, $lengthint, $lengthfrac, $exactdigits, $units, $unitsleft
     ) {
         if (empty($units)) {
-            return new qtype_calculatedformat_answer_processor($base, array());
+            return new qtype_calculatedformat_answer_processor(
+                $base, $lengthint, $lengthfrac, $exactdigits,
+                array()
+            );
         }
 
         $cleanedunits = array();
@@ -287,7 +291,8 @@ class qtype_calculatedformat extends qtype_calculated {
         }
 
         return new qtype_calculatedformat_answer_processor(
-            $base, $cleanedunits, $unitsleft
+            $base, $lengthint, $lengthfrac, $exactdigits,
+            $cleanedunits, $unitsleft
         );
     }
 
@@ -1105,7 +1110,8 @@ class qtype_calculatedformat_answer_processor
     /** @var int required base, or 0 if any base is acceptable. */
     protected $base;
 
-    public function __construct($base, $units, $unitsbefore = false,
+    public function __construct($base, $lengthint, $lengthfrac, $exactdigits,
+        $units, $unitsbefore = false,
         $decsep = null, $thousandssep = null
     ) {
 
@@ -1115,6 +1121,17 @@ class qtype_calculatedformat_answer_processor
             throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
         }
 
+        $lengths = array($lengthint, $lengthfrac);
+        foreach ($lengths as $length) {
+            if (!is_numeric($lengthfrac)) {
+                throw new moodle_exception('illegallength', 'qtype_calculatedformat', $lengthfrac);
+            }
+
+            if (($length < 0) || ($length > 64)) {
+                throw new moodle_exception('illegallength', 'qtype_calculatedformat', $length);
+            }
+        }
+
         $base = intval($base);
         if ($base < 2) {
             $this->base = 0;
@@ -1122,6 +1139,15 @@ class qtype_calculatedformat_answer_processor
             $this->base = $base;
         } else {
             throw new moodle_exception('illegalbase', 'qtype_calculatedformat', $base);
+        }
+
+        $this->lengthint = $lengthint;
+        $this->lengthfrac = $lengthfrac;
+
+        if ($exactdigits and ($lengthint > 0)) {
+            $this->exactdigits = true;
+        } else {
+            $this->exactdigits = false;
         }
     }
 
@@ -1205,15 +1231,39 @@ class qtype_calculatedformat_answer_processor
     }
 
     /**
+     * Checks if the given integer and fractional portions of a number
+     * are of the correct length.
+     *
+     * @param string $int the integer portion of a number
+     * @param string $frac the fractional portion of a number
+     * @return bool true if the number has the correct length (or if don't care).
+     */
+    public function is_correct_length($int, $frac) {
+        if ($this->exactdigits) {
+            if (strlen(trim($int)) != $this->lengthint) {
+                return false;
+            }
+            if (strlen(trim($frac)) != $this->lengthfrac) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Takes a number in almost any localised form, in a given or detected base,
      * and possibly with a unit after it. It separates off the unit, if present,
      * and converts to the default unit, by using the given unit multiplier.
      *
      * @param string $response a value, optionally with a base prefix, and
      *      optionally with a unit.
-     * @return array(numeric, string, numeric) the value with the unit stripped,
-     *      and normalised by the unit multiplier, if any, and the unit string,
-     *      for reference.
+     * @return array(numeric, string, numeric, string, string)
+     *      the value with the unit stripped, and normalised by the unit
+     *      multiplier, if any;
+     *      the unit string, for reference;
+     *      the unit multiplier;
+     *      the integer portion of the response; and
+     *      the fractional portion of the response.
      */
     public function apply_units($response, $separateunit = null) {
         // Strip spaces (which may be thousands separators).
@@ -1222,7 +1272,13 @@ class qtype_calculatedformat_answer_processor
         list($sign, $baseprefix, $int, $frac, $unit) = $this->parse_response_given_base($response);
 
         if (($int === null) && ($frac === null)) {
-            return array(null, null, null);
+            return array(null, null, null, null, null);
+        }
+
+        if ($this->exactdigits) {
+            if (! this->is_correct_length($int, $frac)) {
+                return array(null, null, null, $int, $frac);
+            }
         }
 
         if ($this->base >= 2) {
@@ -1241,7 +1297,7 @@ class qtype_calculatedformat_answer_processor
             } else if ($baseprefix === '0x') {
                 $base = 16;
             } else {
-                return array(null, null, null);
+                return array(null, null, null, $int, $frac);
             }
         }
 
@@ -1261,7 +1317,7 @@ class qtype_calculatedformat_answer_processor
         $valuestr = $int . $frac;
 
         if (preg_match('/[^' . $validcharsre . ']/', $valuestr)) {
-            return array(null, null, null);
+            return array(null, null, null, $int, $frac);
         }
 
         $valuestrlen = strlen($valuestr);
@@ -1279,7 +1335,7 @@ class qtype_calculatedformat_answer_processor
                 $value += 10 + (ord($c) - ord('a'));
             } else {
                 debugging('unexpected character: ' . $c);
-                return array(null, null, null);
+                return array(null, null, null, $int, $frac);
             }
         }
 
@@ -1302,7 +1358,7 @@ class qtype_calculatedformat_answer_processor
             $multiplier = null;
         }
 
-        return array($value, $unit, $multiplier);
+        return array($value, $unit, $multiplier, $int, $frac);
     }
 
     /**

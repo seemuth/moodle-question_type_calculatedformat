@@ -88,6 +88,7 @@ $string['illegalbase'] = 'Illegal base \'{$a}\'';
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'{$a}\'';
 $string['illegallength'] = 'Illegal length \'{$a}\'';
 $string['incorrectfeedback'] = 'For any incorrect response';
+$string['incorrectnumdigits'] = 'Incorrect number of digits';
 $string['item(s)'] = 'item(s)';
 $string['itemno'] = 'Item {$a}';
 $string['itemscount'] = 'Items<br />Count';
