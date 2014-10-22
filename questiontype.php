@@ -586,6 +586,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerbase,
             $question->options->correctanswerlengthint,
             $question->options->correctanswerlengthfrac,
+            $question->options->exactdigits,
             $question->options->units, $question->options->unitsleft);
         $base = $question->options->correctanswerbase;
         if (($base == 2) || ($base == 8) || ($base == 16)) {
