@@ -76,7 +76,7 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering',
             'correctanswerbase',
             'correctanswerlengthint', 'correctanswerlengthfrac',
-            'correctanswergroupdigits',
+            'correctanswergroupdigits', 'correctanswershowbase',
             'exactdigits'
         ));
 

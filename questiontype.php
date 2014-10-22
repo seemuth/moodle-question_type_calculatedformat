@@ -66,6 +66,7 @@ class qtype_calculatedformat extends qtype_calculated {
             $question->options->correctanswerlengthint = 0;
             $question->options->correctanswerlengthfrac = 0;
             $question->options->correctanswergroupdigits = 0;
+            $question->options->correctanswershowbase = 0;
             $question->options->exactdigits = 0;
         }
 
@@ -123,6 +124,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $options->correctanswerlengthint = $question->correctanswerlengthint;
         $options->correctanswerlengthfrac = $question->correctanswerlengthfrac;
         $options->correctanswergroupdigits = $question->correctanswergroupdigits;
+        $options->correctanswershowbase = $question->correctanswershowbase;
         $options->exactdigits = $question->exactdigits;
 
         foreach (array('correctfeedback', 'partiallycorrectfeedback',
@@ -257,6 +259,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $question->correctanswerlengthint = $questiondata->options->correctanswerlengthint;
         $question->correctanswerlengthfrac = $questiondata->options->correctanswerlengthfrac;
         $question->correctanswergroupdigits = $questiondata->options->correctanswergroupdigits;
+        $question->correctanswershowbase = $questiondata->options->correctanswershowbase;
         $question->exactdigits = $questiondata->options->exactdigits;
 
         $question->unitdisplay = $questiondata->options->showunits;
@@ -711,6 +714,7 @@ class qtype_calculatedformat extends qtype_calculated {
             'correctanswerlengthint',
             'correctanswerlengthfrac',
             'correctanswergroupdigits',
+            'correctanswershowbase',
             'exactdigits',
         );
     }
@@ -763,6 +767,7 @@ class qtype_calculatedformat extends qtype_calculated {
         $qo->correctanswerlengthint = $format->getpath($xml, array('#', 'correctanswerlengthint', 0, '#'), 0);
         $qo->correctanswerlengthfrac = $format->getpath($xml, array('#', 'correctanswerlengthfrac', 0, '#'), 0);
         $qo->correctanswergroupdigits = $format->getpath($xml, array('#', 'correctanswergroupdigits', 0, '#'), 0);
+        $qo->correctanswershowbase = $format->getpath($xml, array('#', 'correctanswershowbase', 0, '#'), 2);
         $qo->exactdigits = $format->getpath($xml, array('#', 'exactdigits', 0, '#'), 0);
 
         $format->import_combined_feedback($qo, $xml);

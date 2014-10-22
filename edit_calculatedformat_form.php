@@ -209,6 +209,19 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->setDefault('correctanswergroupdigits', 0);
         $mform->setType('correctanswergroupdigits', PARAM_INT);
 
+        $showbaseoptions = array(
+            0 => get_string('noshowbase', 'qtype_calculatedformat'),
+            1 => get_string('showbaseasprefix', 'qtype_calculatedformat'),
+            2 => get_string('showbaseassubscript', 'qtype_calculatedformat'),
+        );
+        $mform->addElement('select', 'correctanswershowbase',
+            get_string('correctanswershowbase', 'qtype_calculatedformat'),
+            $showbaseoptions);
+        $mform->addHelpButton('correctanswershowbase', 'correctanswershowbase',
+            'qtype_calculatedformat');
+        $mform->setDefault('correctanswershowbase', 2);
+        $mform->setType('correctanswershowbase', PARAM_INT);
+
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
 

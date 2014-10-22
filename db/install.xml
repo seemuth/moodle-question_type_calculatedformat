@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/calculatedformat/db" VERSION="20140501" COMMENT="XMLDB file for Moodle question/type/calculatedformat. This question type also relies on question_dataset* tables created by the calculated question type and the question_numerical_units table created by the numerical question type."
+<XMLDB PATH="question/type/calculatedformat/db" VERSION="20141021" COMMENT="XMLDB file for Moodle question/type/calculatedformat. This question type also relies on question_dataset* tables created by the calculated question type and the question_numerical_units table created by the numerical question type."
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -39,6 +39,7 @@
         <FIELD NAME="correctanswerlengthint" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="correctanswerlengthfrac" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="correctanswergroupdigits" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="correctanswershowbase" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="Optionally show the base of the correct answer"/>
         <FIELD NAME="exactdigits" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If true, then formulas and correct answers will be computed with exact number of digits, rather than minimum number for integer digits."/>
       </FIELDS>
       <KEYS>

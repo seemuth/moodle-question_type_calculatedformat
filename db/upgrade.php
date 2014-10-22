@@ -52,6 +52,20 @@ function xmldb_qtype_calculatedformat_upgrade($oldversion) {
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014102100) {
+        // Define field correctanswershowbase to be added to qtype_calculatedfmt_opts.
+        $table = new xmldb_table('qtype_calculatedfmt_opts');
+        $field = new xmldb_field('correctanswershowbase', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '2', 'correctanswergroupdigits');
+
+        // Conditionally launch add field correctanswershowbase.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Calculatedformat savepoint reached.
+        upgrade_plugin_savepoint(true, 2014102100, 'qtype', 'calculatedformat');
+    }
+
     return true;
 }
 
