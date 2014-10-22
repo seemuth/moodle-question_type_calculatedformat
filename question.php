@@ -124,7 +124,7 @@ class qtype_calculatedformat_question extends qtype_calculated_question
     public function get_validation_error(array $response) {
         list($value, $unit, $multiplier, $int, $frac) = $this->ap->apply_units($response['answer']);
         if (! $this->ap->is_correct_length($int, $frac)) {
-            return get_string('incorrectnumdigits', 'qtype_calculateformat');
+            return get_string('incorrectnumdigits', 'qtype_calculatedformat');
         }
 
         return parent::get_validation_error($response);
