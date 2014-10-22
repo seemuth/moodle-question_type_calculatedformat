@@ -171,18 +171,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->setDefault('correctanswerlengthint', 1);
         $mform->setType('correctanswerlengthint', PARAM_INT);
 
-        $exactdigitsoptions = array(
-            0 => get_string('mindigits', 'qtype_calculatedformat'),
-            1 => get_string('exactdigits', 'qtype_calculatedformat'),
-        );
-        $mform->addElement('select', 'exactdigits',
-            get_string('minexactdigits', 'qtype_calculatedformat'),
-            $exactdigitsoptions);
-        $mform->addHelpButton('exactdigits', 'minexactdigits',
-            'qtype_calculatedformat');
-        $mform->setDefault('exactdigits', 0);
-        $mform->setType('exactdigits', PARAM_INT);
-
         $mform->addElement('text', 'correctanswerlengthfrac',
             get_string('correctanswerlengthfrac', 'qtype_calculatedformat'));
         $mform->addRule('correctanswerlengthfrac',
@@ -221,6 +209,18 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'qtype_calculatedformat');
         $mform->setDefault('correctanswershowbase', 2);
         $mform->setType('correctanswershowbase', PARAM_INT);
+
+        $exactdigitsoptions = array(
+            0 => get_string('no'),
+            1 => get_string('yes'),
+        );
+        $mform->addElement('select', 'exactdigits',
+            get_string('requireexactdigits', 'qtype_calculatedformat'),
+            $exactdigitsoptions);
+        $mform->addHelpButton('exactdigits', 'requireexactdigits',
+            'qtype_calculatedformat');
+        $mform->setDefault('exactdigits', 0);
+        $mform->setType('exactdigits', PARAM_INT);
 
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
@@ -330,15 +330,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         // Validate the answer format.
         foreach ($answers as $key => $answer) {
             $trimmedanswer = trim($answer);
-        }
-
-        // Exact digits is valid only for binary, octal, hexadecimal.
-        if ($data['exactdigits']) {
-            $base = $data['correctanswerbase'];
-            if (($base != 2) && ($base != 8) && ($base != 16)) {
-                $errors['exactdigits'] = get_string('exactdigitsonlyvalid',
-                    'qtype_calculatedformat');
-            }
         }
 
         return $errors;
