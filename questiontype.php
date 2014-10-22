@@ -1241,6 +1241,9 @@ class qtype_calculatedformat_answer_processor
      */
     public function is_correct_length($int, $frac) {
         if ($this->exactdigits) {
+            if (is_null($int) || is_null($frac)) {
+                return false;
+            }
             if (strlen(trim($int)) != $this->lengthint) {
                 return false;
             }
