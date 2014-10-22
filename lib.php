@@ -75,10 +75,17 @@ function qtype_calculatedformat_format_in_base($x, $base = 10, $lengthint = 1, $
     if ($lengthint < 1) {
         $lengthint = 1;
         $masklengthint = 0;
+
+    } else if ($lengthint > 64) {
+        $lengthint = 64;
+        $masklengthint = 64;
     }
 
     if ($lengthfrac < 0) {
         $lengthfrac = 0;
+
+    } else if ($lengthfrac > 64) {
+        $lengthfrac = 64;
     }
 
     if ($groupdigits < 0) {
