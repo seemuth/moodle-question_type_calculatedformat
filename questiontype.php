@@ -762,8 +762,8 @@ class qtype_calculatedformat extends qtype_calculated {
         $qo->correctanswerbase = $format->getpath($xml, array('#', 'correctanswerbase', 0, '#'), 10);
         $qo->correctanswerlengthint = $format->getpath($xml, array('#', 'correctanswerlengthint', 0, '#'), 0);
         $qo->correctanswerlengthfrac = $format->getpath($xml, array('#', 'correctanswerlengthfrac', 0, '#'), 0);
-        $qo->correctanswergroupdigits = $format->getpath($xml, array('#', 'correctanswergroupdigits', 0, '#'), 10);
-        $qo->exactdigits = $format->getpath($xml, array('#', 'exactdigits', 0, '#'), 10);
+        $qo->correctanswergroupdigits = $format->getpath($xml, array('#', 'correctanswergroupdigits', 0, '#'), 0);
+        $qo->exactdigits = $format->getpath($xml, array('#', 'exactdigits', 0, '#'), 0);
 
         $format->import_combined_feedback($qo, $xml);
 
