@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_calculatedformat';
-$plugin->version   = 2014102100;
+$plugin->version   = 2014102200;
 $plugin->release   = 'v0.7.0-dev.0 (2014102100)';
 
 $plugin->requires  = 2013110500;
