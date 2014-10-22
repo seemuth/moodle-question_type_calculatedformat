@@ -91,14 +91,9 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             return array();
         }
 
-        if (
-            ($this->correctanswerbase == 2) ||
-            ($this->correctanswerbase == 8) ||
-            ($this->correctanswerbase == 16)
-        ) {
-
+        // Option 1: show as prefix.
+        if ($this->showbase == 1) {
             $showprefix = true;
-
         } else {
             $showprefix = false;
         }
@@ -109,6 +104,11 @@ class qtype_calculatedformat_question extends qtype_calculated_question
             $this->correctanswergroupdigits,
             $showprefix
         );
+
+        // Option 2: show as subscript.
+        if ($this->showbase == 2) {
+            $formattedanswer .= '<sub>' . $this->correctanswerbase . '</sub>';
+        }
 
         $response = array('answer' => $formattedanswer);
 
