@@ -336,7 +336,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $tocheck = array('correctanswerlengthint', 'correctanswerlengthfrac');
         foreach ($tocheck as $key) {
             $val = $data[$key];
-            if (($val < 0) || ($val > 256)) {
+            if (($val < 0) || ($val > 64)) {
                 $errors[$key] = get_string('illegallength',
                     'qtype_calculatedformat',
                     $val
