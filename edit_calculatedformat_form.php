@@ -161,6 +161,18 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
         $mform->setDefault('correctanswerbase', 10);
         $mform->setType('correctanswerbase', PARAM_INT);
 
+        $exactdigitsoptions = array(
+            0 => get_string('no'),
+            1 => get_string('yes'),
+        );
+        $mform->addElement('select', 'exactdigits',
+            get_string('requireexactdigits', 'qtype_calculatedformat'),
+            $exactdigitsoptions);
+        $mform->addHelpButton('exactdigits', 'requireexactdigits',
+            'qtype_calculatedformat');
+        $mform->setDefault('exactdigits', 0);
+        $mform->setType('exactdigits', PARAM_INT);
+
         $mform->addElement('text', 'correctanswerlengthint',
             get_string('correctanswerlengthint', 'qtype_calculatedformat'));
         $mform->addRule('correctanswerlengthint',
@@ -209,18 +221,6 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             'qtype_calculatedformat');
         $mform->setDefault('correctanswershowbase', 2);
         $mform->setType('correctanswershowbase', PARAM_INT);
-
-        $exactdigitsoptions = array(
-            0 => get_string('no'),
-            1 => get_string('yes'),
-        );
-        $mform->addElement('select', 'exactdigits',
-            get_string('requireexactdigits', 'qtype_calculatedformat'),
-            $exactdigitsoptions);
-        $mform->addHelpButton('exactdigits', 'requireexactdigits',
-            'qtype_calculatedformat');
-        $mform->setDefault('exactdigits', 0);
-        $mform->setType('exactdigits', PARAM_INT);
 
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
                 question_bank::fraction_options(), 1, 1);
