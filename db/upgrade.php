@@ -66,6 +66,18 @@ function xmldb_qtype_calculatedformat_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014102200, 'qtype', 'calculatedformat');
     }
 
+    if ($oldversion < 2014102300) {
+        // Changing the default of field correctanswershowbase on table qtype_calculatedfmt_opts to 0.
+        $table = new xmldb_table('qtype_calculatedfmt_opts');
+        $field = new xmldb_field('correctanswershowbase', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'correctanswergroupdigits');
+
+        // Launch change of default for field correctanswershowbase.
+        $dbman->change_field_default($table, $field);
+
+        // Calculatedformat savepoint reached.
+        upgrade_plugin_savepoint(true, 2014102300, 'qtype', 'calculatedformat');
+    }
+
     return true;
 }
 

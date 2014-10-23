@@ -219,7 +219,7 @@ class qtype_calculatedformat_edit_form extends qtype_numerical_edit_form {
             $showbaseoptions);
         $mform->addHelpButton('correctanswershowbase', 'correctanswershowbase',
             'qtype_calculatedformat');
-        $mform->setDefault('correctanswershowbase', 2);
+        $mform->setDefault('correctanswershowbase', 0);
         $mform->setType('correctanswershowbase', PARAM_INT);
 
         $this->add_per_answer_fields($mform, get_string('answerhdr', 'qtype_calculatedformat', '{no}'),
