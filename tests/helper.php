@@ -68,7 +68,13 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
-        $q->ap = new qtype_calculatedformat_answer_processor(10, array());
+        $q->ap = new qtype_calculatedformat_answer_processor(
+            10,
+            1,
+            4,
+            0,
+            array()
+        );
         $q->synchronised = false;
         $q->correctanswerbase = 10;
         $q->correctanswerlengthint = 1;
