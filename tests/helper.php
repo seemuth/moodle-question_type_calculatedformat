@@ -76,6 +76,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
             array()
         );
         $q->synchronised = false;
+        $q->correctanswershowbase = 1;
         $q->correctanswerbase = 10;
         $q->correctanswerlengthint = 1;
         $q->correctanswerlengthfrac = 4;

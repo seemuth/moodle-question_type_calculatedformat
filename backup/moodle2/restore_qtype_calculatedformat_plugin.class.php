@@ -58,8 +58,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $elepath = $this->get_pathfor('/calculatedformat_records/calculatedformat_record');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        $elename = 'calculatedformat_option';
-        $elepath = $this->get_pathfor('/calculatedformat_options/calculatedformat_option');
+        $elename = 'calculatedformat_options';
+        $elepath = $this->get_pathfor('/calculatedformat_options');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths; // And we return the interesting paths.
@@ -75,8 +75,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('questionid');
-        $newquestionid   = $this->get_new_parentid('questionid');
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
@@ -94,15 +94,15 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
     /**
      * Process the qtype/calculatedformat_option element
      */
-    public function process_calculatedformat_option($data) {
+    public function process_calculatedformat_options($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('questionid');
-        $newquestionid   = $this->get_new_parentid('questionid');
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 

@@ -69,8 +69,7 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
         $calculatedrecord = new backup_nested_element('calculatedformat_record', array('id'), array(
             'answerid', 'tolerance', 'tolerancetype'));
 
-        $calculatedoptions = new backup_nested_element('calculatedformat_options');
-        $calculatedoption = new backup_nested_element('calculatedformat_option', array('id'), array(
+        $calculatedoptions = new backup_nested_element('calculatedformat_options', array('id'), array(
             'synchronize', 'single', 'shuffleanswers', 'correctfeedback',
             'correctfeedbackformat', 'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering',
@@ -85,12 +84,11 @@ class backup_qtype_calculatedformat_plugin extends backup_qtype_plugin {
         $calculatedrecords->add_child($calculatedrecord);
 
         $pluginwrapper->add_child($calculatedoptions);
-        $calculatedoptions->add_child($calculatedoption);
 
         // Set source to populate the data.
         $calculatedrecord->set_source_table('qtype_calculatedfmt',
                 array('questionid' => backup::VAR_PARENTID));
-        $calculatedoption->set_source_table('qtype_calculatedfmt_opts',
+        $calculatedoptions->set_source_table('qtype_calculatedfmt_opts',
                 array('questionid' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.
