@@ -80,6 +80,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $q->correctanswerlengthint = 1;
         $q->correctanswerlengthfrac = 4;
         $q->correctanswergroupdigits = 0;
+        $q->correctanswershowbase = 0;
         $q->exactdigits = 0;
 
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
@@ -117,6 +118,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $qdata->options->correctanswerlengthint = 1;
         $qdata->options->correctanswerlengthfrac = 4;
         $qdata->options->correctanswergroupdigits = 0;
+        $qdata->options->correctanswershowbase = 0;
         $qdata->options->exactdigits = 0;
 
         $qdata->options->answers = array(
