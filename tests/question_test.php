@@ -83,6 +83,7 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 2;
         $question->correctanswerlengthint = 2;
         $question->correctanswerlengthfrac = 4;
+        $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0b01.0010' ), $question->get_correct_response());
         $question->correctanswerlengthint = 4;
         $this->assertSame(array('answer' => '0b1101.0010' ), $question->get_correct_response());
@@ -107,6 +108,7 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 2;
         $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
+        $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0b110' ), $question->get_correct_response());
         $question->correctanswerlengthint = 2;
         $this->assertSame(array('answer' => '0b10' ), $question->get_correct_response());
@@ -143,6 +145,7 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
         $question->correctanswergroupdigits = 4;
+        $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0x7A69' ), $question->get_correct_response());
         $question->correctanswerlengthfrac = 3;
         $this->assertSame(array('answer' => '0x7A69.200' ), $question->get_correct_response());
