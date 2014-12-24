@@ -68,12 +68,19 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
-        $q->ap = new qtype_calculatedformat_answer_processor(10, array());
+        $q->ap = new qtype_calculatedformat_answer_processor(
+            10,
+            1,
+            4,
+            0,
+            array()
+        );
         $q->synchronised = false;
         $q->correctanswerbase = 10;
         $q->correctanswerlengthint = 1;
         $q->correctanswerlengthfrac = 4;
         $q->correctanswergroupdigits = 0;
+        $q->correctanswershowbase = 0;
         $q->exactdigits = 0;
 
         $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
@@ -111,6 +118,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $qdata->options->correctanswerlengthint = 1;
         $qdata->options->correctanswerlengthfrac = 4;
         $qdata->options->correctanswergroupdigits = 0;
+        $qdata->options->correctanswershowbase = 0;
         $qdata->options->exactdigits = 0;
 
         $qdata->options->answers = array(
