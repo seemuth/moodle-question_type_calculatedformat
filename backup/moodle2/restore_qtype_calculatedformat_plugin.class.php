@@ -75,8 +75,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('questionid');
-        $newquestionid   = $this->get_new_parentid('questionid');
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
@@ -101,8 +101,8 @@ class restore_qtype_calculatedformat_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('questionid');
-        $newquestionid   = $this->get_new_parentid('questionid');
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
         $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ?
                 true : false;
 
