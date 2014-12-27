@@ -83,6 +83,10 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 2;
         $question->correctanswerlengthint = 2;
         $question->correctanswerlengthfrac = 4;
+        $question->correctanswershowbase = 0;
+        $this->assertSame(array('answer' => '01.0010' ), $question->get_correct_response());
+        $question->correctanswershowbase = 2;
+        $this->assertSame(array('answer' => '01.0010<sub>2</sub>' ), $question->get_correct_response());
         $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0b01.0010' ), $question->get_correct_response());
         $question->correctanswerlengthint = 4;
@@ -90,6 +94,11 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 16;
         $question->correctanswerlengthint = 2;
         $question->correctanswerlengthfrac = 2;
+        $question->correctanswershowbase = 0;
+        $this->assertSame(array('answer' => 'FD.20' ), $question->get_correct_response());
+        $question->correctanswershowbase = 2;
+        $this->assertSame(array('answer' => 'FD.20<sub>16</sub>' ), $question->get_correct_response());
+        $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0xFD.20' ), $question->get_correct_response());
         $question->correctanswerlengthint = 4;
         $this->assertSame(array('answer' => '0xFFFD.20' ), $question->get_correct_response());
@@ -108,6 +117,8 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 2;
         $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
+        $question->correctanswershowbase = 0;
+        $this->assertSame(array('answer' => '110' ), $question->get_correct_response());
         $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0b110' ), $question->get_correct_response());
         $question->correctanswerlengthint = 2;
@@ -115,6 +126,11 @@ class qtype_calculatedformat_question_test extends advanced_testcase {
         $question->correctanswerbase = 8;
         $question->correctanswerlengthint = 0;
         $question->correctanswerlengthfrac = 0;
+        $question->correctanswershowbase = 0;
+        $this->assertSame(array('answer' => '6' ), $question->get_correct_response());
+        $question->correctanswershowbase = 2;
+        $this->assertSame(array('answer' => '6<sub>8</sub>' ), $question->get_correct_response());
+        $question->correctanswershowbase = 1;
         $this->assertSame(array('answer' => '0o6' ), $question->get_correct_response());
         $question->correctanswerlengthint = 2;
         $this->assertSame(array('answer' => '0o06' ), $question->get_correct_response());
