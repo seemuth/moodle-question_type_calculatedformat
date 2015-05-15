@@ -83,7 +83,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
         $q->correctanswershowbase = 0;
         $q->exactdigits = 0;
 
-        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
+        $q->datasetloader = new qtype_calculatedformat_test_dataset_loader(0, array(
             array('a' => 1, 'b' => 5),
             array('a' => 3, 'b' => 4),
             array('a' => -3, 'b' => 0.125),
@@ -142,7 +142,7 @@ class qtype_calculatedformat_test_helper extends question_test_helper {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
+class qtype_calculatedformat_test_dataset_loader extends qtype_calculated_dataset_loader{
     protected $valuesets;
     protected $aresynchronised = array();
 
